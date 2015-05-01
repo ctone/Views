@@ -1,11 +1,11 @@
 ﻿@model DiethelmTSWebsite2015.Models.TransferSearchResult
 
-<div class="small-6 columns content-detail-transfer-large">
+<div class="small-12 medium-6 columns content-detail-transfer-large">
     <div class="row">
-        <div class="small-12 columns transfer-pic">
+        <div class="small-12 medium-12 columns transfer-pic">
             <img src="@Model.Image" onclick="GotoDetail('@Model.PackageID')" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" title="@Model.PackageName" alt="@Model.PackageName" />
         </div>
-        <div class="small-12 columns display-block">
+        <div class="small-12 medium-12 columns display-block">
             @if (Model.Available == "Yes")
             {
                 <img src="/Images/status.png" class="float-left" />
