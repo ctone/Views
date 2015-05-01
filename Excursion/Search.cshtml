@@ -1,0 +1,190 @@
+﻿@using System.Web.UI.WebControls
+@using DiethelmTSWebsite2015.Core
+
+@{
+    ViewBag.Title = "Search";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+
+    string country = Utility.GetCurrentCountryName();
+
+    if (string.IsNullOrEmpty(country))
+    {
+        //DISPLAY COUNTRY POPUP ... REDIRECT 
+    };
+
+    //if (AppSession.Instance.IsLogin()) {}
+}
+
+<div class="row step-title">
+    <div class="small-12 medium-4 columns">
+        <h3 class="step-title-label">Excursion search</h3>
+    </div>
+    <div class="small-12 medium-8 columns" style="background-color:#EEEEEE;padding:20px;">
+        <img src="~/Images/progress_s1.png" />
+    </div>
+</div>
+
+<div class="row">
+    <div class="small-12 medium-4 columns">
+        @{  Html.RenderAction("SearchCondition", "Excursion", new { country = Utility.GetCurrentCountryName() });  }
+
+        <div id="ExcursionFilterBox">
+            <!-- Render after search process -->
+        </div>
+    </div>
+    <div class="small-12 medium-8 columns">
+        <div class="row">
+            <div class="small-12 columns">
+                <h3 class="text-red" id="ExcursionSummaryResult">0 Excursion(s) : All city area in Bangkok</h3>
+            </div>
+        </div>
+        <div id="ExcursionSortBox" class="row">
+
+        </div>
+        <div class="row">
+            @*<div id="HotelSummaryResult" class="column large-12">
+
+            </div>*@
+            <div class="column small-12">
+            @using (Html.BeginForm("Detail", "Excursion", FormMethod.Post, new { id = "frmDetail" }))
+            {
+                <input type="hidden" id="ExcursionID" name="ExcursionID" value="" />
+                                <input type="hidden" name="IsLandingPage" value="false" />
+
+                <div id="ExcursionSearchResult" class="row">
+                    @Html.ValidationSummary(false)@*ใช้แสดง error*@
+                </div>
+                <div class="row load-more-search-result">
+                    <div class="column large-12">
+                        <input type="button" value="Load More" id="LoadMore" class="button expand hide btn-load" onclick="LoadMoreResult()" />
+                    </div>
+                </div>
+            }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="@Url.Content("~/Scripts/jquery.cookie.js")"></script>
+    <script src="@Url.Content("~/Scripts/TS/Excursion.js")"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            LoadExcursionSortBox();
+
+            $("#frmDetail").submit(function (e) {
+                CheckActiveLogin("@Url.Action("CheckActiveLogin","Home")", function (result) {
+                    if (!result) {
+                        e.preventDefault();
+                    }
+                });
+            });
+
+        });
+
+        function LoadExcursionSortBox() {
+            $.ajax({
+                url: '@Url.Action("Sort", "Excursion")',
+                type: 'GET',
+                success: function (data) {
+                    $('#ExcursionSortBox').html(data);
+                }
+            });
+        }
+
+        function GotoDetail(serviceID) {
+            PrepareSearchConditionData();//เตรียมข้อมูล search condition data เพื่อส่งไปยังหน้า detail
+            $("#ExcursionID").val(serviceID);
+            $("#frmDetail").submit();
+        }
+
+        function LoadMoreResult() {
+            $.ajax({
+                url: '@Url.Action("LoadMoreResult", "Excursion")',
+                type: 'Get',
+                success: function (data) {
+
+                    $('#ExcursionSearchResult').append(data);
+                    ShowLoadMoreButton();
+                }
+            });
+        }
+
+        function LoadSummaryResult() {
+            $.ajax({
+                url: '@Url.Action("SummaryResult", "Excursion")',
+                type: 'Get',
+                success: function (data) {
+                    $('#ExcursionSummaryResult').html(data);
+                }
+            });
+        }
+
+        function PrepareSearchConditionData() {
+            //Load ค่าจาก search condition จาก cookie เข้า obj เพื่อที่จะส่งเข้าไปในหน้า Detail
+            var obj = $.cookie("ExcursionSearchCondition");
+            var searchObj = null;
+            if (obj) {
+
+                searchObj = queryStringToJSON(obj);
+
+            }
+
+            var fromDate;
+            var rooms = [];
+            if (searchObj) {
+                fromDate = searchObj.FromDate;
+                rooms = searchObj.Rooms;
+            } else {
+                checkInDate = $("#CheckInDate").val();
+                $('#searchfrm').find('.room').each(function (i) {
+                    var room = {};
+                    var adults = $(this).find('select[name=Adults] option:selected').val();
+                    room.Adults = adults;
+                    room.Children = [];
+
+                    var childAges = $(this).find('.child-container .child-age');
+
+                    childAges.each(function (j) {
+                        var childAge = {};
+                        var age = $(this).find('select[name=ChildAge] option:selected').val();
+                        childAge.Age = age;
+                        room.Children.push(childAge);
+                    });
+
+                    rooms.push(room);
+                });
+            }
+
+            //เอาค่ามาสร้าง hidden field แล้ว append ลง form เพื่อที่จะ submit และส่งค่าไปยังหน้า detail
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'FromDate',
+                value: fromDate
+            }).appendTo('#frmDetail');
+
+            for (var i = 0; i < rooms.length; i++) {
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'Rooms[' + i + '].Adults[0]',
+                    value: rooms[i].Adults
+                }).appendTo('#frmDetail');
+
+                if (rooms[i].Children) {
+                    for (var j = 0; j < rooms[i].Children.length; j++) {
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'Rooms[' + i + '].Children[' + j + '].Age',
+                            value: rooms[i].Children[j].Age
+                        }).appendTo('#frmDetail');
+                    }
+                }
+            }
+        }
+
+    </script>
+}

@@ -1,0 +1,481 @@
+﻿@model DiethelmTSWebsite2015.Models.TravellerSet
+@using DiethelmTSWebsite2015.Models
+
+@{
+    ViewBag.Title = "TravellerInputPackage";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+
+    List<Title> TitleList = ViewBag.TitleList;
+    List<NationalitiesCountriesState> NationalitiesList = ViewBag.NationalitiesList;
+
+    int travellerCount = 0;
+    int nAdult = 1;
+    int nChild = 1;
+
+}
+
+<div class="row step-title">
+    <div class="small-12 medium-4 columns">
+        <h3 class="step-title-label">Holidays search</h3>
+    </div>
+    <div class="small-12 medium-8 columns" style="background-color: #EEEEEE; padding: 9px;">
+        <img src="~/Images/progress_s3.png" />
+    </div>
+</div>
+
+
+@using (Html.BeginForm("BookingPackageProcess", "Booking"))
+{
+
+    foreach (var group in Model.TravellerGroupPackage)
+    {
+        string selected = "";
+        
+        if (travellerCount == 0)
+        {
+            <div class="row hotel-detail">
+                <div class="column small-12 detail-title">
+                     @group.PackageName
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="column small-3 traveller-room">
+                @group.OccupancyName
+            </div>
+            <div class="column small-9 traveller-room-name">
+                @group.ElementName
+            </div>
+        </div>    
+   
+        if (group.NewTraveller != null)
+        {
+            foreach (var traveller in group.NewTraveller)
+            {
+                if (traveller.Type == "ADULT")
+                {
+                    if (nAdult == 1) 
+                    { 
+                    <div class="row">
+                        <div class="column small-1 traveller-yellow">
+                            Adult
+                        </div>
+                        @*<div class="column small-1 traveller-gray">
+                            Main Traveller
+                        </div>*@
+                        <div class="column small-2 traveller-gray">
+                            Title
+                        </div>
+                        <div class="column small-6 traveller-name-cover">
+                           <div class="row traveller-name">
+                                <div class="column small-6 traveller-gray">
+                                    &nbsp;&nbsp;&nbsp;First name
+                                </div>
+                                <div class="column small-6 traveller-gray">
+                                    Last name
+                                </div>
+                           </div>
+                        </div>
+                        @*<div class="column small-2 traveller-gray">
+                            Nationality
+                        </div>*@
+                        <div class="column small-2 traveller-gray">
+                            Age
+                        </div>
+                        <div class="column small-1 traveller-gray" style="font-size:0.6em">
+                            Select from Existing
+                        </div>
+                    </div>
+                    }
+
+
+                <div class="row traveller">
+                    <div class="column small-1 padding-top-5">
+                        @nAdult
+                    </div>   
+                    @*<div class="column small-1 padding-top-5">
+
+                         @if(traveller == group.NewTraveller.First())
+                        {
+                            selected = "checked";
+                        }
+
+                        <input type="radio" name="MainPassenger" value="@travellerCount" @selected />  
+                    </div>*@   
+                    <div class="column small-2">
+                        <select name="[@travellerCount].Title">
+                            @foreach (var item in TitleList)
+                            {
+                                selected = "";
+
+                                if (item.ContactTitleTypeDefault)
+                                {
+                                    selected = "selected";
+                                }
+                    
+                                <option value="@item.ContactTitleTypeName" @selected >@item.ContactTitleTypeName</option>
+                            }
+                        </select>
+                    </div>
+                     <div class="column small-6">
+                           <div class="row">
+                                <div class="column small-6">
+                                    <input type="text" name="[@travellerCount].FirstName" placeholder="@traveller.Type" value="@traveller.FirstName"/>
+                                </div>
+                                <div class="column small-6">
+                                    <input type="text" name="[@travellerCount].LastName" placeholder="@traveller.Type" value="@traveller.LastName" />
+                                    <input type="hidden" name="[@travellerCount].Type" value="@traveller.Type"/>
+                                    <input type="hidden" name="[@travellerCount].Module" value="@group.Module" />
+                                </div>
+                           </div>
+                    </div>
+                    @*<div class="column small-2">
+                        <select name="[@travellerCount].NationalityTypeID">
+                            @foreach (var item in NationalitiesList)
+                            {                   
+                                <option value="@item.NationalityID" >@item.NationalityName</option>
+                            }
+                        </select>
+                    </div>*@
+                <div class="column small-2">
+                    @*@traveller.Age*@
+                    <input type="hidden" name="[@travellerCount].Age" value="@traveller.Age"/>   
+                </div>
+
+                <div class="column small-1 right">
+                    <input type="button" class="button tiny radius" Value="......" onclick="OpenExistingPopup('@travellerCount')">
+                    @*<input type="radio" name="MainPassenger" />*@
+                </div>
+
+        <input type="hidden" name="[@travellerCount].PackageID" value="@group.PackageID"/>
+        <input type="hidden" name="[@travellerCount].ElementID" value="@group.ElementID"/>
+        <input type="hidden" name="[@travellerCount].ElementName" value="@group.ElementName"/>
+        <input type="hidden" name="[@travellerCount].ID" value="@travellerCount" />
+        <input type="hidden" name="[@travellerCount].StartDate" value="@group.StartDate" />
+        <input type="hidden" name="[@travellerCount].EndDate" value="@group.EndDate" />
+        <input type="hidden" name="[@travellerCount].OccupancyName" value="@group.OccupancyName" />
+        <input type="hidden" name="[@travellerCount].OccupancyTypeID" value="@group.OccupancyTypeID" />
+
+        <!-- For Transfer, Excursion-->
+        <input type="hidden" name="[@travellerCount].FlightNo" value="@group.FlightNo" />
+        <input type="hidden" name="[@travellerCount].Pickup" value="@group.Pickup" />
+        <input type="hidden" name="[@travellerCount].PickupTime" value="@group.PickupTime" />
+        <input type="hidden" name="[@travellerCount].FlightTime" value="@group.FlightTime" />
+        <input type="hidden" name="[@travellerCount].Dropoff" value="@group.Dropoff" />
+        <input type="hidden" name="[@travellerCount].DropoffTime" value="@group.DropoffTime" />
+        <input type="hidden" name="Module" value="@ViewBag.Module" />
+
+                    
+        
+        
+
+    </div>
+    
+                travellerCount++;
+                nAdult++;
+                }
+            }
+            foreach (var traveller in group.NewTraveller)
+            {
+                if (traveller.Type == "CHILD")
+                {
+                    if (nChild == 1) 
+                    { 
+                    <div class="row">
+                        <div class="column small-1 traveller-yellow">
+                            Child
+                        </div>
+                        @*<div class="column small-1 traveller-gray">
+                            Main Traveller
+                        </div>*@
+                        <div class="column small-2 traveller-gray">
+                            Title
+                        </div>
+                        <div class="column small-6 traveller-name-cover">
+                           <div class="row traveller-name">
+                                <div class="column small-6 traveller-gray">
+                                    &nbsp;&nbsp;&nbsp;First name
+                                </div>
+                                <div class="column small-6 traveller-gray">
+                                    Last name
+                                </div>
+                           </div>
+                        </div>
+                        @*<div class="column small-2 traveller-gray">
+                            Nationality
+                        </div>*@
+                        <div class="column small-2 traveller-gray">
+                            Age
+                        </div>
+                        <div class="column small-1 traveller-gray" style="font-size:0.6em">
+                            Select from Existing
+                        </div>
+                    </div>
+                    }
+
+    <div class="row traveller">
+                    <div class="column small-1 padding-top-5">
+                        @nChild
+                    </div>   
+                    @*<div class="column small-1 padding-top-5">
+                        <input type="radio" name="MainPassenger" />  
+                    </div>*@   
+                    <div class="column small-2">
+                        <select name="[@travellerCount].Title">
+                            @foreach (var item in TitleList)
+                            {
+                                selected = "";
+
+                                if (item.ContactTitleTypeDefault)
+                                {
+                                    selected = "selected";
+                                }
+                    
+                                <option value="@item.ContactTitleTypeName" @selected >@item.ContactTitleTypeName</option>
+                            }
+                        </select>
+                    </div>
+                     <div class="column small-6">
+                           <div class="row">
+                                <div class="column small-6">
+                                    <input type="text" name="[@travellerCount].FirstName" placeholder="@traveller.Type" value="@traveller.FirstName"/>
+                                </div>
+                                <div class="column small-6">
+                                    <input type="text" name="[@travellerCount].LastName" placeholder="@traveller.Type" value="@traveller.LastName" />
+                                    <input type="hidden" name="[@travellerCount].Type" value="@traveller.Type"/>
+                                </div>
+                           </div>
+                    </div>
+                    @*<div class="column small-2">
+                        <select name="[@travellerCount].NationalityTypeID">
+                            @foreach (var item in NationalitiesList)
+                            {                   
+                                <option value="@item.NationalityID" >@item.NationalityName</option>
+                            }
+                        </select>
+                    </div>*@
+                <div class="column small-2 padding-top-5">
+                    @traveller.Age
+                    <input type="hidden" name="[@travellerCount].Age" value="@traveller.Age"/>   
+                </div>
+
+                <div class="column small-1 right">
+                    <input type="button" class="button tiny radius" Value="......" onclick="OpenExistingPopup('@travellerCount')">
+                    @*<input type="radio" name="MainPassenger" />*@
+                </div>
+        <input type="hidden" name="[@travellerCount].PackageID" value="@group.PackageID"/>
+        <input type="hidden" name="[@travellerCount].ElementID" value="@group.ElementID"/>
+        <input type="hidden" name="[@travellerCount].ElementName" value="@group.ElementName"/>
+        <input type="hidden" name="[@travellerCount].ID" value="@travellerCount" />
+        <input type="hidden" name="[@travellerCount].StartDate" value="@group.StartDate" />
+        <input type="hidden" name="[@travellerCount].EndDate" value="@group.EndDate" />
+        <input type="hidden" name="[@travellerCount].OccupancyName" value="@group.OccupancyName" />
+        <input type="hidden" name="[@travellerCount].OccupancyTypeID" value="@group.OccupancyTypeID" />
+
+        <!-- For Transfer-->
+        <input type="hidden" name="[@travellerCount].FlightNo" value="@group.FlightNo" />
+        <input type="hidden" name="[@travellerCount].Pickup" value="@group.Pickup" />
+        <input type="hidden" name="[@travellerCount].PickupTime" value="@group.PickupTime" />
+        <input type="hidden" name="[@travellerCount].FlightTime" value="@group.FlightTime" />
+        <input type="hidden" name="[@travellerCount].Dropoff" value="@group.Dropoff" />
+        <input type="hidden" name="[@travellerCount].DropoffTime" value="@group.DropoffTime" />
+        
+        
+
+    </div>
+    
+                travellerCount++;
+                nChild++;
+                }
+            }
+        }
+    }
+    <div class="row">
+        <div class="column large-12">
+            @Html.ValidationSummary(false)
+        </div>
+    </div>
+    <div class="row">
+        <div class="column small-12">
+@*            <input type="submit" value="Book" onclick="return ValidateInput()" />*@
+            <div class="float-right margin-left-10"><input type="button" value="< Back" class="button main-btn btn-gray tiny" onclick="history.back();" /></div>
+            <div class="float-right"><input type="submit" value="Confirm" class="button main-btn right tiny" onclick="return ValidateInput()" /></div>
+        </div>
+    </div>
+}
+@section popup
+{
+    <input type="hidden" id="selTravellerID" value="" />
+
+    @*Popup แสดง traveller list ที่อยู่ใน Service อื่น*@
+    <div id="ExistingTravellerPopup" class="reveal-modal medium" data-reveal>
+        <a class="close-reveal-modal">&#215;</a>
+        @*ถ้ามีการเพิ่ม field ให้ไปเพิ่มที่ Model และ js ด้วย*@
+        @*there is no existing passenger*@
+        @if (Model.ExistingTraveller.Count() <= 0)
+        {
+            <div class="row">
+                <div class="column small-12">
+                    There is no existing passenger.
+                </div>
+                <div class="column small-12">
+                    <div>
+                        <a id="closePopup" class="button main-btn tiny right">Close</a>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="column small-1 traveller-gray padding-top-10">
+                    Select
+                </div>
+                <div class="column small-2 traveller-gray padding-top-10">
+                    Title
+                </div>
+                <div class="column small-7 traveller-name-cover">
+                    <div class="row traveller-name">
+                        <div class="column small-6 traveller-gray padding-top-10">
+                            &nbsp;&nbsp;&nbsp;First name
+                        </div>
+                        <div class="column small-6 traveller-gray padding-top-10">
+                            Last name
+                        </div>
+                    </div>
+                </div>
+                <div class="column small-2 traveller-gray padding-top-10">
+                    Age
+                </div>
+                @*<div class="column small-2 traveller-gray padding-top-10">
+                    Nationality
+                </div>*@
+            </div>
+        }
+        @for (int i = 0; i < Model.ExistingTraveller.Count(); i++)
+        {
+            <div class="row hotel-detail-text">
+                <div class="column small-1">
+                    <input type="radio" id="exist_rdo_@i" name="existTitle" value="@i" />
+                </div>
+                <div class="column small-2">
+                    @Model.ExistingTraveller[i].Title
+                    <input type="hidden" id="exist_Title_@i" value="@Model.ExistingTraveller[i].Title" />
+                </div>
+                <div class="column small-7">
+                    <div class="row">
+                        <div class="column small-6">
+                            @Model.ExistingTraveller[i].FirstName
+                            <input type="hidden" id="exist_FirstName_@i" value="@Model.ExistingTraveller[i].FirstName" />
+                        </div>
+                        <div class="column small-6">
+                            @Model.ExistingTraveller[i].LastName
+                            <input type="hidden" id="exist_LastName_@i" value="@Model.ExistingTraveller[i].LastName" />
+                        </div>
+                    </div>
+                </div>
+                <div class="column small-2">
+                    @Model.ExistingTraveller[i].Age
+                    <input type="hidden" id="exist_Age_@i" value="@Model.ExistingTraveller[i].Age" />
+                </div>
+                @*<div class="column small-2">
+                    @Model.ExistingTraveller[i].NationalityName
+                    <input type="hidden" id="exist_NationalityTypeName_@i" value="@Model.ExistingTraveller[i].NationalityName" />
+                    <input type="hidden" id="exist_NationalityTypeID_@i" value="@Model.ExistingTraveller[i].NationalityTypeID" />
+                    <input type="hidden" id="exist_Type_@i" value="@Model.ExistingTraveller[i].Type" />
+                </div>*@
+            </div>
+        }
+        @if (Model.ExistingTraveller.Count() > 0)
+        {
+            <div class="row">
+                <div class="column small-12">
+                    <input id="btnSelectTraveller" class="button right tiny main-btn" type="button" value="Select">
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#closePopup").click(function () {
+                $("#ExistingTravellerPopup").foundation('reveal', 'close');
+            });
+
+            
+
+            //เลือกจาก traveller ที่มีอยู่ใน service อื่น
+            $("#btnSelectTraveller").click(function () {
+                var rowID = $("input[name=existTitle]:checked").val();
+                var title = $("#exist_Title_" + rowID).val();
+                var firstName = $("#exist_FirstName_" + rowID).val();
+                var lastName = $("#exist_LastName_" + rowID).val();
+                //var nationalityID = $("#exist_NationalityTypeID_" + rowID).val();
+                //var nationalityName = $("#exist_NationalityTypeName_" + rowID).val();
+                var type = $("#exist_Type_" + rowID).val();
+
+                var selTravellerID = $("#selTravellerID").val();
+               // alert(selTravellerID);
+
+                $('select[name="[' + selTravellerID + '].Title"]').val(title);
+                $('input[name="[' + selTravellerID + '].FirstName"]').val(firstName);
+                $('input[name="[' + selTravellerID + '].LastName"]').val(lastName);
+                //$('input[name="[' + selTravellerID + '].Type"]').val(type);
+                //$('select[name="[' + selTravellerID + '].NationalityTypeID"]').val(nationalityID);
+
+                $("#ExistingTravellerPopup").foundation('reveal', 'close');
+            });
+
+        });
+
+        //เปิด popup แสดง traveller list ที่มีอยู่ใน service อื่น
+        function OpenExistingPopup(rowNo) {
+            $("#selTravellerID").val(rowNo.trim());
+            $("#exist_rdo_0").prop('checked', true);
+            $("#ExistingTravellerPopup").foundation('reveal', 'open');
+        }
+
+        function ValidateInput()
+        {
+            var count = travellerCount;
+
+            for(i=0;i<count;i++)
+            {
+                if($("input[name='[" + i +"].FirstName']").val() == "")
+                {
+                    alert("Name");
+                    $("input[name='[" + i +"].FirstName']").focus();
+                    return false;
+                }
+
+                if($("input[name='[" + i +"].LastName']").val() == "")
+                {
+                    alert("LastName");
+                    $("input[name='[" + i +"].LastName']").focus();
+                    return false;
+                }
+
+            }
+
+
+            for(i=0;i<count;i++)
+            {
+                for(j=i+1;j<count;j++)
+                {
+                    if($("input[name='[" + i +"].FirstName']").val() == $("input[name='[" + j +"].FirstName']").val() &&  $("input[name='[" + i +"].LastName']").val() == $("input[name='[" + j +"].LastName']").val())
+                    {
+                        alert("Duplicate traveller");
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+    </script>
+}

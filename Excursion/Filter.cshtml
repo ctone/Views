@@ -1,0 +1,204 @@
+﻿@model DiethelmTSWebsite2015.Models.ExcursionFilter
+@using DiethelmTSWebsite2015.Biz
+
+@{
+    Layout = null;
+
+    string tourType = "";
+    string excursionCat = "";
+    string speakingGuide = "";
+    int k = 0;
+
+    if (Model.TourType != null && Model.TourType.Length > 0)
+    {
+        tourType = Model.TourType.Substring(0, Model.TourType.Length - 1);
+    }
+
+    if (Model.ExcursionCat != null && Model.ExcursionCat.Length > 0)
+    {
+        excursionCat = Model.ExcursionCat.Substring(0, Model.ExcursionCat.Length - 1);
+    }
+
+    if (Model.SpeakingGuide != null && Model.SpeakingGuide.Length > 0)
+    {
+        speakingGuide = Model.SpeakingGuide.Substring(0, Model.SpeakingGuide.Length - 1);
+    }
+}
+
+<div class="row">
+    <div class="columns small-12 editor-label search-label">
+        Tour type
+    </div>
+    <div class="columns small-12 editor-field search-checkbox">
+        @if (string.IsNullOrEmpty(tourType))
+        {
+            foreach (var item in Model.TourTypeList)
+            {
+                <input type="radio" name="TourTypeFilter" id="TourTypeFilter-@k" onclick="Filter(true)" value="@item.ServiceTypeRatingID" />
+                <label for="TourTypeFilter-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                k++;
+            }
+            <input type="radio" id="TourTypeFilter-@k" name="TourTypeFilter" onclick="Filter(true)" value="" /><label for="TourTypeFilter-@k">All</label>
+        }
+        else
+        {
+            foreach (var item in Model.TourTypeList)
+            {
+                string[] arrTourType = tourType.Split(',');
+                if (arrTourType.Where(t => t == item.ServiceTypeRatingID.ToString()).Count() > 0)
+                {
+                    <input type="radio" name="TourTypeFilter" id="TourTypeFilter-@k" onclick="Filter(true)" checked="checked" value="@item.ServiceTypeRatingID" />
+                    <label for="TourTypeFilter-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                }
+                else
+                {
+                    <input type="radio" name="TourTypeFilter" id="TourTypeFilter-@k" onclick="Filter(true)" value="@item.ServiceTypeRatingID" />
+                    <label for="TourTypeFilter-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                }
+                k++;
+            }
+            <input type="radio" name="TourTypeFilter" id="TourTypeFilter-@k" onclick="Filter(true)" value="" /><label for="TourTypeFilter-@k">All</label>
+        }
+    </div>
+
+    <div class="columns small-12 editor-label search-label">
+        Excursion category
+    </div>
+    <div class="columns small-12 editor-field search-checkbox">
+        @{ k = 0;
+         }
+        
+        @if (string.IsNullOrEmpty(excursionCat))
+{
+    foreach (var item in Model.ExcursionCatList)
+    {
+        <input type="checkbox" name="ExcursionCatFilter[]" id="ExcursionCatFilter-@k" onclick="Filter(true)" value="@item.ServiceTypeRatingID" />
+        <label for="ExcursionCatFilter-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+        k++;
+    }
+}
+        else
+        {
+            foreach (var item in Model.ExcursionCatList)
+            {
+                string[] arrExcursionCat = excursionCat.Split(',');
+                if (arrExcursionCat.Where(t => t == item.ServiceTypeRatingID.ToString()).Count() > 0)
+                {
+                    <input type="checkbox" name="ExcursionCatFilter[]" id="ExcursionCatFilter2-@k" checked="checked" onclick="Filter(true)" value="@item.ServiceTypeRatingID" />
+        <label for="ExcursionCatFilter2-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                k++;
+
+                }
+            }
+        }
+
+    </div>
+
+
+    <div class="columns small-12 editor-label  search-label">
+       Speaking guide
+    </div>
+    <div class="columns small-12 editor-field search-checkbox">
+        @{ k = 0;
+         }
+        @if (string.IsNullOrEmpty(speakingGuide))
+        {
+            foreach (var item in Model.SpeakingGuideList)
+            {
+            <input type="checkbox" name="SpeakingGuideFilter[]" id="SpeakingGuideFilter-@k" onclick="Filter(true)" value="@item.ServiceTypeRatingID" /> 
+            <label for="SpeakingGuideFilter-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                k++;
+            }
+        }
+        else
+        {
+            foreach (var item in Model.SpeakingGuideList)
+            {
+                string[] arrSpeakingGuide = speakingGuide.Split(',');
+                if (arrSpeakingGuide.Where(t => t == item.ServiceTypeRatingID.ToString()).Count() > 0)
+                {
+            <input type="checkbox" name="SpeakingGuideFilter[]" id="SpeakingGuideFilter2-@k" onclick="Filter(true)" checked="checked" value="@item.ServiceTypeRatingID" />             
+                <label for="SpeakingGuideFilter2-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                    k++;
+                }
+            }
+        }
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        //initialize search data from cookie
+        var obj = $.cookie("@DataManager.Hotel.FILTER_COOKIE_NAME");
+        var filterObj = null;
+        if (obj) {
+
+            filterObj = queryStringToJSON(obj);
+            fillFacilityForm(filterObj);
+            //Filter(false); TODONOP: check function filter ตอนกด back อีกที
+        }
+
+
+    });
+
+    $('select[name=Duration]').change(function () {
+        Filter(true);
+    });
+
+    $('select[name=TourComfort]').change(function () {
+        Filter(true);
+    });
+
+    $('select[name=TourLevel]').change(function () {
+        Filter(true);
+    });
+
+    function Filter(isResetPaging) {
+
+        var chkExcursionCatVal = "";
+        $('input[name="ExcursionCatFilter[]"]:checked').each(function () {
+            chkExcursionCatVal += $(this).val() + ",";
+        });
+
+        var chkTourTypeVal = "";
+        var rdoVal = $("input:radio[name ='TourTypeFilter']:checked").val();
+        if (rdoVal != null && rdoVal != "") {
+            chkTourTypeVal = rdoVal + ",";
+        }
+        else {
+            chkTourTypeVal = rdoVal;
+        }
+
+        var chkSpeakingGuideVal = "";
+        $('input[name="SpeakingGuideFilter[]"]:checked').each(function () {
+            chkSpeakingGuideVal += $(this).val() + ",";
+        });
+
+        $('#ExcursionSearchResult').html("Loading....");
+
+        $.ajax({
+            url: '@Url.Action("Filter", "Excursion")',
+            type: 'POST',
+            data: {
+                ExcursionCatSelected: chkExcursionCatVal,
+                TourTypeSelected: chkTourTypeVal,
+                SpeakingGuideSelected: chkSpeakingGuideVal,
+                Duration: $("#Duration").val(),
+                TourComfort: $("#TourComfort").val(),
+                TourLevel: $("#TourLevel").val(),
+                IsResetPaging: isResetPaging
+            },
+            success: function (data) {
+                $('#ExcursionSearchResult').html(data);
+                LoadSummaryResult();
+                ShowLoadMoreButton();
+            }
+        });
+
+    }
+
+
+</script>

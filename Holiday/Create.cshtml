@@ -1,0 +1,83 @@
+﻿@model DiethelmTSWebsite2015.Models.Holiday
+@using DiethelmTSWebsite2015.Models;
+
+@{
+    ViewBag.Title = "Create";
+    string country = Request.RequestContext.RouteData.Values["country"].ToString();
+    DiethelmTSWebsite2015.Biz.CountryCollection countryColl = new DiethelmTSWebsite2015.Biz.CountryCollection();
+
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <input type="hidden" id="CountryID" name="CountryID" value="@countryColl[country].ID" />
+    <fieldset>
+        <legend>Create Shopping List</legend>
+        <div class="row">
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.Title)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.Title)
+            </div>
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.StartDate)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.StartDate)
+            </div>
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.EndDate)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.EndDate)
+            </div>
+            <div class="columns small-12 large-2 editor-label">
+                Publish
+            </div>
+            <div class="columns small-12 large-10 editor-field">
+                @Html.EditorFor(model => model.IsPublishFontend) Publish to fontend
+            </div>
+            <div class="columns small-12 text-right">
+                <input type="submit" value="Save" class="button radius tiny" /> <input type="button" value="Cancel" class="button radius tiny" onclick="history.back();" />
+            </div>
+        </div>
+    </fieldset>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $.datepicker.setDefaults($.datepicker.regional['en']);
+        $("#StartDate").datepicker({
+            dateFormat: "dd-mm-yy",
+            prevText: "", // Display text for previous month link
+            nextText: "", // Display text for next month link
+            isBE: false,
+            autoConversionField: false,
+            onClose: function () { $(this).attr('readonly', true); }
+        });
+        $("#StartDate").keypress(function (e) {
+            e.preventDefault();
+        });
+
+        $.datepicker.setDefaults($.datepicker.regional['en']);
+        $("#EndDate").datepicker({
+            dateFormat: "dd-mm-yy",
+            prevText: "", // Display text for previous month link
+            nextText: "", // Display text for next month link
+            isBE: false,
+            autoConversionField: false,
+            onClose: function () { $(this).attr('readonly', true); }
+        });
+        $("#EndDate").keypress(function (e) {
+            e.preventDefault();
+        });
+
+
+        $.validator.addMethod("date", function (value, element) {
+            return this.optional(element) || /^\d\d?-\d\d-\d\d\d\d/.test(value);
+        }, "Please specify the date in DD-MM-YYYY format");
+    </script>
+ }

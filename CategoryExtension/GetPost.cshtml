@@ -1,0 +1,11 @@
+﻿@model DiethelmTSWebsite2015.Models.SysPost
+
+@{
+    Layout = null;
+    string description;
+    description = Model == null ? "<div style='height:350px;padding-top:100px;text-align:center;font-size:28px;font-weight:bold;color:#808080'>coming soon...</div>" : Model.Description;
+    
+    
+}
+@Html.Raw(description)
+

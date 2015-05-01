@@ -1,0 +1,137 @@
+﻿@model DiethelmTSWebsite2015.Models.Festival
+
+@{
+    ViewBag.Title = "Edit";
+
+    string startDate = Model.DateFrom.ToString("dd-MM-yyyy");
+    string endDate = Model.DateFrom.ToString("dd-MM-yyyy");
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm("Edit", "Festival", FormMethod.Post, new { id = "main-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Festival</legend>
+
+        @Html.HiddenFor(model => model.ID)
+        @Html.HiddenFor(model => model.CountryID)
+        @Html.HiddenFor(model => model.CreateDate)
+        @Html.HiddenFor(model => model.CreateBy)
+        @Html.HiddenFor(model => model.Status)
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.FestivalName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.FestivalName)
+            @Html.ValidationMessageFor(model => model.FestivalName)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Location)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Location)
+            @Html.ValidationMessageFor(model => model.Location)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.City)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.City)
+            @Html.ValidationMessageFor(model => model.City)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DateFrom)
+        </div>
+        <div class="editor-field">
+            <input id="startDate" class="text-box single-line" type="text" name="startDate" value="@startDate" />
+            @Html.ValidationMessageFor(model => model.DateFrom)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DateTo)
+        </div>
+        <div class="editor-field">
+            <input id="DateTo" class="text-box single-line" type="text" name="DateTo" value="@endDate" />
+            @Html.ValidationMessageFor(model => model.DateTo)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.NearestAirport)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.NearestAirport)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Theme)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Theme)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Description)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.Description)
+            @Html.ValidationMessageFor(model => model.Description)
+        </div>
+
+
+        <div class="columns small-12 text-right">
+            <input type="button" onclick="Submit();" value="Save" class="button radius tiny" /> &nbsp;
+            <input type="button" value="Cancel" class="button radius tiny" onclick="history.back();" />
+        </div>
+    </fieldset>
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        function Submit() {
+            $('#main-form').submit();
+        }
+
+        $.datepicker.setDefaults($.datepicker.regional['en']);
+        $("#StartDate").datepicker({
+            dateFormat: "dd-mm-yy",
+            prevText: "", // Display text for previous month link
+            nextText: "", // Display text for next month link
+            isBE: false,
+            autoConversionField: false,
+            onClose: function () { $(this).attr('readonly', true); }
+        });
+        $("#StartDate").keypress(function (e) {
+            e.preventDefault();
+        });
+
+        $.datepicker.setDefaults($.datepicker.regional['en']);
+        $("#EndDate").datepicker({
+            dateFormat: "dd-mm-yy",
+            prevText: "", // Display text for previous month link
+            nextText: "", // Display text for next month link
+            isBE: false,
+            autoConversionField: false,
+            onClose: function () { $(this).attr('readonly', true); }
+        });
+        $("#EndDate").keypress(function (e) {
+            e.preventDefault();
+        });
+
+
+        $.validator.addMethod("date", function (value, element) {
+            return this.optional(element) || /^\d\d?-\d\d-\d\d\d\d/.test(value);
+        }, "Please specify the date in DD-MM-YYYY format");
+    </script>
+}

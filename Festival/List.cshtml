@@ -1,0 +1,88 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@using DiethelmTSWebsite2015.Models;
+
+@model IPagedList<DiethelmTSWebsite2015.Models.Festival>
+@{
+    ViewBag.Title = "List";
+    DTTDBContext db = new DTTDBContext();
+    string country = Request.RequestContext.RouteData.Values["country"].ToString();
+    DiethelmTSWebsite2015.Biz.CountryCollection countryColl = new DiethelmTSWebsite2015.Biz.CountryCollection();
+
+    DiethelmTSWebsite2015.Biz.RegionBiz region = new DiethelmTSWebsite2015.Biz.RegionBiz();
+
+    DiethelmTSWebsite2015.Biz.SysUserBiz biz = new DiethelmTSWebsite2015.Biz.SysUserBiz();
+    var userList = biz.GetUser(DiethelmTSWebsite2015.Core.Types.UserType.All);
+    int countryID = DiethelmTSWebsite2015.Core.Utility.GetCurrentCountryID();
+
+
+}
+<div class="row">
+    <div class="columns small-6 large-8"><h3>Price Range</h3></div>
+    <div class="columns small-6 large-2 padding-top-10 text-right no-padding-right">
+      
+    </div>
+    <div class="columns small-6 large-2 padding-top-10 text-right no-padding-left">
+        <a href="@Url.Action("Create")" class="button radius tiny">Create</a>
+    </div>
+</div>
+<div class="table-container">
+    <div class="table-row-head row">
+        <div class="table-column columns small-3">Festival Name</div>
+        <div class="table-column columns small-3">Date From To</div>
+        <div class="table-column columns small-2">Date To</div>
+        <div class="table-column columns small-3">Last Update</div>
+        <div class="table-column columns small-1">Tools</div>
+    </div>
+
+
+    @foreach (var item in Model)
+    {
+      
+        <div class="table-row row">
+            <div class="table-column columns small-3 text-center">
+                @item.FestivalName
+            </div>
+
+            <div class="table-column columns small-3 text-center">
+                @item.DateFrom.ToString("dd-MMM-yyyy")
+            </div>
+            <div class="table-column columns small-2 text-center">
+                @item.DateTo.ToString("dd-MMM-yyyy")
+            </div>
+            <div class="table-column columns small-3 text-center">
+                @item.UpdateDate.ToString("dd-MMM-yyyy") (@DiethelmTSWebsite2015.Biz.SysUserBiz.GetUserName(userList, item.UpdateBy))
+            </div>
+            <div class="table-column columns small-1 text-center">
+                <a href="@Url.Action("Edit", new { id = item.ID })"><img src="/Images/icon_edit.png"> </a>
+                <a href="#" onclick="Delete('@item.ID')"><img src="/Images/icon_delete.png"></a>
+            </div>
+        </div>
+    }
+
+</div>
+
+
+<div class="float-right">
+    @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page = page }), (PagedListRenderOptions)ViewBag.PagedListRender)
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+
+        function Delete(id) {
+            if (confirm("Do you want to delete?")) {
+                $.ajax({
+                    url: '@Url.Action("Delete", "Festival")?id=' + id,
+                    type: 'GET',
+                    async: false,
+                    success: function (result) {
+                        location.reload();
+                    }
+                });
+            }
+        }
+
+
+    </script>
+}

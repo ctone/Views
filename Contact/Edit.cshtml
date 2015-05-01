@@ -1,0 +1,136 @@
+﻿@using DiethelmTSWebsite2015.Biz;
+
+@model DiethelmTSWebsite2015.Models.Contact
+
+@{
+    ViewBag.Title = "Edit";
+    string country = Request.RequestContext.RouteData.Values["country"].ToString();
+    DiethelmTSWebsite2015.Biz.CountryCollection countryColl = new DiethelmTSWebsite2015.Biz.CountryCollection();
+
+    SysCategoryBiz biz = new SysCategoryBiz();
+    var catList = biz.Get(countryColl[country].ID);
+}
+
+<h2>Edit</h2>
+@using (Html.BeginForm("Edit", "Contact", FormMethod.Post, new { id = "main-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    @Html.HiddenFor(model => model.Status)
+    @Html.HiddenFor(model => model.CreateDate)
+    @Html.HiddenFor(model => model.CreateBy)
+
+    @Html.HiddenFor(model => model.UpdateDate, new { Value = DateTime.Now })
+
+    @Html.HiddenFor(model => model.DirectEmail)
+    <fieldset>
+        <legend>Contact</legend>
+        <div class="row">
+            @Html.HiddenFor(model => model.ID)
+
+
+            <div class="columns small-2 editor-label">
+                <label for="Title">Country </label>
+            </div>
+            <div class="columns small-10 editor-field">
+                <select name="CountryId">
+                    @foreach (var item in countryColl.ToList())
+                    {
+                        if (item.ID == Model.CountryID)
+                        {
+                             <option value="@item.ID" selected>@item.DisplayName</option>
+                        }
+                        else { 
+                             <option value="@item.ID">@item.DisplayName</option>
+                        }
+                       
+                    }
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                <label for="Title">Country Office</label>
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.Title)
+                @Html.ValidationMessageFor(model => model.Title)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.MailingAddress)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.MailingAddress)
+                @Html.ValidationMessageFor(model => model.MailingAddress)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.GeneralLine)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.GeneralLine)
+                @Html.ValidationMessageFor(model => model.GeneralLine)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                <label for="MobilePhone">Hot Line</label>
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.MobilePhone)
+                @Html.ValidationMessageFor(model => model.MobilePhone)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.GeneralFax)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.GeneralFax)
+                @Html.ValidationMessageFor(model => model.GeneralFax)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.GeneralEmail)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.GeneralEmail)
+                @Html.ValidationMessageFor(model => model.GeneralEmail)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.ContactPerson)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.ContactPerson)
+                @Html.ValidationMessageFor(model => model.ContactPerson)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.JobTitle)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.JobTitle)
+                @Html.ValidationMessageFor(model => model.JobTitle)
+            </div>
+
+            <div class="columns small-12 text-right padding-top-20">
+                <input type="button" onclick="Submit();" value="Save" class="button radius tiny" />
+                &nbsp;
+                <input type="button" value="Cancel" class="button radius tiny" onclick="history.back();" />
+            </div>
+        </div>
+    </fieldset>
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+<script type="text/javascript">
+    function Submit() {
+        $('#main-form').submit();
+    }
+</script>
+
+}

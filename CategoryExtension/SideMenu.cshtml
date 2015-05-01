@@ -1,0 +1,33 @@
+﻿@using DiethelmTSWebsite2015.Biz;
+@model IList<DiethelmTSWebsite2015.Models.SysCategory>
+@{
+    Layout = null;
+    SysCategoryBiz biz = new SysCategoryBiz();
+    string active = "";
+    int postID = 0;
+}
+
+<div class="row">
+    @*style="margin-top: 22px;"*@
+    <div class="medium-12 large-12 column" id="title-bar">
+        <h5>@biz.GetByCatID(ViewBag.parentId).Title</h5>
+    </div>
+</div>
+<div class="row side-menu">
+    @foreach (var item in Model)
+    {
+        postID = biz.GetPostIdByCategoryId(item.ID);
+        if (postID == ViewBag.postID)
+        {
+            active = "active-menu";
+        }
+        else
+        {
+            active = "";
+        }
+        <div class="medium-12 large-12 column @active">
+            @*            <a onclick="ChangeContent(@item.ID,'@item.Title')" id="@item.ID">&#8226; @item.Title </a>*@
+            <a href="@Url.Action("Index", "PostExtension", new { category = item.Code, postId = postID })" id="@item.ID">&#8226; @item.Title </a>
+        </div>
+    }
+</div>

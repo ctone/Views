@@ -1,0 +1,20 @@
+﻿@using DiethelmTSWebsite2015.Models.Core;
+
+@model Stack<HtmlElement.BreadcrumbData>
+@{
+    Layout = null;
+}
+
+@do
+{
+    if (Model.Count == 0)
+    {
+        break;
+    }
+    
+    HtmlElement.BreadcrumbData data = Model.Pop();
+
+    <text>&nbsp; <a href="@data.Url">@data.Name</a> &nbsp;</text>
+    if (Model.Count() > 0)
+    { @(">") }
+} while (true);

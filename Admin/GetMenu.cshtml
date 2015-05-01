@@ -1,0 +1,28 @@
+﻿@using DiethelmTSWebsite2015.Biz;
+
+@model IEnumerable<DiethelmTSWebsite2015.Models.SysCategory>
+
+@{
+    Layout = null;
+
+    SysCategoryBiz biz = new SysCategoryBiz();
+}
+
+
+<ul class="left">
+    @foreach (var item in Model)
+    {
+        var childList = @biz.Get(item.ID);
+        var strHasDropdown = "";
+        
+        if(childList.Count() > 0)
+            strHasDropdown = "has-dropdown";
+        
+        <li class="@strHasDropdown">
+            <a href="#">@item.Title</a>
+
+
+
+        </li>
+    }
+</ul>

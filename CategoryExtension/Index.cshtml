@@ -1,0 +1,86 @@
+﻿@using DiethelmTSWebsite2015.Core
+
+@model DiethelmTSWebsite2015.Models.SysCategory
+@{
+    ViewBag.Title = "Diethelm Travel";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+    //DiethelmTSWebsite2015.Models.DTTDBContext db = new DiethelmTSWebsite2015.Models.DTTDBContext();
+    //var list = db.SysCategories.Where(c => c.Status == 1 && c.ParentID == 34).ToList();
+    //List<DiethelmTSWebsite2015.Models.SysCategory> SubList = ViewBag.SubList;
+    //string ForeBreadcumb = "<a href=''>" + ViewBag.ParentTitle + " </a> > " + "<a href='CategoryExtension?CatID=" + Model.ID + "'>" + Model.Title + " </a> > ";
+}
+
+<div class="page-title">
+    @{ Html.RenderAction("PageLabel", "PostExtension", new { country = Utility.GetCurrentCountryName(), categoryId = Model.ParentID }); }
+</div>
+<div class="row">
+    <div class="large-4 columns">
+        <div class="row" style="margin-top: 22px;">
+            <div class="medium-12 large-12 column" id="title-bar">
+                <h5>@Model.Title</h5>
+            </div>
+        </div>
+        <div class="hide-for-small">
+            @{ Html.RenderAction("Breadcrumb", "CategoryExtension", new { country = Utility.GetCurrentCountryName(), categoryId = Model.ID, postId = Model.ID }); }
+        </div>
+    </div>
+    <div class="large-8 columns">
+        <div class="post-breadcumb hide-for-small" id="breadcumb">
+            @{ Html.RenderAction("Breadcrumb", new { country = Utility.GetCurrentCountryName(), category = Model.Code }); }
+
+           @*@Html.Raw(ForeBreadcumb) @SubList.First().Title*@
+        </div>
+        <div id="contentbody" class="contentbody">
+            @Html.Raw(ViewBag.PostDescription)
+        </div>
+    </div>
+</div>
+
+@section banner
+{
+    <div class="row">
+        <div class="medium-12 large-12 columns">
+            <!-- MOCKUP BANNER -->
+            <img style="width:100%" src="~/assets/banner/mockup_Banner.jpg" alt="Destination" title="Destination" />
+        </div>
+    </div>
+}
+
+@section popup
+{
+
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+        function ChangeContent(CateId, Lv3Title) {
+            var Lv1Title = '@ViewBag.ParentTitle';
+            var Lv1Id = '@Model.ParentID'
+            var Lv2Title = '@Model.Title';
+            var Lv2Id = '@Model.ID'
+
+            $("#page-title").html(Lv3Title);
+
+            Breadcumb = "<a href=''>" + Lv1Title + " </a> > " + "<a href='CategoryExtension?CatID=" + Lv2Id + "'>" + Lv2Title + " </a> > " + Lv3Title;
+             $("#breadcumb").html(Breadcumb);
+
+            $(".side-menu").children().children().removeClass("active");
+            $("#" + PostId).addClass("active");
+            $.ajax({
+                url: 'CategoryExtension/GetPost',
+                data: { CateId: PostId },
+                type: 'Get',
+                cache: false,
+                async: false,
+                success: function (result) {
+                    $("#contentbody").html(result);
+                },
+                error: function (err) {
+                    $("#contentbody").html("<div style='height:350px;padding-top:100px;text-align:center;font-size:28px;font-weight:bold;color:#808080'>coming soon...</div>");
+                }
+            });
+        }
+    </script>
+
+}

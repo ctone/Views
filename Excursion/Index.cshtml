@@ -1,0 +1,82 @@
+﻿@using DiethelmTSWebsite2015.Core
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+
+    object obj = Request.RequestContext.RouteData.Values["country"];
+    string country = obj == null ? string.Empty : obj.ToString();
+    DiethelmTSWebsite2015.Biz.DataManager dataManager = DiethelmTSWebsite2015.Biz.DataManager.Instance;
+    var isLogin = dataManager.IsAgencyLogin();
+
+    if (string.IsNullOrEmpty(country))
+    {
+        //DISPLAY COUNTRY POPUP ... REDIRECT
+    };
+
+    //if (AppSession.Instance.IsLogin()) {}
+}
+@if (isLogin)
+{
+    <div id="ExcursionSearchBox"></div>
+}
+@using (Html.BeginForm("Detail", "Excursion", FormMethod.Post, new { id = "frmDetail" }))
+{
+    <input type="hidden" id="ExcursionID" name="ExcursionID" value="" />
+    <input type="hidden" id="IsLandingPage" name="IsLandingPage" value="true" />
+
+    <div class="row">
+
+        <!-- SPECIAL PROMOTION -->
+        <div class="small-12 medium-8 columns" id="SpecialPromotion">
+            <div class="row">
+                @{  Html.RenderAction("Distinctive", "Excursion", new { country = Utility.GetCurrentCountryName() });  }
+            </div>
+        </div>
+
+        <!-- RECOMMENDED -->
+        <div class="small-12 medium-4 columns" id="Recommended">
+            <div class="row">
+                @{  Html.RenderAction("BestSeller", "Excursion", new { country = Utility.GetCurrentCountryName() });  }
+
+            </div>
+        </div>
+    </div>
+}
+
+@section banner
+{
+    @{  Html.RenderAction("ShowBanner", "SysBanner", new { country = Utility.GetCurrentCountryName() });  }
+}
+
+@section Scripts {
+
+    <script src="@Url.Content("~/Scripts/TS/Package.js")"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('select[name=MyCboAge]').change(function () {
+
+            });
+
+            $("#btnTest").click(function () {
+                var box = $("#template .box").first().clone();
+
+                alert(box.find(".detail").html());
+            });
+
+            $.ajax({
+                url: '@Url.Action("QuickSearch", "Excursion")',
+                type: 'GET',
+                success: function (data) {
+                    $('#ExcursionSearchBox').html(data);
+                }
+            });
+
+        });
+
+        function GotoDetail(serviceID) {
+            $("#ExcursionID").val(serviceID);
+            $("#frmDetail").submit();
+        }
+    </script>
+}

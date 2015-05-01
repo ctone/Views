@@ -1,0 +1,26 @@
+﻿@model IList<DiethelmTSWebsite2015.Models.ExcursionSearchResult>
+@{
+    Layout = null;
+    string strDisplay = "display:none;";
+    if (Model != null && Model.Count > 0)
+    {
+        strDisplay = "";
+    }
+    int i = 0;
+}
+
+
+<div id="BestSeller" style="@strDisplay">
+    <div class="small-12 medium-12 columns">
+        <h3 class="content-subject">Best Sellers</h3>
+    </div>
+    @foreach (var item in Model)
+    {
+        @Html.DisplayFor(modelItem => item, "ExcursionItemSmall");
+        i++;
+        if (i == 4)
+        {
+            break;
+        }
+    }
+</div>

@@ -1,0 +1,24 @@
+﻿@using DiethelmTSWebsite2015.Core
+
+@model DiethelmTSWebsite2015.Models.SysPost
+@{
+    ViewBag.Title = "Diethelm Travel";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+}
+@section banner
+{
+    @{  Html.RenderAction("ShowBanner", "SysBanner",  new { country = Utility.GetCurrentCountryName() });  }
+}
+<div class="page-title">
+    @{ Html.RenderAction("PageLabel", "PostExtension", new { country = Utility.GetCurrentCountryName(), categoryId = Model.SysCategoryID, postId = Model.ID }); }
+</div>
+<div class="row">
+    <div class="small-12 columns post-breadcumb">
+        <a onclick="history.back();" class="right">< Back</a>
+    </div>
+</div>
+<div class="row">
+    <div class="small-12 columns">
+        @Html.Raw(Model.Description)
+    </div>
+</div>

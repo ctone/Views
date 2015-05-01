@@ -1,0 +1,99 @@
+﻿@model DiethelmTSWebsite2015.Models.ExcursionSearchCondition
+
+@{
+    Layout = null;
+
+    List<DiethelmTSWebsite2015.Models.Region> CityList = ViewBag.CityList;
+
+    int maxTravelDate = ViewBag.MaximumTravelDate;
+    
+}
+
+
+
+@using (Html.BeginForm("Search", "Excursion", FormMethod.Post, new { id = "frm" }))
+{
+    
+    <input type="hidden" name="IsQuickSearch" value="true" />
+
+    <div class="page-title page-title-quick-search">
+        <div class="row quick-search-cover">
+            <div class="small-12 medium-2 columns">
+                <h5 class="page-title-label main-title margin-top40">Quick search</h5>
+            </div>
+            <div class="small-12 medium-5 columns">
+                <h5 class="page-title-label main-title">
+                    <label>Where do you want to go?</label>
+
+                    <select id="City" name="City">
+                        @foreach (var item in CityList)
+                        {
+                            <option value="@item.RegionName.Trim()">@item.RegionName.Trim()</option>
+                        }
+                    </select>
+                </h5>
+            </div>
+            <div class="small-12 medium-3 columns ">
+                <div class="row ">
+                    <div class="small-6 medium-12 columns"><label>Departure date</label></div>
+                    <div class="small-6 medium-12 columns">
+                        @Html.TextBoxFor(model => model.FromDate, new { @Value = DateTime.Now.ToString("dd-MM-yyyy") })
+                    </div>
+                </div>
+            </div>
+            <div class="small-12 medium-2 columns">
+                <input id="btnExcursionSearch" type="submit" class="tiny button radius expand " value="Go" onclick="return ValidateInput()" />
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+
+            $("#frm").submit(function (e) {
+                CheckActiveLogin("@Url.Action("CheckActiveLogin","Home")", function (result) {
+                    if (!result) {
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            $.datepicker.setDefaults($.datepicker.regional['en']);
+            $("#FromDate").datepicker({
+                dateFormat: "dd-mm-yy",
+                isBE: false,
+                autoConversionField: false,
+                nextText: ' ',
+                prevText: ' ',
+                minDate: 0,
+                onClose: function () { $(this).attr('readonly', true); }
+            });
+            $("#FromDate").keypress(function (e) {
+                e.preventDefault();
+            });
+
+            $("#ToDate").datepicker({
+                dateFormat: "dd-mm-yy",
+                isBE: false,
+                autoConversionField: false,
+                onClose: function () { $(this).attr('readonly', true); }
+            });
+            $("#ToDate").keypress(function (e) {
+                e.preventDefault();
+            });
+
+        });
+
+        function ValidateInput() {
+
+            if ($("#FromDate").val() == "") {
+                alert("Please input FromDate");
+                $("#FromDate").focus();
+                return false;
+            }
+
+            return true;
+        }
+
+    </script>
+}

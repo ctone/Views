@@ -1,0 +1,94 @@
+﻿@model DiethelmTSWebsite2015.Models.SysLogin
+
+@{
+    ViewBag.Title = "Login";
+    //Layout = "~/Views/Shared/_LayoutBackend.cshtml";
+    Layout = null;
+}
+
+@Styles.Render("~/Content/foundation/css")
+@Styles.Render("~/Content/themes/base/css")
+@Styles.Render("~/Content/foundation/css")
+@Styles.Render("~/Content/admin/css")
+@Scripts.Render("~/bundles/jquery")
+<div class="curtain">
+    <div class="login-screen">
+        <div class="row">
+            <div class="small-12 large-8 small-centered columns">
+                <div class="row">
+                    <div class="hide-for-small large-5 columns" style="border-right: 1px gray solid;
+                        margin: 2em auto;min-height:18em;max-height:18em;">
+                        <img src="/Images/diethelm_travel_logo.png" style="margin: 33px auto;" />
+                    </div>
+                    <div class="small-12 large-7 columns">
+                        <div class="admin-login-tab">
+                            <div class="admin-login">
+                                @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    <ul>
+                                        <li style="border-bottom:1px solid gray;">
+                                            <h3>เข้าสู่ระบบ</h3>
+                                        </li>
+                                        <li>
+                                            @Html.LabelFor(m => m.UserName)
+                                            @Html.TextBoxFor(m => m.UserName)
+                                            @*@Html.ValidationMessageFor(m => m.UserName)*@
+                                        </li>
+                                        <li>
+                                            @Html.LabelFor(m => m.Password)
+                                            @Html.PasswordFor(m => m.Password, new { value = Model.Password })
+                                            @*@Html.ValidationMessageFor(m => m.Password)*@
+                                        </li>
+                                        <li>
+                                            @Html.ValidationSummary(false)
+                                        </li>
+                                        <li>
+                                            <div class="row">
+                                                <div class="columns small-12 large-6 text-left">
+                                                    @Html.CheckBoxFor(x=>x.RememberMe) Remember me
+                                                </div>
+                                                <div class="columns small-12 large-6 text-right">
+                                                    <input type="submit" value="Login" class="button radius tiny" />
+                                                </div>
+                                            </div>
+                                        </li>
+                                        @*<li>
+                                            <div style="display:none;float:left;margin-left:1.2em;">
+                                                @Html.ActionLink("ลืมรหัสผ่าน", "")
+                                            </div>
+                                            <div style="display:inline-block;float:right;">
+                                                <input type="submit" value="Login" class="button radius tiny" />
+                                            </div>
+                                        </li>*@
+
+                                    </ul>
+
+                                    @*<div class="validate-text" style="color: Red; margin-left: 14px; float: left;">
+                                        @Html.ValidationSummary(true)
+                                    </div>*@
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#UserName").val("admin");
+            $("#Password").val("password");
+        });
+
+    </script>
+}
+

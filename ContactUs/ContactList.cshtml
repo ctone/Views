@@ -1,0 +1,52 @@
+﻿@model IList<DiethelmTSWebsite2015.Models.Contact>
+@{
+    Layout = null;
+    DiethelmTSWebsite2015.Biz.CountryCollection countryColl = new DiethelmTSWebsite2015.Biz.CountryCollection();
+    int i = 0;
+}
+@if (Model != null)
+{
+    foreach (var item in Model) {
+        if (i == 0) { 
+            <div class="top-toggle" onclick="ContactToggle('@item.CountryID')">
+                @countryColl[item.CountryID].DisplayName
+                <div class="@item.CountryID right" style="display:none;">+</div><div class="@item.CountryID right" >-</div> 
+            </div>
+            <div class="bottom-toggle" id="@item.CountryID">
+
+                <font class="text-red"> @item.Title </font>  <br>
+                <font class="text-black"> Mailing Address :  </font> @item.MailingAddress <br>
+                <font class="text-black"> General Line : </font>@item.GeneralLine<br>
+                <font class="text-black">Hot Line :  </font>@item.MobilePhone<br>
+                <font class="text-black"> General Fax : </font>@item.GeneralFax<br>
+                <font class="text-black">General Email : </font>@item.GeneralEmail<br>
+                <font class="text-black">Contact Person : </font>@item.ContactPerson<br>
+                <font class="text-black">Job Title :  </font>@item.JobTitle<br>
+            </div>
+        }
+        else
+        {
+            <div class="top-toggle" onclick="ContactToggle('@item.CountryID')">
+                @countryColl[item.CountryID].DisplayName
+                <div class="@item.CountryID right">+</div><div class="@item.CountryID right" style="display:none;">-</div> 
+            </div>
+            <div class="bottom-toggle" style="display:none;" id="@item.CountryID">
+
+                <font class="text-red"> @item.Title </font>  <br>
+                <font class="text-black"> Mailing Address :  </font> @item.MailingAddress <br>
+                <font class="text-black"> General Line : </font>@item.GeneralLine<br>
+                <font class="text-black">Hot Line :  </font>@item.MobilePhone<br>
+                <font class="text-black"> General Fax : </font>@item.GeneralFax<br>
+                <font class="text-black">General Email : </font>@item.GeneralEmail<br>
+                <font class="text-black">Contact Person : </font>@item.ContactPerson<br>
+                <font class="text-black">Job Title :  </font>@item.JobTitle<br>
+            </div>
+            
+            
+        }
+        i++;
+
+    }
+}
+
+

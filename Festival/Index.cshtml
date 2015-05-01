@@ -1,0 +1,147 @@
+﻿@using DiethelmTSWebsite2015.Core
+@using DiethelmTSWebsite2015.Biz
+@using DiethelmTSWebsite2015.Models;
+@model IEnumerable<DiethelmTSWebsite2015.Models.Festival>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+
+    DiethelmTSWebsite2015.Core.Utility.ReloadRouteData();
+    DTTDBContext db = new DTTDBContext();
+    object obj = Request.RequestContext.RouteData.Values["country"];
+    string country = obj == null ? string.Empty : obj.ToString();
+    string countryTab = DiethelmTSWebsite2015.Core.HtmlHelper.GenerateTabCountryFrontend(country);
+    CountryCollection list = new CountryCollection();
+    var countryList = list.ToList();
+    byte countryID = Utility.GetCurrentCountryID();
+    string countryname = Utility.GetCurrentCountryName();
+    if (string.IsNullOrEmpty(country))
+    {
+        //DISPLAY COUNTRY POPUP ... REDIRECT
+    };
+    string active = "";
+    //if (AppSession.Instance.IsLogin()) {}
+}
+<div class="row ">
+    <div class="small-12 columns post-breadcumb">
+        <a onclick="history.back();" class="right">< Back</a>
+    </div>
+</div>
+
+<div class="row step-title">
+    <div class="small-12 medium-4 columns">
+        <h3 class="step-title-label">Festival &bull; <font id="country-header">@countryname</font></h3> 
+    </div>
+    <div class="medium-8 columns list-heading-right hide-for-small">
+    </div>
+</div>
+
+<div class="row herizontal-tabs margin-top30">
+    @Html.Raw(countryTab)
+</div>
+<div class="row ">
+    <div class="small-12 columns country-header-cover">  </div>
+    <div class="small-12 columns country-image-cover"> <img src="/Images/@countryname-Headercover.png" id="img-cover" width="100%"> </div>
+</div>
+
+
+<div class="list-cover margin-top15">
+    @foreach (var item in countryList)
+    {
+
+        if (item.ID == countryID)
+        {
+            active = "active";
+        }
+        else
+        {
+            active = "";
+        }
+        <div class="content @active" id="panel-@item.ID">
+            <div class="row front-list-title" style="padding-top:10px;padding-bottom:10px;">
+               
+                <div class="small-4 medium-3 columns">
+                    Festival Name
+                </div>
+                <div class="small-3 columns hide-for-small">
+                    Location <br> (Temple/Venue)
+                </div>
+                <div class="small-2  columns  hide-for-small">
+                    City
+                </div>
+                <div class="small-4 medium-2 columns">
+                    Festival <br> start date
+                </div>
+                <div class="small-4 medium-2 columns">
+                    Festival <br> end date
+                </div>
+            </div>
+
+            @{
+        var shoppingByCountry = Model.Where(f => f.CountryID == item.ID).ToList();
+            }
+            @for (int i = 0; i < shoppingByCountry.Count(); i++)
+            {
+                <div class="row front-list " data-reveal-id="item-@shoppingByCountry[i].ID">
+                    <div class="small-4 medium-3 columns font-red">@shoppingByCountry[i].FestivalName </div>
+                    <div class="small-3 columns hide-for-small">@shoppingByCountry[i].Location </div>
+                    <div class="small-2 columns hide-for-small">@shoppingByCountry[i].City</div>
+                    <div class="small-4 medium-2 columns">@shoppingByCountry[i].DateFrom.ToString("dd MMM yy")</div>
+                    <div class="small-4 medium-2 columns">@shoppingByCountry[i].DateTo.ToString("dd MMM yy")</div>
+                </div>
+
+                <div id="item-@shoppingByCountry[i].ID" class="reveal-modal small reveal-modal-list" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+                    <div class="row header-popup">
+                        <div class="small-12 ">
+                            Festival and events details
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="small-12 columns font-red"><img src="/assets/thumbnail/@shoppingByCountry[i].Thumbnail" width="100%"></div>
+                        <div class="small-12 columns font-red margin-top30"><h3 class="font-red">@shoppingByCountry[i].FestivalName</h3> </div>
+                        <div class="small-3 columns font-red font-bold">Country</div>         <div class="small-9 columns">@countryname</div>
+                        <div class="small-3 columns font-red font-bold">City</div>            <div class="small-9 columns">@shoppingByCountry[i].City</div>
+                        <div class="small-12 columns font-red font-bold">Description</div>     <div class="small-12 columns">@shoppingByCountry[i].Description</div>
+                    </div>
+
+                    <div class="row margin-top30 festival-gray-block">
+                        <div class="small-12 medium-4 columns text-center">
+                            <img src="/Images/Festival_calendar.jpg"> <br>
+                            <font class="text-red"> From : </font>  @shoppingByCountry[i].DateFrom.ToString("dd MMM yy") <br>
+                            <font class="text-red"> To : </font>  @shoppingByCountry[i].DateTo.ToString("dd MMM yy")
+                        </div>
+                        <div class="small-12 medium-4 columns text-center">
+                            <img src="/Images/Festival_aorport.jpg"> <br>
+                            <font class="text-red"> Nesrest Airport</font><br>
+                            @shoppingByCountry[i].NearestAirport
+                        </div>
+                        <div class="small-12 medium-4 columns text-center">
+                            <img src="/Images/Festival_theme.jpg"> <br>
+                            <font class="text-red"> Theme</font><br>
+                            @shoppingByCountry[i].Theme
+                        </div>
+
+                    </div>
+
+                    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+                </div>
+            }
+
+        </div>
+    }
+</div>
+
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        function ChooseCountryTab(Country) {
+            $('#country-header').html(Country);
+            $('#img-cover').attr("src", "/Images/" + Country + "-Headercover.jpg");
+        }
+
+    </script>
+}

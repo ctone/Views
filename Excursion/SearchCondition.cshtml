@@ -1,0 +1,475 @@
+﻿@using DiethelmTSWebsite2015.Models
+@using DiethelmTSWebsite2015.Biz
+
+@model DiethelmTSWebsite2015.Models.ExcursionSearchCondition
+
+@{
+    Layout = null;
+
+    List<Region> CityList = ViewBag.CityList;
+    List<ServiceTypeRatingDetails> tourTypeList = ViewBag.TourTypeList;
+    List<ServiceTypeRatingDetails> excursionCatList = ViewBag.ExcursionCatList;
+    List<ServiceTypeRatingDetails> languageList = ViewBag.LanguageList;
+    List<ServiceTypeRatingDetails> timingList = ViewBag.TimingList;
+
+
+    int maxTravelDate = ViewBag.MaximumTravelDate;
+    int j = 0;
+}
+
+@using (Html.BeginForm("SearchProcess", "Excursion", FormMethod.Post, new { id = "searchfrm" }))
+{
+
+    @Html.HiddenFor(model => model.IsSearch)
+    @Html.HiddenFor(model => model.IsQuickSearch)
+
+    <div class="row">
+        <div class="columns small-12 editor-label search-label">
+            Where do you want to go?
+        </div>
+        <div class="columns small-12 editor-field">
+            <select id="City" name="City">
+                @foreach (var item in CityList)
+                {
+                    <option value="@item.RegionName.Trim()" data-val="@item.RegionID">@item.RegionName.Trim()</option>
+                }
+            </select>
+        </div>
+        <div class="columns small-12 editor-label search-label">
+            Excursion name
+        </div>
+        <div class="columns small-12 editor-field">
+            @Html.EditorFor(model => model.ExcursionName)
+        </div>
+
+        <div class="columns small-12">
+            <div class="row">
+                <div class="small-12 medium-6 columns">
+                    <div class="editor-label search-label">
+                        Travel start date
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.FromDate)
+                    </div>
+                </div>
+
+                <div class="small-12 medium-6 columns">
+                    <div class="editor-label search-label">
+                        Max. travel date
+                    </div>
+                    <div class="editor-field">
+                        <select name="MaxTravelDate">
+                            @for (int i = 1; i <= maxTravelDate; i++)
+                            {
+                                string selected = "";
+                                if (i == Model.MaxTravelDate)
+                                {
+                                    selected = "selected";
+                                }
+
+                                <option value="@i" @selected>@i</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="roomContainer">
+        </div>
+        <div class="columns small-12 editor-field search-field search-checkbox">
+            <input type="checkbox" name="AvailableOnly" id="AvailableOnly" value="false" />
+            <label for="AvailableOnly">Show available only</label>
+        </div>
+
+
+        <div id="MoreOption" style="display:none;">
+            <div class="columns small-12 large-12 search-label">
+                Tour type
+            </div>
+            <div class="columns small-12 large-12 search-field search-checkbox">
+                @foreach (var item in tourTypeList)
+                {
+                    <input type="radio" name="TourType" id="TourType-@j" value="@item.ServiceTypeRatingID" /><label for="TourType-@j"> @item.ServiceTypeRatingName.Trim()</label>
+                    <br />
+                    j++;
+                }
+                <input type="radio" class="css-checkbox" name="TourType" id="TourType-@j" value="" /> <label for="TourType-@j" class="css-label">All</label>
+            </div>
+            <div class="columns small-12 large-12 search-label">
+                Excursion category
+            </div>
+            <div class="columns small-12 large-12 search-checkbox">
+                @{ j = 0;
+                }
+                @foreach (var item in excursionCatList)
+                {
+                    <input type="checkbox" name="ExcursionClass[]" id="ExcursionClass-@j" value="@item.ServiceTypeRatingID" />
+                    <label for="ExcursionClass-@j">@item.ServiceTypeRatingName.Trim()</label><br />
+                    j++;
+                }
+            </div>
+            <div class="columns small-12 large-12 search-label ">
+                Excursion option
+            </div>
+            <div class="columns small-12 large-12 search-checkbox">
+                @{ j = 0;
+                }
+                @foreach (var item in languageList)
+                {
+                    <input type="checkbox" name="SpeakingGuide[]" id="SpeakingGuide-@j" value="@item.ServiceTypeRatingID" />
+                    <label for="SpeakingGuide-@j"> @item.ServiceTypeRatingName.Trim()</label><br />
+                    j++;
+                }
+            </div>
+            <div class="columns small-12 large-12 search-label ">
+                Tour Timing
+            </div>
+            <div class="columns small-12 large-12 search-checkbox">
+                @{ j = 0;
+                }
+                @foreach (var item in timingList)
+                {
+                    <input type="checkbox" name="TourTiming[]" id="TourTiming-@j" value="@item.ServiceTypeRatingID" />
+                    <label for="TourTiming-@j"> @item.ServiceTypeRatingName.Trim()</label><br />
+                    j++;
+                }
+            </div>            
+        </div>
+
+        <div class="columns small-12 editor-label search-label text-center">
+            <a onclick="MoreOptionClick()" id="MoreOptionShow">+ More search options</a>
+            <a onclick="MoreOptionClick()" id="MoreOptionHide" style="display:none;">- Less search options</a>
+        </div>
+
+        <div class="columns small-12 editor-field margin-top15">
+            <input id="btnExcursionSearch" type="button" value="Find Holidays" class="button btnSearch expand" onclick="SearchExcursion(true)" />
+        </div>
+    </div>
+}
+
+<div id="cloneTemplate">
+    <div class="child-age columns small-4 hide left">
+        <select name="ChildAge">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">12</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+        </select>
+    </div>
+    <div class="row child-row hide">
+        <div class="columns small-12">
+            <div class="search-label"><label>Age</label></div>
+            <div class="child-container row">
+            </div>
+        </div>
+    </div>
+    <div class="room columns small-12 hide">
+        <div class="row">
+            <div class="columns medium-12 small-12">
+                <div class="room-selection">
+                    <div class="row">
+                        <div class="columns medium-6 small-6">
+                            <label class="search-label">Adults</label>
+                            <select name="Adults">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                        </div>
+                        <div class="columns medium-6 small-6">
+                            <label class="search-label">Children</label>
+                            <select name="Children" class="child-amount">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#searchfrm").submit(function (e) {
+            CheckActiveLogin("@Url.Action("CheckActiveLogin","Home")", function (result) {
+                if (!result) {
+                    e.preventDefault();
+                }
+            });
+        });
+    });
+
+    function LoadExcursionFilterBox() {
+        $.ajax({
+            url: '@Url.Action("Filter", "Excursion")',
+            type: 'GET',
+            success: function (data) {
+                $('#ExcursionFilterBox').html(data);
+            }
+        });
+    }
+
+    $(function () {
+
+        //initialize search data from cookie
+        var obj = $.cookie("@DataManager.Excursion.SEARCH_COOKIE_NAME");
+        var searchObj = null;
+        if (obj) {
+
+            searchObj = queryStringToJSON(obj);
+            fillSearchForm(searchObj);
+            fillTourTypeForm(searchObj);
+            fillPackageClassForm(searchObj);
+            fillSpeakingGuideForm(searchObj);
+
+            SearchExcursion(false);//TODOTARN: ตอน auto search ให้ disable ปุ่ม search ด้วย
+        }
+
+
+        $.datepicker.setDefaults($.datepicker.regional['en']);
+        $("#FromDate").datepicker({
+            dateFormat: "dd-mm-yy",
+            prevText: "", // Display text for previous month link
+            nextText: "", // Display text for next month link
+            isBE: false,
+            minDate: 0,
+            autoConversionField: false,
+            onClose: function () { $(this).attr('readonly', true); }
+        });
+        $("#FromDate").keypress(function (e) {
+            e.preventDefault();
+        });
+
+        $(document).on('change', 'select.child-amount', function () {
+            var numberOfChildren = $(this).find('option:selected').val();
+            var room = $(this).closest('.room');
+            room.find('.child-row').remove();
+
+            if (parseInt(numberOfChildren) == 0) {
+                return;
+            }
+
+            var childRow = $('#cloneTemplate .child-row').first().clone();
+            childRow.addChildAge(parseInt(numberOfChildren));
+            room.find('.room-selection').append(childRow);
+            room.find('*').removeClass('hide');
+        });
+
+
+        //CreateRoom();
+
+
+    });
+
+    function SearchExcursion(isSearch) {
+
+        CheckActiveLogin("@Url.Action("CheckActiveLogin","Home")", function (result) {
+            if (!result) {
+                return;
+            }
+        });
+
+        $("#ExcursionFilterBox").html("");
+        $("#IsSearch").val(isSearch);
+
+        if (!ValidateUI())
+            return false;
+
+
+        $('#ExcursionSearchResult').html("Loading.........................");
+
+        var searchData = ConvertFormToJson($('#searchfrm'));
+        $('#Loading').foundation('reveal', 'open');
+        $.ajax({
+            url: '@Url.Action("SearchProcess", "Excursion")',
+            type: 'POST',
+            data: searchData,
+            contentType: "application/json",
+            success: function (data) {
+
+                $("#ExcursionSearchResult").html("");
+
+                if (data.error) {
+
+                    var errorMsg = '';
+                    data.error.forEach(function (error) {
+                        errorMsg += '<p>' + error + '</p>';
+                    });
+
+                    $("#ExcursionSearchResult").html(errorMsg);
+
+                } else {
+
+                    $('#ExcursionSearchResult').html(data);
+                    ShowLoadMoreButton();
+
+                    if (isSearch) {
+                        LoadExcursionSortBox();//โหลด sort ใหม่เนื่องจากมีการ clear ค่า sort ตอนกด search
+                    }
+
+                    if (data != "Error" && data != "No data found.")
+                        LoadExcursionFilterBox();
+                }
+
+                LoadSummaryResult();
+                $('#Loading').foundation('reveal', 'close');
+            }
+        });
+    }
+
+    function ValidateUI() {
+
+        if ($("#City").val() == "") {
+            alert("Please input city");//TODOTARN: เปลี่ยน alert เป็น display error text
+            $("#City").focus();
+            return false;
+        }
+
+        if ($("#FromDate").val() == "") {
+            alert("Please input FromDate");//TODOTARN: เปลี่ยน alert เป็น display error text
+            $("#FromDate").focus();
+            return false;
+        }
+
+        return true;
+    }
+
+    function CreateRoom() {
+        var container = $('#roomContainer');
+        container.clearRoom();
+        container.addNewRoom(1);//Package มีแค่ 1 ห้อง
+    }
+
+    function ShowLoadMoreButton() {
+
+        $('#LoadMore').addClass("hide");
+
+        $.ajax({
+            url: '@Url.Action("CheckLastPage", "Utility")',
+            type: 'Get',
+            success: function (data) {
+
+                if (data.result) {
+                    $('#LoadMore').addClass("hide");
+                }
+                else {
+                    $('#LoadMore').removeClass("hide");
+                }
+            }
+        });
+    }
+
+    function MoreOptionClick() {
+        $('#MoreOption').toggle('slow');
+        $('#MoreOptionShow').toggle();
+        $('#MoreOptionHide').toggle();
+    }
+
+
+    function ConvertFormToJson(form) {
+        var result = {};
+        result.City = form.find('select[name=City]').val();
+        result.ExcursionName = form.find('input[name=ExcursionName]').val();
+        result.FromDate = form.find('input[name=FromDate]').val();
+        result.MaxTravelDate = form.find('select[name=MaxTravelDate]').val();
+
+        //result.RoomAmount = form.find('select[name=RoomAmount]').val();
+        result.IsSearch = form.find('input[name=IsSearch]').val();
+        result.IsQuickSearch = form.find('input[name=IsQuickSearch]').val();
+
+        var rdoVal = $("input:radio[name ='TourType']:checked").val();
+        if (rdoVal != null && rdoVal != "") {
+            result.TourType = rdoVal + ",";
+        }
+        else {
+            result.TourType = rdoVal;
+        }
+
+        var chkExcursionClassVal = "";
+        $('input[name="ExcursionClass[]"]:checked').each(function () {
+            chkExcursionClassVal += $(this).val() + ",";
+        });
+
+        result.ExcursionClass = chkExcursionClassVal;
+
+
+        var chkSpeakingGuideVal = "";
+        $('input[name="SpeakingGuide[]"]:checked').each(function () {
+            chkSpeakingGuideVal += $(this).val() + ",";
+        });
+
+        result.SpeakingGuide = chkSpeakingGuideVal;
+
+
+        var chkTourTimingVal = "";
+        $('input[name="TourTiming[]"]:checked').each(function () {
+            chkTourTimingVal += $(this).val() + ",";
+        });
+
+        result.TourTiming = chkTourTimingVal;
+
+
+        var avail = form.find('input[name="AvailableOnly"]');
+        if (avail.is(':checked')) {
+            avail.val(true);
+        } else {
+            avail.val(false);
+        }
+        result.AvailableOnly = avail.val();
+
+        var rooms = [];
+        form.find('.room').each(function (i) {
+            var room = {};
+            var adults = $(this).find('select[name=Adults] option:selected').val();
+            room.Adults = adults;
+            room.Children = [];
+
+            var childAges = $(this).find('.child-container .child-age');
+
+            childAges.each(function (j) {
+                var childAge = {};
+                var age = $(this).find('select[name=ChildAge] option:selected').val();
+                childAge.Age = age;
+                room.Children.push(childAge);
+            });
+
+            rooms.push(room);
+        });
+
+        result.Rooms = rooms;
+
+        return JSON.stringify(result);
+    }
+</script>

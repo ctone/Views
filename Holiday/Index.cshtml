@@ -1,0 +1,149 @@
+﻿@using DiethelmTSWebsite2015.Core
+@using DiethelmTSWebsite2015.Biz
+@using DiethelmTSWebsite2015.Models;
+@model IEnumerable<DiethelmTSWebsite2015.Models.Holiday>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+
+    DiethelmTSWebsite2015.Core.Utility.ReloadRouteData();
+    DTTDBContext db = new DTTDBContext();
+    object obj = Request.RequestContext.RouteData.Values["country"];
+    string country = obj == null ? string.Empty : obj.ToString();
+    string countryTab = DiethelmTSWebsite2015.Core.HtmlHelper.GenerateTabCountryFrontend(country);
+    CountryCollection list = new CountryCollection();
+    var countryList = list.ToList();
+    byte countryID = Utility.GetCurrentCountryID();
+    string countryname = Utility.GetCurrentCountryName();
+    if (string.IsNullOrEmpty(country))
+    {
+        //DISPLAY COUNTRY POPUP ... REDIRECT
+    };
+    string active = "";
+    //if (AppSession.Instance.IsLogin()) {}
+}
+<div class="row ">
+    <div class="small-12 columns post-breadcumb">
+        <a onclick="history.back();" class="right">< Back</a>
+    </div>
+</div>
+
+<div class="row step-title">
+    <div class="small-12 medium-4 columns">
+        <h3 class="step-title-label">Holiday  &bull; <font id="country-header">@countryname</font></h3> 
+    </div>
+    <div class="medium-8 columns list-heading-right hide-for-small">
+    </div>
+</div>
+
+<div class="row herizontal-tabs margin-top30">
+    @Html.Raw(countryTab)
+</div>
+<div class="row ">
+    <div class="small-12 columns country-header-cover"> </div>
+    <div class="small-12 columns country-image-cover"> <img src="/Images/@countryname-Headercover.png" id="img-cover" width="100%"> </div>
+</div>
+
+
+<div class="list-cover margin-top15">
+    @foreach (var item in countryList)
+    {
+
+        if (item.ID == countryID)
+        {
+            active = "active";
+        }
+        else
+        {
+            active = "";
+        }
+        <div class="content @active" id="panel-@item.ID">
+            <div class="row front-list-title">
+                <div class="small-3 columns">
+                    Country
+                </div>
+                <div class="small-3 columns">
+                    Holiday
+                </div>
+                <div class="small-3 columns">
+                    Start date
+                </div>
+                <div class="small-3 columns">
+                    End date
+                </div>
+
+            </div>
+
+            @{
+        var shoppingByCountry = Model.Where(f => f.CountryID == item.ID).ToList();
+            }
+            @for (int i = 0; i < shoppingByCountry.Count(); i++)
+            {
+                <div class="row front-list " data-reveal-id="item-@shoppingByCountry[i].ID">
+                    <div class="small-3 columns font-red">@countryname</div>
+                    <div class="small-3 columns">@shoppingByCountry[i].Title </div>
+                    <div class="small-3 columns">
+                        @if (shoppingByCountry[i].StartDate.HasValue)
+                        {
+                            @shoppingByCountry[i].StartDate.Value.ToString("dd MMM yy")
+                        }
+                    </div>
+                    <div class="small-3 columns">
+                        @if (shoppingByCountry[i].EndDate.HasValue)
+                        {
+                            @shoppingByCountry[i].EndDate.Value.ToString("dd MMM yy")
+                        }
+                    </div>
+                </div>
+
+                <div id="item-@shoppingByCountry[i].ID" class="reveal-modal small reveal-modal-list" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+                    <div class="row header-popup">
+                        <div class="small-12 ">
+                            Public Holiday
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="small-12 columns font-red margin-top30"><h3 class="font-red">@shoppingByCountry[i].Title</h3> </div>
+                        <div class="small-3 columns font-red font-bold">Country</div>         <div class="small-9 columns">@countryname</div>
+                    </div>
+
+                    <div class="row margin-top15 festival-gray-block">
+                        <div class="small-12 medium-12 columns text-center">
+                            <img src="/Images/Festival_calendar.jpg"> <br>
+                            <font class="text-red"> From : </font>
+                            @if (shoppingByCountry[i].StartDate.HasValue)
+                            {
+                                @shoppingByCountry[i].StartDate.Value.ToString("dd MMM yy")
+                            }
+                            <br>
+                            <font class="text-red"> To : </font>
+                            @if (shoppingByCountry[i].EndDate.HasValue)
+                            {
+                                @shoppingByCountry[i].EndDate.Value.ToString("dd MMM yy")
+                            }
+                        </div>
+
+                    </div>
+
+                    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+                </div>
+            }
+
+        </div>
+    }
+</div>
+
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        function ChooseCountryTab(Country) {
+            $('#country-header').html(Country);
+            $('#img-cover').attr("src", "/Images/" + Country + "-Headercover.jpg");
+        }
+
+    </script>
+}

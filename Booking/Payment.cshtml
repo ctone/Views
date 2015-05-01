@@ -1,0 +1,580 @@
+﻿@model DiethelmWebServiceClient.TSWS.BookingInfoResponses
+@using DiethelmTSWebsite2015.Biz
+@{
+    ViewBag.Title = "Payment";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+    HotelBiz hotelBiz = new HotelBiz();
+    DiethelmWebServiceClient.TSWS.GetTypesResponse types = ViewBag.Types;
+    double grandtotal = 0;
+
+    DiethelmWebServiceClient.TSWS.BookingInfoResponse info = (DiethelmWebServiceClient.TSWS.BookingInfoResponse)Model.ResponseList[0];
+    int originTypeID = info.ORIGIN_TYPE_ID;
+}
+
+<div class="row step-title">
+    <div class="small-12 medium-4 columns">
+        <h3 class="step-title-label">Booking</h3>
+    </div>
+    <div class="small-12 medium-8 columns" style="background-color: #EEEEEE; padding: 6.5px;">
+        <img src="~/Images/progress_s5.png" />
+    </div>
+</div>
+
+<div class="row">
+    <div class="small-12 columns booking-head-bg-red">
+        Agency Only
+    </div>
+</div>
+
+@using (Html.BeginForm("PaymentBefore", "Booking", FormMethod.Post, new { id = "paymentFrm" }))
+{
+    <div class="row margin-top30">
+        <div class="small-6 columns">
+            <label>External Ref</label><input type="text" name="ExternalReference" value="@info.BookingClientReferenceNumber"/>
+        </div>
+        <div class="small-6 columns">
+            <label>Language</label>
+            <select id="OriginTypeId" name="OriginTypeId">
+            @foreach(var item in types.GetOriginTypesResponse.OriginTypes)
+            {
+                string sel = "";
+
+                if (originTypeID == item.Id)
+                {
+                    sel = "selected";
+                }
+                
+                <option value="@item.Id" @sel>@item.Name</option>
+            }
+            </select>
+        </div>
+        <div class="small-12 columns">
+            <label>Remark</label><input type="text" name="Remark" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-12 columns booking-head-bg-red">
+            Booking Summary
+        </div>
+    </div>
+    <div class="row" style="width:90%">
+        <div class="small-12 columns margin-top30 ">
+            @foreach (DiethelmWebServiceClient.TSWS.BookingInfoResponse item in Model.ResponseList)
+            {
+                int roomNo = 1;
+                int passengerNo = 1;
+
+                var hotels = item.BookedServices.Where(t => t.ServiceTypeName.ToLower().Trim() == "accommodation" && t.BoookedPackageId == 0).ToList();
+                var packages = item.BookedPackageElements.Where(b => b.PackageTypeName == "Package").ToList();
+                var excursion = item.BookedPackageElements.Where(b => b.PackageTypeName == "Excursion").ToList();
+                var transfer = item.BookedPackageElements.Where(b => b.PackageTypeName == "Transfer").ToList();
+
+
+                if (packages.Count() > 0)
+                {
+                    double sumpackagePrice = 0;
+                    foreach (var package in packages)
+                    {
+                        sumpackagePrice = sumpackagePrice + package.BookedOptionTotalSellingAmount;
+                    }
+
+                    <div class="row">
+                        <div class="small-6 columns booking-head-bg-red">
+                            Holidays
+                        </div>
+                        <div class="small-2 columns booking-head-bg-red text-center">
+                            Total Price
+                        </div>
+                        <div class="small-2 columns booking-head-bg-yellow text-center">
+                            @sumpackagePrice.ToString("#,##0.00")
+                            @{
+                                grandtotal = grandtotal + sumpackagePrice;
+                            }
+                        </div>
+                        <div class="small-2 columns booking-head-bg-red text-center">
+                            @item.CurrencyISOcode
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="small-6 columns booking-head-bg-gray">
+                            Detail
+                        </div>
+                        <div class="small-3 columns booking-head-bg-gray text-center">
+                            Status
+                        </div>
+                        <div class="small-3 columns booking-head-bg-gray text-center">
+                            Price
+                        </div>
+                    </div>
+                    foreach (var package in packages)
+                    {
+                        <div class="row">
+                            <div class="small-6 columns booking-big-red-font">
+                                @package.PackageLongName<br />
+                            </div>
+                            <div class="small-3 columns center">
+                                &nbsp;
+                            </div>
+                            <div class="small-3 columns center booking-big-red-font">
+                                @item.CurrencyISOcode @package.BookedOptionTotalSellingAmount.ToString("#,##0.00") 
+                            </div>
+                        </div>
+                        <div class="row booking-review-bottom-line">
+                            <div class="small-12 columns">
+                            </div>
+                        </div>
+                        @*<span>PackageTypeName: @package.PackageTypeName</span><br/>
+                            <span>PackageLongName: @package.PackageLongName</span><br/>
+                            <span>BookedOptionInDate: @package.BookedOptionInDate.ToString("dd-MM-yyyy")</span><br/>
+                            <span>BookedOptionOutDate: @package.BookedOptionOutDate.ToString("dd-MM-yyyy")</span><br/>
+                            <span>BookedOptionSellingAmount: @package.BookedOptionSellingAmount.ToString("#,##0") THB</span><br/>
+                            <span>Traveller: @package.AssignedPassenger.Count()</span><br/>*@
+                        <div class="row">
+                            <div class="small-6 columns">
+                                <div class="row">
+                                    <div class="small-2 columns booking-small-red-font">
+                                        Start date:
+                                    </div>
+                                    <div class="small-4 columns booking-small-gray-font">
+                                        @package.BookedOptionInDate.ToString("dd-MM-yyyy")
+                                    </div>
+                                    <div class="small-3 columns booking-small-red-font">
+                                        End date:
+                                    </div>
+                                    <div class="small-3 columns booking-small-gray-font">
+                                        @package.BookedOptionOutDate.ToString("dd-MM-yyyy")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        foreach (var passenger in package.AssignedPassenger)
+                        {
+                            var p = item.PassengerDetails.Where(t => t.PassengerID == passenger.Value).First();
+                            <div class="row">
+                                <div class="small-8 columns">
+                                    <div class="row">
+                                        <div class="small-3 columns booking-small-red-font">
+                                            @p.PassengerType:
+                                        </div>
+                                        <div class="small-4 columns booking-small-gray-font">
+                                            @passengerNo . @p.Title @p.FirstName @p.LastName
+                                        </div>
+                                        <div class="small-3 columns booking-small-red-font">
+                                        </div>
+                                        <div class="small-2 columns booking-small-gray-font">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="small-4 columns center">
+                                </div>
+                            </div>
+                            passengerNo++;
+                        }
+
+                    }
+                }
+                if (excursion.Count() > 0)
+                {
+                    double sumExcursionPrice = 0;
+                    foreach (var package in excursion)
+                    {
+                        sumExcursionPrice = sumExcursionPrice + package.BookedOptionTotalSellingAmount;
+                    }
+
+                    <div class="row">
+                        <div class="small-6 columns booking-head-bg-red">
+                            Excursion
+                        </div>
+                        <div class="small-2 columns booking-head-bg-red text-center">
+                            Total Price
+                        </div>
+                        <div class="small-2 columns booking-head-bg-yellow text-center">
+                            @sumExcursionPrice.ToString("#,##0.00")
+                            @{
+                                grandtotal = grandtotal + sumExcursionPrice;
+                            }
+                        </div>
+                        <div class="small-2 columns booking-head-bg-red text-center">
+                            @item.CurrencyISOcode
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="small-6 columns booking-head-bg-gray">
+                            Detail
+                        </div>
+                        <div class="small-3 columns booking-head-bg-gray text-center">
+                            Status
+                        </div>
+                        <div class="small-3 columns booking-head-bg-gray text-center">
+                            Price
+                        </div>
+                    </div>
+                    foreach (var package in excursion)
+                    {
+                        <div class="row">
+                            <div class="small-6 columns booking-big-red-font">
+                                @package.PackageLongName<br />
+                            </div>
+                            <div class="small-3 columns center">
+                                &nbsp;
+                            </div>
+                            <div class="small-3 columns center booking-big-red-font">
+                                @item.CurrencyISOcode @package.BookedOptionTotalSellingAmount.ToString("#,##0.00") 
+                            </div>
+                        </div>
+                        <div class="row booking-review-bottom-line">
+                            <div class="small-12 columns">
+                            </div>
+                        </div>
+                        @*<span>PackageTypeName: @package.PackageTypeName</span><br/>
+                            <span>PackageLongName: @package.PackageLongName</span><br/>
+                            <span>BookedOptionInDate: @package.BookedOptionInDate.ToString("dd-MM-yyyy")</span><br/>
+                            <span>BookedOptionOutDate: @package.BookedOptionOutDate.ToString("dd-MM-yyyy")</span><br/>
+                            <span>BookedOptionSellingAmount: @package.BookedOptionSellingAmount.ToString("#,##0") THB</span><br/>
+                            <span>Traveller: @package.AssignedPassenger.Count()</span><br/>*@
+                        <div class="row">
+                            <div class="small-6 columns">
+                                <div class="row">
+                                    <div class="small-2 columns booking-small-red-font">
+                                        Start date:
+                                    </div>
+                                    <div class="small-4 columns booking-small-gray-font">
+                                        @package.BookedOptionInDate.ToString("dd-MM-yyyy")
+                                    </div>
+                                    <div class="small-3 columns booking-small-red-font">
+                                        End date:
+                                    </div>
+                                    <div class="small-3 columns booking-small-gray-font">
+                                        @package.BookedOptionOutDate.ToString("dd-MM-yyyy")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        foreach (var passenger in package.AssignedPassenger)
+                        {
+                            var p = item.PassengerDetails.Where(t => t.PassengerID == passenger.Value).First();
+                            <div class="row">
+                                <div class="small-8 columns">
+                                    <div class="row">
+                                        <div class="small-3 columns booking-small-red-font">
+                                            @p.PassengerType:
+                                        </div>
+                                        <div class="small-4 columns booking-small-gray-font">
+                                            @passengerNo . @p.Title @p.FirstName @p.LastName
+                                        </div>
+                                        <div class="small-3 columns booking-small-red-font">
+                                        </div>
+                                        <div class="small-2 columns booking-small-gray-font">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="small-4 columns center">
+                                </div>
+                            </div>
+                            passengerNo++;
+                        }
+                    }
+                }
+                if (transfer.Count() > 0)
+                {
+                    double sumTransferPrice = 0;
+                    foreach (var package in transfer)
+                    {
+                        sumTransferPrice = sumTransferPrice + package.BookedOptionTotalSellingAmount;
+                    }
+
+                    <div class="row">
+                        <div class="small-6 columns booking-head-bg-red">
+                            Transfer
+                        </div>
+                        <div class="small-2 columns booking-head-bg-red text-center">
+                            Total Price
+                        </div>
+                        <div class="small-2 columns booking-head-bg-yellow text-center">
+                            @sumTransferPrice.ToString("#,##0.00")
+                            @{
+                                grandtotal = grandtotal + sumTransferPrice;
+                            }
+                        </div>
+                        <div class="small-2 columns booking-head-bg-red text-center">
+                            @item.CurrencyISOcode
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="small-6 columns booking-head-bg-gray">
+                            Detail
+                        </div>
+                        <div class="small-3 columns booking-head-bg-gray text-center">
+                            Status
+                        </div>
+                        <div class="small-3 columns booking-head-bg-gray text-center">
+                            Price
+                        </div>
+                    </div>
+                    foreach (var package in transfer)
+                    {
+                        <div class="row">
+                            <div class="small-6 columns booking-big-red-font">
+                                @package.PackageLongName<br />
+                            </div>
+                            <div class="small-3 columns center">
+                                &nbsp;
+                            </div>
+                            <div class="small-3 columns center booking-big-red-font">
+                                @item.CurrencyISOcode @package.BookedOptionTotalSellingAmount.ToString("#,##0.00") 
+                            </div>
+                        </div>
+                        <div class="row booking-review-bottom-line">
+                            <div class="small-12 columns">
+                            </div>
+                        </div>
+                        @*<span>PackageTypeName: @package.PackageTypeName</span><br/>
+                            <span>PackageLongName: @package.PackageLongName</span><br/>
+                            <span>BookedOptionInDate: @package.BookedOptionInDate.ToString("dd-MM-yyyy")</span><br/>
+                            <span>BookedOptionOutDate: @package.BookedOptionOutDate.ToString("dd-MM-yyyy")</span><br/>
+                            <span>BookedOptionSellingAmount: @package.BookedOptionSellingAmount.ToString("#,##0") THB</span><br/>
+                            <span>Traveller: @package.AssignedPassenger.Count()</span><br/>*@
+                        <div class="row">
+                            <div class="small-6 columns">
+                                <div class="row">
+                                    <div class="small-2 columns booking-small-red-font">
+                                        Start date:
+                                    </div>
+                                    <div class="small-4 columns booking-small-gray-font">
+                                        @package.BookedOptionInDate.ToString("dd-MM-yyyy")
+                                    </div>
+                                    <div class="small-3 columns booking-small-red-font">
+                                        End date:
+                                    </div>
+                                    <div class="small-3 columns booking-small-gray-font">
+                                        @package.BookedOptionOutDate.ToString("dd-MM-yyyy")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        foreach (var passenger in package.AssignedPassenger)
+                        {
+                            var p = item.PassengerDetails.Where(t => t.PassengerID == passenger.Value).First();
+                            <div class="row">
+                                <div class="small-8 columns">
+                                    <div class="row">
+                                        <div class="small-3 columns booking-small-red-font">
+                                            @p.PassengerType:
+                                        </div>
+                                        <div class="small-4 columns booking-small-gray-font">
+                                            @passengerNo . @p.Title @p.FirstName @p.LastName
+                                        </div>
+                                        <div class="small-3 columns booking-small-red-font">
+                                        </div>
+                                        <div class="small-2 columns booking-small-gray-font">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="small-4 columns center">
+                                </div>
+                            </div>
+                            passengerNo++;
+                        }
+
+                    }
+                }
+
+                if (hotels.Count() > 0)
+                {
+                    double sumHotelPrice = 0;
+                    foreach (var service in hotels)
+                    {
+                        foreach (var option in service.BookedOptions.Where(t => t.IsExtra == false).ToList())
+                        {
+                            sumHotelPrice = sumHotelPrice + option.SellAmount;
+                        }
+                        foreach (var option in service.BookedOptions.Where(t => t.IsExtra).ToList())
+                        {
+                            sumHotelPrice = sumHotelPrice + option.SellAmount;
+                    }
+                    }
+
+                    <div class="row">
+                        <div class="small-6 columns booking-head-bg-red">
+                            Hotel
+                        </div>
+                        <div class="small-2 columns booking-head-bg-red text-center">
+                            Total Price
+                        </div>
+                        <div class="small-2 columns booking-head-bg-yellow text-center">
+                            @sumHotelPrice.ToString("#,##0.00")
+                            @{
+                                grandtotal = grandtotal + sumHotelPrice;
+                            }
+                        </div> 
+                        <div class="small-2 columns booking-head-bg-red text-center">
+                            @item.CurrencyISOcode
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="small-6 columns booking-head-bg-gray">
+                            Detail
+                        </div>
+                        <div class="small-3 columns booking-head-bg-gray text-center">
+                            Status
+                        </div>
+                        <div class="small-3 columns booking-head-bg-gray text-center">
+                            Price
+                        </div>
+                    </div>
+                    foreach (var service in item.BookedServices)
+                    {
+                        <div class="row">
+                            <div class="small-12 columns booking-big-red-font">
+                                @service.ServiceName<br />
+                            </div>
+                            <div class="small-2 columns booking-small-red-font">
+                                Service Extra:
+                            </div>
+                            <div class="small-10 columns">
+                                <div class="row">
+                                @foreach (var option in service.BookedOptions.Where(t => t.IsExtra).ToList())
+                                {
+                                        <div class="small-4 columns booking-small-gray-font">
+                                    <span>@option.BookedOptionName @option.MealPlanName</span><br />
+                                        </div>
+                                        <div class="small-8 columns booking-small-red-font">
+                                            <span>@option.CurrencyISOCode @option.Amount.ToString("#,##0.00")</span><br />
+                                        </div>
+                                }
+                            </div>
+                        </div>
+                        </div>
+                        <div class="row booking-review-bottom-line">
+                            <div class="small-12 columns">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="small-6 columns">
+                                <div class="row">
+                                    <div class="small-3 columns booking-small-red-font">
+                                        Check in:
+                                    </div>
+                                    <div class="small-3 columns booking-small-gray-font">
+                                        @service.BookedOptions[0].FromDate.ToString("dd-MM-yyyy")
+                                    </div>
+                                    <div class="small-3 columns booking-small-red-font">
+                                        Check out:
+                                    </div>
+                                    <div class="small-3 columns booking-small-gray-font">
+                                        @service.BookedOptions[0].ToDate.ToString("dd-MM-yyyy")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="column large-12">
+
+                                @foreach (var option in service.BookedOptions.Where(t => t.IsExtra == false).ToList())
+                                {
+                                    var assignTravellerList = option.AssignedPassengersArray.ToList();
+                                    <div class="row booking-review-bottom-line">
+                                        <div class="small-12 columns">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="small-6 columns">
+                                            <div class="row">
+                                                <div class="small-2 columns booking-small-red-font">
+                                                    Room: @roomNo
+                                                </div>
+                                                <div class="small-4 columns booking-small-gray-font">
+                                                    @option.BookedOptionName
+                                                </div>
+                                                <div class="small-3 columns booking-small-red-font">
+                                                    Traveller:
+                                                </div>
+                                                <div class="small-3 columns booking-small-gray-font">
+                                                    @option.AssignedPassengersArray.Count()
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="small-3 columns center">
+                                            @if (option.OptionStatus.ToString() == "OnRequest")
+                                            {
+                                                <img src="/Images/OnRequest.png" />
+                                            }
+                                            else if (option.OptionStatus.ToString() == "Confirmed")
+                                            {
+                                                <img src="/Images/status.png" />
+                                            }
+
+                                        </div>
+                                        <div class="small-3 columns booking-big-red-font center">
+                                            @option.CurrencyISOCode @option.SellAmount.ToString("#,##0.00")
+                                        </div>
+                                    </div>
+
+                                    foreach (var passenger in option.AssignedPassengersArray)
+                                    {
+                                        var p = item.PassengerDetails.Where(t => t.PassengerID == passenger.PassengerID).First();
+                                        <div class="row">
+                                            <div class="small-8 columns">
+                                                <div class="row">
+                                                    <div class="small-3 columns booking-small-red-font">
+                                                        @p.PassengerType:
+                                                    </div>
+                                                    <div class="small-4 columns booking-small-gray-font">
+                                                        @passengerNo . @p.Title @p.FirstName @p.LastName
+                                                    </div>
+                                                    <div class="small-3 columns booking-small-red-font">
+                                                    </div>
+                                                    <div class="small-2 columns booking-small-gray-font">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="small-4 columns center">
+                                            </div>
+                                        </div>
+                                        passengerNo++;
+                                    }
+                                    roomNo++;
+                                }
+                            </div>
+                            @*        <div>
+                                    Cancellation Policy:<br/>
+                                    @hotelBiz.GetCancellationPolicy(service.ServiceID.ToString());
+                                </div>*@
+                        </div>
+                        <div class="row">
+                            <div class="small-12 columns booking-small-red-font">
+                                Cancellation Policy:
+                            </div>
+                            <div class="small-12 push-1 columns booking-small-gray-font">
+                                @Html.Raw(hotelBiz.GetCancellationPolicy(service.ServiceID.ToString()))
+                            </div>
+                        </div>
+
+                    }
+                }
+                <div class="row grand-total">
+                    <div class="small-8 columns booking-head-bg-red text-center">
+                        Grand total price
+                    </div>
+                    <div class="small-2 columns booking-head-bg-yellow text-center">
+                        @grandtotal.ToString("#,##0.00")
+                    </div>
+                    <div class="small-2 columns booking-head-bg-red text-center">
+                        @item.CurrencyISOcode
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="row" style="margin-top:10px;">
+        <div class="small-12 columns">
+            <input type="button" value="< Back" class="button tiny main-btn right" onclick="history.back();" /> <input class="button tiny main-btn right" type="submit" value="Confirm Order" />
+        </div>
+    </div>
+}

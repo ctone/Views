@@ -1,0 +1,49 @@
+﻿@using DiethelmTSWebsite2015.Core
+@model IEnumerable<DiethelmTSWebsite2015.Models.SysPost>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+    int i = 0;
+}
+@section banner
+{
+    @{  Html.RenderAction("ShowBanner", "SysBanner", new { country = Utility.GetCurrentCountryName() });  }
+}
+
+<div class="page-title">
+    <div class="row">
+        <div class="large-12 columns">
+            <h2 class="page-title-label">Awesome Deals</h2>
+        </div>
+    </div>
+</div>
+<div class="row margin-top30">
+    @foreach (var item in Model)
+    {
+        @Html.DisplayFor(modelItem => item, "AwesomeDealItemLarge");
+        i = i + 1;
+        if (i == 2)
+        {
+            break;
+        }
+    }
+</div>
+@{
+    i = 0;
+}
+<div class="row">
+    @foreach (var item in Model)
+    {
+        i = i + 1;
+        if (i <= 2) 
+        {
+            continue;
+        }
+        @Html.DisplayFor(modelItem => item, "ContentVerticalSmall");
+        if (i >= 11)
+        {
+            break;
+        }
+    }
+</div>

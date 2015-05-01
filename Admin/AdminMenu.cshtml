@@ -1,0 +1,51 @@
+﻿@using DiethelmTSWebsite2015.Core
+
+@model IEnumerable<DiethelmTSWebsite2015.Models.SysCategory>
+
+@{
+    Layout = null;
+    DiethelmTSWebsite2015.Models.DTTDBContext db = new DiethelmTSWebsite2015.Models.DTTDBContext();
+    DiethelmTSWebsite2015.Biz.SysCategoryBiz biz = new DiethelmTSWebsite2015.Biz.SysCategoryBiz();
+
+    string country = Utility.GetCurrentCountryName();
+
+    string menuTag = DiethelmTSWebsite2015.Core.HtmlHelper.GenerateBackendMenu(null, country);
+    string countryTag = DiethelmTSWebsite2015.Core.HtmlHelper.GenerateMenuCountry();
+}
+
+<div class="row">
+    <div class="columns small-1 large-1">
+        <a href="@Url.Action("List", "Dashboard")"><img src="/Images/diethelm_travel_logo.png" /></a>
+    </div>
+    <div class="columns small-11 large-11">
+        <span class="sysName">Diethelm Travel</span>
+    </div>
+    <div class="columns small-12 large-12">
+        <nav class="top-bar" data-topbar role="navigation">
+            <section class="top-bar-section">
+                <ul class="">
+                    <li class="has-dropdown">
+                        <a href="#">Admin</a>
+                        <ul class="dropdown">
+                            <li><a href="@Url.Action("List", "SysCategory")">Category</a></li>
+                            <li><a href="@Url.Action("List", "SysPost")">Post</a></li>
+                            <li><a href="@Url.Action("List", "SysBanner")">Banner</a></li>
+                            <li><a href="@Url.Action("List", "SysUser")">User</a></li>
+                            <li><a href="@Url.Action("ChangePassword", "SysUser")">Change Password</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        @Html.Raw(menuTag)
+                    </li>
+
+                </ul>
+                <ul class="right">
+                    <li class="has-dropdown">
+                        @Html.Raw(countryTag)
+                    </li>
+                    <li><a href='@Url.Action("Logout", "Admin")'>Logout</a></li>
+                </ul>
+            </section>
+        </nav>
+    </div>
+</div>

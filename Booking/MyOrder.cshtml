@@ -1,0 +1,303 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@using DiethelmWebServiceClient.TSWS
+@*@model IPagedList<DiethelmWebServiceClient.TSWS.BookingListResponse>*@
+@model IPagedList<object>
+@{
+    ViewBag.Title = "MyOrder";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+    DiethelmTSWebsite2015.Biz.DataManager dataManager = DiethelmTSWebsite2015.Biz.DataManager.Instance;
+    DateTime startDate = ViewBag.StartDate;
+    DateTime endDate = ViewBag.EndDate;
+    DateTime? TravelStartDate = ViewBag.travelStartDate;
+    DateTime? TravelEndDate = ViewBag.travelEndDate;
+    string booking_ref = "-";
+    string booking_ref_name = "";
+
+}
+
+<div class="page-title">
+    <div class="row">
+        <div class="large-12 columns">
+            <h2 class="page-title-label">My Order</h2>
+        </div>
+    </div>
+</div>
+<div class="row margin-top30">
+    <div class="small-12 columns booking-head-bg-red">
+        My profile
+    </div>
+</div>
+<div class="row myprofile">
+    <div class="small-2 columns myorder-profile-label">
+        Login Name :
+    </div>
+    <div class="small-10 columns myorder-profile-data">
+        @dataManager.AgentDetails.LONG_NAME
+    </div>
+    <div class="small-2 columns myorder-profile-label">
+        Agent Name :
+    </div>
+    <div class="small-10 columns myorder-profile-data">
+        @dataManager.AgentDetails.PREFERRED_ORGANIZATION_NAME
+    </div>
+    <div class="small-2 columns myorder-profile-label">
+        Address :
+    </div>
+    <div class="small-10 columns myorder-profile-data">
+        My profile
+    </div>
+</div>
+
+<div class="row">
+    <div class="small-12 columns booking-head-bg-red">
+        Booking history
+    </div>
+</div>
+@using (Html.BeginForm("MyOrder", "Booking", FormMethod.Post, new { id = "myOrderFrm" }))
+{
+
+<div class="row margin-top15">
+    <div class="small-3 columns">
+        <div class="row">
+            <input type="hidden" id="RedirectTo" name="RedirectTo" value="MyOrder" />
+            <div class="small-12 columns">
+                <label>
+                    Booking reference
+                </label>
+                <input id="bookingReference" name="bookingReference" type="text" value="@ViewBag.bookingReference" />
+            </div>
+            <div class="small-12 columns">
+                <label>
+                    Booking status
+                </label>
+                <input id="bookingStatus" name="bookingStatus" type="text" value="" />
+            </div>
+            <div class="small-12 columns">
+                <label>
+                    Booking start date
+                </label>
+                <input type="text" id="startDate" value="@startDate.ToString("dd-MM-yyyy")" />
+            </div>
+            <div class="small-12 columns">
+                <label>
+                    Booking end date
+                </label>
+                <input type="text" id="endDate" value="@endDate.ToString("dd-MM-yyyy")"/>
+            </div>
+            <div class="small-12 columns">
+                <label>
+                    Travel start date
+                </label>
+                <input id="travelStartDate" name="travelStartDate" type="text" value="@TravelStartDate" />
+            </div>
+            <div class="small-12 columns">
+                <label>
+                    Travel end date
+                </label>
+                <input id="travelEndDate" name="travelEndDate" type="text" value="@TravelEndDate" />
+            </div>
+            <div class="small-12 columns">
+                <label>
+                    External reference
+                </label>
+                <input id="externalRef" name="externalRef" type="text" value="@ViewBag.externalRef" />
+            </div>
+            <div class="small-12 columns">
+                <label>
+                    Travel first name
+                </label>
+                <input id="travelFirstName" name="travelFirstName" type="text" value="@ViewBag.travelFirstName" />
+            </div>
+            <div class="small-12 columns">
+                <label>
+                    Travel last name
+                </label>
+                <input id="travelLastName" name="travelLastName" type="text" value="@ViewBag.travelLastName" />
+            </div>
+            <div class="columns small-12 editor-field">
+                <input type="submit" value="Find Booking" class="button btnSearch expand" />
+            </div>
+        </div>
+    </div>
+    <div class="small-9 columns">
+            <div class="row">
+                <div class="column small-2 myorder-profile-label">
+                    My order :
+                </div>  
+                <div class="column small-10 myorder-profile-data" >
+                    @ViewBag.BookingCount bookings
+                </div>
+            </div>
+            @*<div class="row">
+                <div class="column large-12">
+                    BookingDate / BookingReference / BookingTotalSellAmount CurrencyISOCode / BookingStatus / InternalBookingStatus
+                </div>
+            </div>*@
+            <div class="row booking-head-bg-gray">
+                <div class="column small-2">
+                    Booking reference
+                </div>
+                <div class="column small-1">
+                    Status
+                </div>
+                <div class="column small-2">
+                    Booking date
+                </div>
+                <div class="column small-2">
+                    Travel date
+                </div>
+                <div class="column small-2">
+                    External reference
+                </div>
+                <div class="column small-2">
+                    Price
+                </div>
+                <div class="column small-1">
+                    Tools
+                </div>
+            </div>
+            @foreach (var item in Model)
+            {
+                BookingListResponse resp = (BookingListResponse)item;
+                <div class="row my-order-data">
+                    <div class="column small-2">
+                        @resp.BookingReference
+                    </div>
+                    <div class="column small-1">
+                        @if (resp.InternalBookingStatus.ToString() == "Confirmed")
+                        {
+                            <img src="/Images/confirmed.png" title="Confirmed" />
+                        }
+                        else if (resp.InternalBookingStatus.ToString() == "On Request")
+                        {
+                            <img src="/Images/on_requested.png" title="On Request" />
+                        }
+                        else if (resp.InternalBookingStatus.ToString() == "Quote")
+                        {
+                            <img src="/Images/quote.png" title="Quote" />
+                        }
+                        else if (resp.InternalBookingStatus.ToString() == "Confirmed - Pending Payment")
+                        {
+                            <img src="/Images/pending.png" title="Confirmed - Pending Payment" />
+                        }
+                        else if (resp.InternalBookingStatus.ToString() == "Cancelled")
+                        {
+                            <img src="/Images/cancelled.png" title="Cancelled" />
+                        }
+                    </div>
+                    <div class="column small-2">
+                        @resp.BookingDate.ToString("dd-MM-yyyy")
+                    </div>
+                    <div class="column small-2">
+                        @resp.BookingStartDate.ToString("dd-MM-yyyy")
+                    </div>
+                    <div class="column small-2">
+                        @*External reference*@
+                        @if (resp.BookingClientReferenceNumber.ToString() != "")
+                        {
+                            booking_ref = resp.BookingClientReferenceNumber.ToString();
+                        }
+                        @if (booking_ref.Length > 1)
+                        {
+                            if (booking_ref.Length >= 10)
+                            {
+                                booking_ref_name = string.Concat(booking_ref.Substring(0, 10), "...");
+                            }
+                        }
+                        else
+                        {
+                            booking_ref_name = booking_ref;
+                        }
+                        <div title="@booking_ref">@booking_ref_name</div>
+                    </div>
+                    <div class="column small-2">
+                        @resp.CurrencyISOCode @resp.BookingNetValue.ToString("#,##0.00")
+                    </div>
+                    <div class="column small-1">
+                        @if (resp.InternalBookingStatus.ToLower() != "confirmed" && resp.InternalBookingStatus.ToLower() != "cancelled")
+                        {
+                            <a class="left" onclick="GotoShoppingCart('@resp.BookingReference')"><img src="/Images/icon_edit.png" /></a>
+                        }
+                        <a class="left" onclick="GotoBookingDetail('@resp.BookingReference')"><img src="/Images/icon_folder.png" /></a>
+                    </div>
+                </div>
+                <div class="row booking-review-bottom-line">
+                    <div class="small-12 columns"></div>
+                </div>
+            }
+            <div class="row booking-remark">
+                <div class="column small-12 booking-small-gray-font">
+                    <img src="/Images/confirmed.png" title="Confirmed" /> Confirmed <img src="/Images/on_requested.png" title="On Request" /> On Request <img src="/Images/quote.png" title="Quote" /> Quote <img src="/Images/pending.png" title="Confirmed - Pending Payment" /> Confirmed - Pending Payment <img src="/Images/cancelled.png" title="Cancelled" /> Cancelled
+                </div>
+            </div>
+            <div class="row" >
+                <div class="column small-6 booking-remark-text">
+                    <span>* Display booking history for a month as default</span>
+                </div>
+                <div class="column small-6">
+                    <div class="row float-right">
+                        <div class="column small-12">
+                            @Html.PagedListPager((IPagedList)Model, page => Url.Action("MyOrder", new { page = page }), (PagedListRenderOptions)ViewBag.PagedListRender)
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+}
+
+
+<script type="text/javascript">
+    function GotoShoppingCart(bookingRef) {
+        $("#bookingReference").val(bookingRef);
+        $("#RedirectTo").val("shoppingcart");
+        $('#myOrderFrm').submit();
+    }
+
+    function GotoBookingDetail(bookingRef) {
+        $("#bookingReference").val(bookingRef);
+        $("#RedirectTo").val("bookingdetail");
+        $('#myOrderFrm').submit();
+    }
+</script>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#startDate").datepicker({
+                dateFormat: "dd-mm-yy",
+                isBE: false,
+                autoConversionField: false,
+                nextText: ' ',
+                prevText: ' ',
+                onClose: function () { $(this).attr('readonly', true); }
+            });
+            $("#endDate").datepicker({
+                dateFormat: "dd-mm-yy",
+                isBE: false,
+                autoConversionField: false,
+                nextText: ' ',
+                prevText: ' ',
+                onClose: function () { $(this).attr('readonly', true); }
+            });
+            $("#travelStartDate").datepicker({
+                dateFormat: "dd-mm-yy",
+                isBE: false,
+                autoConversionField: false,
+                nextText: ' ',
+                prevText: ' ',
+                onClose: function () { $(this).attr('readonly', true); }
+            });
+            $("#travelEndDate").datepicker({
+                dateFormat: "dd-mm-yy",
+                isBE: false,
+                autoConversionField: false,
+                nextText: ' ',
+                prevText: ' ',
+                onClose: function () { $(this).attr('readonly', true); }
+            });
+        });
+    </script>
+}

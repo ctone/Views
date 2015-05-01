@@ -1,0 +1,63 @@
+﻿@using DiethelmTSWebsite2015.Core
+
+@{
+    ViewBag.Title = "PaymentProcess";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+
+    IDictionary<string, string> parameters = new Dictionary<string, string>();
+    string guid = System.Guid.NewGuid().ToString();
+    string utcDateTime = Utility.GetUTCDateTime();
+    string strBookingNetValue = Convert.ToString(ViewBag.BookingNetValue);
+
+    parameters.Add("access_key", ViewBag.AccessKey);
+    parameters.Add("profile_id", ViewBag.ProfileID);
+    parameters.Add("transaction_uuid", guid);
+    parameters.Add("signed_field_names", "access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency");
+    parameters.Add("unsigned_field_names", "");
+    parameters.Add("signed_date_time", utcDateTime);
+    parameters.Add("locale", "en");
+    parameters.Add("transaction_type", "sale");//authorization
+    parameters.Add("reference_number", ViewBag.BookingReference);
+    parameters.Add("amount", strBookingNetValue);
+    parameters.Add("currency", ViewBag.Currency);
+    parameters.Add("req_bill_to_address_city", "nop");
+    
+}
+
+<h2>Please waiting for payment process..</h2>
+
+<form id="frmPayment" name="frmPayment" action="@ViewBag.Url" method="post" >
+
+    <input type="hidden" id="access_key" name="access_key" value="@ViewBag.AccessKey">
+    <input type="hidden" id="profile_id" name="profile_id" value="@ViewBag.ProfileID">
+    <input type="hidden" id="transaction_uuid" name="transaction_uuid" value="@guid">
+    <input type="hidden" id="signed_field_names" name="signed_field_names" value="access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency">
+    <input type="hidden" id="unsigned_field_names" name="unsigned_field_names">
+    <input type="hidden" id="signed_date_time" name="signed_date_time" value="@utcDateTime">
+    <input type="hidden" id="locale" name="locale" value="en">
+    <input type="hidden" id="transaction_type" name="transaction_type" value="sale">
+    <input type="hidden" id="reference_number" name="reference_number" value="@ViewBag.BookingReference">
+    <input type="hidden" id="amount" name="amount" value="@strBookingNetValue">
+    <input type="hidden" id="currency" name="currency" value="@ViewBag.Currency" /> 
+    <input type="hidden" id="signature" name="signature" value="@DiethelmTSWebsite2015.Biz.PaymentSecurityBiz.sign(parameters)" />
+@*    <input type="hidden" id="bill_to_forename" name="bill_to_forename" value="nop" /> 
+    <input type="hidden" id="bill_to_surname" name="bill_to_surname" value="ph" /> 
+    <input type="hidden" id="bill_to_company_name" name="bill_to_company_name" value="agere" /> 
+    <input type="hidden" id="bill_to_address_line1" name="bill_to_address_line1" value="123123 fsdfsd" /> 
+    <input type="hidden" id="bill_to_address_city" name="bill_to_address_city" value="bangkok" /> 
+    <input type="hidden" id="bill_to_address_country" name="bill_to_address_country" value="thailand" /> 
+    <input type="hidden" id="bill_to_address_postal_code" name="bill_to_address_postal_code" value="11110" /> 
+    <input type="hidden" id="bill_to_phone" name="bill_to_phone" value="0899999999" /> 
+    <input type="hidden" id="bill_to_email" name="bill_to_phone" value="losociety@hotmail.com" /> *@
+
+    
+</form>
+
+@section Scripts {
+    <script src="http://malsup.github.com/jquery.form.js"></script> 
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#frmPayment").submit();
+        });
+    </script>
+}

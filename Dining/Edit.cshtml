@@ -1,0 +1,250 @@
+﻿@model DiethelmTSWebsite2015.Models.Dining
+@using DiethelmTSWebsite2015.Biz;
+@using DiethelmTSWebsite2015.Models;
+@using DiethelmTSWebsite2015.Core;
+@{
+    ViewBag.Title = "Edit";
+
+    string country = Request.RequestContext.RouteData.Values["country"].ToString();
+    DiethelmTSWebsite2015.Biz.CountryCollection countryColl = new DiethelmTSWebsite2015.Biz.CountryCollection();
+
+    SysCategoryBiz biz = new SysCategoryBiz();
+    var catList = biz.Get(countryColl[country].ID);
+
+    DiethelmTSWebsite2015.Biz.RegionBiz region = new DiethelmTSWebsite2015.Biz.RegionBiz();
+    byte countryID = Utility.GetCurrentCountryID();
+    List<Region> regionlist = region.GetCity(countryID, country); 
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm("Edit", "Dining", FormMethod.Post, new { id = "main-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+
+    @Html.HiddenFor(model => model.Status)
+    @Html.HiddenFor(model => model.CreateDate)
+    @Html.HiddenFor(model => model.CreateBy)
+    @Html.HiddenFor(model => model.CountryID)
+    @Html.HiddenFor(model => model.UpdateDate, new { Value = DateTime.Now })
+
+    <fieldset>
+        <legend>Dining</legend>
+        <div class="row">
+            @Html.HiddenFor(model => model.ID)
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.Restaurant)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.Restaurant)
+                @Html.ValidationMessageFor(model => model.Restaurant)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.Cuisine)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.Cuisine)
+                @Html.ValidationMessageFor(model => model.Cuisine)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.PriceRange)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.PriceRange)
+                @Html.ValidationMessageFor(model => model.PriceRange)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.CityID)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="CityID" name="CityID">
+                    @foreach (var item in regionlist)
+                    {
+                        if (item.RegionID == Model.CityID)
+                        {
+                            <option value="@item.RegionID" selected>@item.RegionName</option>
+                        }
+                        else
+                        {
+                            <option value="@item.RegionID">@item.RegionName</option>
+                        }
+                    }
+                </select>
+            </div>
+
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.Description)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.TextAreaFor(model => model.Description)
+                @Html.ValidationMessageFor(model => model.Description)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.Thumbnail)
+                @Html.HiddenFor(model => model.Thumbnail)
+            </div>
+
+            <div class="columns small-10 editor-label">
+                <img id="imgThumbnail" src="@Url.Content("~/Images/Noimage.jpg")" />
+                <br />
+                <img id="removeImgThumbnail" style="display:none;" class="removeCursor" src="@Url.Content("~/Images/delimg.png")" onclick="RemoveImg()" />
+                <br />
+            </div>
+            <div class="columns push-2 small-12 editor-field padding-bottom-15">
+                <input type="button" value="Select Image" onclick="$('#thumb-upload').trigger('click');">
+                &nbsp; &nbsp;<text id="thumbnailFileName"></text><text id="upload-thumb-success" style="color: greenyellow; display: none;">&nbsp;&nbsp; Success</text>&nbsp;&nbsp;
+                <img src="@Url.Content("~/Images/loading.gif")" id="loading" style="display:none;" />
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.Address)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.Address)
+                @Html.ValidationMessageFor(model => model.Address)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.Telephone)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.Telephone)
+                @Html.ValidationMessageFor(model => model.Telephone)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.WebSite)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.WebSite)
+                @Html.ValidationMessageFor(model => model.WebSite)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.Map)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.Map)
+                @Html.ValidationMessageFor(model => model.Map)
+            </div>
+            <div class="columns small-12 text-right padding-top-20">
+                <input type="button" onclick="Submit();" value="Save" class="button radius tiny" />
+                &nbsp;
+                <input type="button" value="Cancel" class="button radius tiny" onclick="history.back();" />
+            </div>
+        </div>
+    </fieldset>
+}
+
+<form id="frmUpload" action="@Url.Action("UploadThumbnail", "Dining")" method="post" enctype="multipart/form-data">
+    <input type="file" name="files[]" id="thumb-upload" style="display: none;" accept="image/*" />
+</form>
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryfileupload")
+
+    <script type="text/javascript">
+        function Submit() {
+            $('#main-form').submit();
+        }
+
+        function RemoveImg() {
+            if (confirm("Do you want to remove the thumbnail?")) {
+                $("#Image").val("");
+                $("#imgThumbnail").attr("src", '@Url.Content("~/Images/Noimage.jpg")');
+                $("#removeImgThumbnail").hide();
+                $("#thumbnailFileName").hide();
+                $("#upload-thumb-success").hide();
+            }
+        }
+        $(document).ready(function () {
+            $("#frmUpload").fileupload({
+                add: function (e, data) {
+                    var goUpload = true;
+                    var uploadFile = data.files[0];
+
+                    $("#btn-submit").prop('disabled', true);
+                    $("#thumbnailFileName").html(uploadFile.name);
+                    $("#upload-thumb-success").hide();
+                    $('#removeImg').show();
+                    if (!(/\.(jpg|png|JPG|PNG)$/i).test(uploadFile.name)) {
+                        alert('สามารถอัพโหลดได้เฉพาะไฟล์ .jpg และ .png เท่านั้น');
+                        $("#thumbnailFileName").html("");
+                        goUpload = false;
+                    }
+                    /*  if (uploadFile.size > 200 * 1024 * 1024) {
+                          alert('Please upload a smaller image, max size is 200 MB [' + uploadFile.name + ']');
+                          goUpload = false;
+                      } */
+                    if (goUpload) {
+                        $("#loading").show();
+                        data.progressdiv = $("#uploading-origin").clone().attr("id", "").css("display", "").attr("title", uploadFile.name);
+                        data.progressdiv.appendTo($("#drop-l"));
+                        data.progressdiv.find(".glyphicon-repeat").on("click", function (event) {
+                            event.stopPropagation();
+                            data.progressdiv.find(".loading").show();
+                            data.progressdiv.find(".retry").hide();
+                            data.progressdiv.find(".progress-bar").css("width", "0%");
+                            data.progressdiv.find(".progress-bar").removeClass("progress-bar-danger");
+                            data.submit();
+                        });
+                        data.progressdiv.find(".glyphicon-remove").on("click", function (event) {
+                            event.stopPropagation();
+                            data.progressdiv.remove();
+                            delete data;
+                        });
+
+                        data.progressdiv.on("click", function (event) {
+                            event.stopPropagation();
+                        });
+                        $("#drop-l").removeClass("background");
+                        data.submit();
+                    }
+
+                },
+                progress: function (e, data) {
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    data.progressdiv.find(".progress-bar").css("width", progress + "%");
+                },
+                done: function (e, data) {
+                    $("#loading").hide();
+                    $("#upload-thumb-success").show();
+                    $("#btn-submit").prop('disabled', false);
+                    $("#Body").val(data.result);
+                    setTimeout(function () {
+                        data.progressdiv.remove();
+                        if (!$("#drop-l").children().length) {
+                            $("#drop-l").addClass("background");
+                        }
+                    }, 500);
+
+                    var img_o = data.result;
+
+                    $("#Image").val(img_o);
+
+                    $("#imgThumbnail").attr("src", '@Url.Content("~/assets/thumbnail/")' + 'm-' + img_o);
+
+                },
+                fail: function (e, data) {
+
+                    data.progressdiv.find(".loading").hide();
+                    data.progressdiv.find(".retry").show();
+                    data.progressdiv.find(".progress-bar").css("width", "100%");
+                    data.progressdiv.find(".progress-bar").addClass("progress-bar-danger");
+                }
+            });
+        });
+
+    </script>
+}

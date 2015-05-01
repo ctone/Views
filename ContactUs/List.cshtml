@@ -1,0 +1,54 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+
+@model IPagedList<DiethelmTSWebsite2015.Models.ContactUs>
+
+@{
+    ViewBag.Title = "List";
+
+    var catID = Request.QueryString["catID"];
+
+    DiethelmTSWebsite2015.Biz.SysUserBiz biz = new DiethelmTSWebsite2015.Biz.SysUserBiz();
+    var userList = biz.GetUser(DiethelmTSWebsite2015.Core.Types.UserType.All);
+}
+<div class="row">
+    <div class="columns small-6 large-6"><h3>Contact Us</h3></div>
+    <div class="columns small-6 large-6 padding-top-10 text-right">
+    </div>
+</div>
+<div class="table-container">
+    <div class="table-row-head row">
+        <div class="table-column columns small-3">Name</div>
+        <div class="table-column columns small-5">Title</div>
+        <div class="table-column columns small-2">Email</div>
+        <div class="table-column columns small-2">Created Date</div>
+    </div>
+    @foreach (var item in Model)
+    {
+        <div class="table-row row">
+            <div class="table-column columns small-3">
+                <a href="@Url.Action("Details", new { id = item.ID })">
+                @Html.DisplayFor(modelItem => item.FirstName)
+                    </a>
+            </div>
+            <div class="table-column columns small-5">
+                @Html.DisplayFor(modelItem => item.Title)
+            </div>
+            <div class="table-column columns small-2 text-center">
+                @Html.DisplayFor(modelItem => item.Email)
+            </div>
+            <div class="table-column columns small-2 text-center">
+                @Html.DisplayFor(modelItem => item.CreateDate)
+            </div>
+        </div>
+    }
+
+</div>
+
+
+<div class="float-left">
+    @Html.PagedListPager((IPagedList)Model, page => Url.Action("List", new { page = page }), (PagedListRenderOptions)ViewBag.PagedListRender)
+</div>
+
+
+
