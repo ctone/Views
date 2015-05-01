@@ -1,0 +1,87 @@
+﻿@model DiethelmTSWebsite2015.Models.PackageSearchCondition
+
+@{
+    Layout = null;
+
+    List<DiethelmTSWebsite2015.Models.Region> CityList = ViewBag.CityList;
+
+    int maxTravelDate = ViewBag.MaximumTravelDate;
+    
+}
+
+
+
+@using (Html.BeginForm("Search", "Package", new { id = "smallSearch" }))
+{
+    
+    <input type="hidden" name="IsQuickSearch" value="true" />
+
+    <div class="row quick-search-cover">
+        <div class="small-12 medium-4 columns">
+            <h5 class="page-title-label main-title">
+                <label>Where do you want to go?</label>
+
+                <select id="City" name="City">
+                    @foreach (var item in CityList)
+                    {
+                        <option value="@item.RegionName.Trim()">@item.RegionName.Trim()</option>
+                    }
+                </select>
+            </h5>
+        </div>
+        <div class="small-12 medium-3 columns ">
+            <div class="row ">
+                <div class="small-6 medium-12 columns"><label>Travel start date</label></div>
+                <div class="small-6 medium-12 columns">
+                    @Html.TextBoxFor(model => model.FromDate, new { @Value = DateTime.Now.ToString("dd-MM-yyyy"), id = "FromDate2" })
+                </div>
+            </div>
+        </div>
+        <div class="small-12 medium-3 columns">
+            <div class="row">
+                <div class="small-6 medium-12 columns"><label>Max. travel date</label></div>
+                <div class="small-6 medium-12 columns">
+                    <select name="MaxTravelDate">
+                        @for (int i = 1; i <= maxTravelDate; i++)
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="small-12 medium-2 columns">
+                    <input type="submit" class="tiny expand button radius quick-search-button" value="Go" />
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            $.datepicker.setDefaults($.datepicker.regional['en']);
+            $("input[name='FromDate']").datepicker({
+                dateFormat: "dd-mm-yy",
+                isBE: false,
+                autoConversionField: false,
+                nextText: ' ',
+                prevText: ' ',
+                onClose: function () { $(this).attr('readonly', true); }
+            });
+            $("input[name='FromDate']").keypress(function (e) {
+                e.preventDefault();
+            });
+
+        });
+
+        function ValidateInput() {
+
+            if ($(".FromDate").val() == "") {
+                alert("Please input CheckInDate");
+                $(".FromDate").focus();
+                return false;
+            }
+
+            return true;
+        }
+
+    </script>
+}

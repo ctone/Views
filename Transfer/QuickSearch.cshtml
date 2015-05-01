@@ -1,0 +1,122 @@
+﻿@model DiethelmTSWebsite2015.Models.TransferSearchCondition
+
+@{
+    Layout = null;
+
+    List<DiethelmTSWebsite2015.Models.TransferLocation> CityList = ViewBag.CityList;
+
+        var FromList =
+            (from t in CityList
+             group t by new { RegionFromID = t.RegionFromID.ToString(), RegionFromName = t.RegionFromName } into t2
+             select t2).ToList();
+    
+}
+
+@using (Html.BeginForm("Search", "Transfer", FormMethod.Post, new { id = "frm" }))
+{
+    
+    <input type="hidden" name="IsQuickSearch" value="true" />
+
+    <div class="page-title page-title-quick-search">
+        <div class="row quick-search-cover">
+            <div class="small-12 medium-2 columns">
+                <h5 class="page-title-label main-title margin-top40">Quick search</h5>
+            </div>
+            <div class="small-12 medium-3 columns">
+                <h5 class="page-title-label main-title">
+                    <label>Depature From</label>
+                    <select id="FromLocation" name="FromLocation">
+                        @foreach (var item in FromList)
+                        {
+                            <option value="@item.Key.RegionFromID">@item.Key.RegionFromName.Trim()</option>
+                        }
+                    </select>
+                </h5>
+            </div>
+            <div class="small-12 medium-3 columns ">
+                <div class="row ">
+                    <div class="small-6 medium-12 columns"><label>Arrival To</label></div>
+                    <div class="small-6 medium-12 columns">
+                        <select id="ToLocation" name="ToLocation"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="small-12 medium-2 columns">
+                <div class="row">
+                    <div class="small-6 medium-12 columns"><label>Depature Date</label></div>
+                    <div class="small-6 medium-12 columns">
+                        @Html.TextBoxFor(model => model.FromDate, new { @Value = DateTime.Now.ToString("dd-MM-yyyy") })
+                    </div>
+                </div>
+            </div>
+            <div class="small-12 medium-2 columns">
+                <input id="btnPackageSearch" type="submit" class="tiny button radius expand " value="Go" onclick="return ValidateInput()" />
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        $('select[name=FromLocation]').change(function () {
+
+            $.ajax({
+                url: '@Url.Action("GetLocationTo", "Transfer")',
+                type: 'GET',
+                data: { LocationFromID: $(this).val() },
+                success: function (data) {
+                    $("#ToLocation").html(data);
+                }
+            });
+
+        });
+
+        $(function () {
+
+            $("#frm").submit(function (e) {
+                CheckActiveLogin("@Url.Action("CheckActiveLogin","Home")", function (result) {
+                    if (!result) {
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            $.ajax({
+                url: '@Url.Action("GetLocationTo", "Transfer")',
+                type: 'GET',
+                data: { LocationFromID: $("#FromLocation").val() },
+                success: function (data) {
+                    $("#ToLocation").html(data);
+                }
+            });
+
+            $.datepicker.setDefaults($.datepicker.regional['en']);
+            $("#FromDate").datepicker({
+                dateFormat: "dd-mm-yy",
+                isBE: false,
+                minDate: 3,
+                autoConversionField: false,
+                nextText: ' ',
+                prevText: ' ',
+                onClose: function () { $(this).attr('readonly', true); }
+            });
+            $("#FromDate").keypress(function (e) {
+                e.preventDefault();
+            });
+
+            $("#FromDate").datepicker("setDate", 3);
+
+        });
+
+        function ValidateInput() {
+
+            if ($("#FromDate").val() == "") {
+                alert("Please input FromDate");
+                $("#FromDate").focus();
+                return false;
+            }
+
+            return true;
+        }
+
+    </script>
+}

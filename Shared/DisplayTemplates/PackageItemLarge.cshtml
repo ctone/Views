@@ -1,0 +1,44 @@
+﻿@model DiethelmTSWebsite2015.Models.PackageSearchResult
+
+<div class="small-12 columns content-detail">
+    <div class="row">
+        <div class="small-12 columns package-pic">
+            <img src="@Model.Image" onclick="GotoDetail('@Model.PackageID')" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" title="@Model.PackageName" alt="@Model.PackageName" />
+        </div>
+        <div class="small-12 columns display-block">
+            @if (Model.Available=="Yes") {
+                <img src="/Images/status.png" class="float-left"  />
+            }
+            else if (Model.Available=="No"){
+                <img src="/Images/OnRequest.png" class="float-left"  />
+            }
+            @if (Model.TourType == DiethelmTSWebsite2015.Models.PackageTourType.Join) { 
+                <img src="/Images/Join.png" class="float-right"  />
+            }
+            @if (Model.TourType == DiethelmTSWebsite2015.Models.PackageTourType.Private)
+            {
+                <img src="/Images/Private.png" class="float-right"  />
+            }
+        </div>
+        <div class="small-12 push-3 medium-9 columns">
+            <div class="row content-detail-title">
+                <div class="small-12 medium-12 columns">
+                    <h5 onclick="GotoDetail('@Model.PackageID')">@Model.PackageName</h5>
+                </div>
+                <div class="small-12 medium-12 columns">
+                    <span class="content-detail-desc">@Model.PackageDescription</span>
+                </div>
+                <div class="small-12 medium-12 columns">
+                    <span class="link-readmore" onclick="GotoDetail('@Model.PackageID')">read more</span>
+                </div>
+            </div>
+        </div>
+        <div class="small-12 pull-9 medium-3 columns">
+            <div class="price-tag-circle">
+                <span>from</span><br />
+                <span class="price">@Math.Ceiling(Model.Price).ToString("#,##0") </span><br>
+                <span>THB</span>
+            </div>
+        </div>
+    </div>
+</div>

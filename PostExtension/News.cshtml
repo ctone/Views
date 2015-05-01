@@ -1,0 +1,20 @@
+﻿@model IList<DiethelmTSWebsite2015.Models.SysPost>
+@{
+    Layout = null;
+}
+<div id="News">
+    <div class="row">
+        <div class="small-12 medium-12 columns">
+            @if (Model.Count() > 0)
+            {
+                <h4 class="content-subject">News</h4>
+            }
+        </div>
+        <div class="small-12 medium-12 columns content-detail">
+            @foreach (var item in Model)
+            {
+                @Html.DisplayFor(modelItem => item, "ContentHorizontalLarge");
+            }
+        </div>
+    </div>
+</div>

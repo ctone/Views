@@ -1,0 +1,107 @@
+﻿@model DiethelmTSWebsite2015.Models.JobApplication
+
+@{
+    ViewBag.Title = "Edit";
+
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm("Edit", "JobApplication", FormMethod.Post, new { id = "main-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    @Html.HiddenFor(model => model.Status)
+    @Html.HiddenFor(model => model.CreateDate)
+    @Html.HiddenFor(model => model.CreateBy)
+    @Html.HiddenFor(model => model.Country)
+    @Html.HiddenFor(model => model.UpdateDate, new { Value = DateTime.Now })
+
+    <fieldset>
+        <legend>JobApplication</legend>
+        <div class="row">
+            @Html.HiddenFor(model => model.ID)
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.JobTitle)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.JobTitle)
+                @Html.ValidationMessageFor(model => model.JobTitle)
+            </div>
+
+            <div class="columns small-12 editor-label">
+                @Html.LabelFor(model => model.Responsibilities)
+            </div>
+            <div class="columns small-12 editor-field padding-bottom-15">
+                @Html.TextArea("txtDescription", htmlAttributes: new { @class = "ckeditor" })
+                @Html.HiddenFor(model => model.Responsibilities)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Qualifications)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Qualifications)
+                @Html.ValidationMessageFor(model => model.Qualifications)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Destination)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Destination)
+                @Html.ValidationMessageFor(model => model.Destination)
+            </div>
+
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PublicationDate)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PublicationDate)
+                @Html.ValidationMessageFor(model => model.PublicationDate)
+            </div>
+            <div class="columns small-12 text-right padding-top-20">
+                <input type="button" onclick="Submit();" value="Save" class="button radius tiny" />
+                &nbsp;
+                <input type="button" value="Cancel" class="button radius tiny" onclick="history.back();" />
+            </div>
+        </div>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $.datepicker.setDefaults($.datepicker.regional['en']);
+        $("#PublicationDate").datepicker({
+            dateFormat: "dd-mm-yy",
+            isBE: false,
+            autoConversionField: false,
+            onClose: function () { $(this).attr('readonly', true); }
+        });
+        $("#PublicationDate").keypress(function (e) {
+            e.preventDefault();
+        });
+
+        $.validator.addMethod("date", function (value, element) {
+            return this.optional(element) || /^\d\d?-\d\d-\d\d\d\d/.test(value);
+        }, "Please specify the date in DD-MM-YYYY format");
+
+        $(document).ready(function () {
+            $("#txtDescription").val($("#Responsibilities").val());
+        });
+
+        function Submit() {
+            var description = CKEDITOR.instances.txtDescription.getData();
+            $("#Responsibilities").val(description);
+            $('#main-form').submit();
+    </script>
+}
+

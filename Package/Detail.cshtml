@@ -1,0 +1,420 @@
+﻿@using DiethelmTSWebsite2015.Biz
+@using DiethelmWebServiceClient.TSWS
+
+@model DiethelmWebServiceClient.TSWS.DetailsPackage
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+
+    List<string> imageList = ViewBag.ImageList;
+    List<DiethelmWebServiceClient.TSWS.Package> packagePeroidList = ViewBag.PackagePeroidList;
+
+    List<PackageRating> tourType = ViewBag.TourType;
+    List<string> hints = ViewBag.Hints;
+    
+
+    //double StartingPrice = ViewBag.StartingPrice;
+    int i = 0;
+
+    bool IsDisplayHint = hints.Count() > 0;
+}
+
+@using (Html.BeginForm("TravellerPackage", "Booking", FormMethod.Post, new { id = "frm" }))
+{
+    <input type="hidden" id="PackageID" name="PackageID" value="@ViewBag.PackageID"/>
+    <input type="hidden" id="PackageName" name="PackageName" value="@ViewBag.PackageName" />
+    <input type="hidden" id="FromDate" name="FromDate" />
+    <input type="hidden" id="ToDate" name="ToDate" />
+    <input type="hidden" id="MainElementID" name="MainElementID" value="MainElementID" />
+    <input type="hidden" id="MainElementName" name="MainElementName" value="MainElementName" />
+    <input type="hidden" id="OccupancyName" name="OccupancyName" value="Double" />
+    <input type="hidden" id="OccupancyTypeID" name="OccupancyTypeID" value="@ViewBag.OccupancyTypeID" />
+    <input type="hidden" id="Module" name="Module" value="Package" />
+    
+    <div class="row step-title">
+        <div class="small-12 medium-4 columns">
+            <h3 class="step-title-label">Holidays search</h3>
+        </div>
+        <div class="small-12 medium-8 columns" style="background-color: #EEEEEE; padding: 9px;">
+            <img src="~/Images/progress_s2.png" />
+        </div>
+    </div>
+    <div class="row hotel-detail">
+        <div class="column small-12 show-for-small right">
+            <input type="button" value="< Back" class="button btn-gray right tiny " onclick="history.back();" />
+        </div>
+        <div class="column medium-10 small-12 detail-title">
+            @ViewBag.PackageName
+        </div>
+        <div class="column medium-2 hide-for-small right">
+            <input type="button" value="< Back" class="button btn-gray right " onclick="history.back();" />
+        </div>
+      
+    </div>
+    
+    
+   <div class="row">
+       <div class="columns small-12 medium-8 owl-theme-area">
+           <div id="slice-content-package" class="owl-carousel owl-theme">
+               @if (imageList != null)
+               {
+                   foreach (var image in imageList)
+                   {
+                       <div class="item">
+                           <img src="@image" title="@Model.PACKAGE_NAME" alt="@Model.PACKAGE_NAME" /><br />
+                       </div>
+                   }
+               }
+           </div>
+       </div>
+       <div class="columns small-12 medium-4 map-area-excursion">
+           <img src="@ViewBag.Map" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" title="@Model.PACKAGE_NAME" alt="@Model.PACKAGE_NAME" />
+       </div>
+    </div>
+
+    <div class="row margin-top15">
+        <div class="column small-12">
+            <div class="hotel-detail-section"></div>
+        </div>
+        <div class="column small-12 medium-3">
+            <label class="hotel-detail-label">Tour Highlight</label>
+        </div>
+        <div class="column small-12 medium-9 hotel-detail-text">
+            @ViewBag.TourHighlight
+        </div>
+    </div>
+    <div class="row">
+        <div class="column small-12">
+            <div class="hotel-detail-section"></div>
+        </div>
+        <div class="column small-12 medium-3">
+            <label class="hotel-detail-label">Description</label>
+        </div>
+        <div class="column small-12 medium-9 hotel-detail-text">
+             @Model.PACKAGE_DESCRIPTION
+        </div>
+    </div>
+    <div class="row">
+        <div class="column small-12">
+            <div class="hotel-detail-section"></div>
+        </div>
+        <div class="column small-12 medium-3">
+            <label class="hotel-detail-label">Tour Rating</label>
+        </div>
+        <div class="column small-12 medium-9 hotel-detail-text">
+             @foreach (var item in tourType)
+             {
+                 <span>@item.SERVICETYPERATINGTYPENAME</span><br/>
+             }
+        </div>
+    </div>
+    <div class="page-title page-title-package">
+        <div class="row">
+            <div class="column small-12">
+                <img src="/Images/yellow-arrow.png" /> Please Select
+            </div>
+        </div>
+    </div>
+    <div class="gray-bg">
+        <div class="row">
+            <div class="column small-12">
+                <div class="hotel-detail-section"></div>
+            </div>
+            <div class="column small-12 medium-3">
+                <label class="hotel-detail-label">Availability</label>
+            </div>
+            <div class="column small-12 medium-9  ">
+                <div class="row">
+                    <div class="column small-12 small-label padding-top-25">Available Peroid</div>
+                    <div class="column small-12 ">
+                    @if (packagePeroidList != null)
+                    {
+                        <select name="PackagePeroid">
+                            @foreach (var item in packagePeroidList)
+                            {
+                                <option value="@item.PACKAGE_ID,@item.PACKAGE_START_DATE,@item.PACKAGE_END_DATE">@DateTime.ParseExact(item.PACKAGE_START_DATE, "yyyy-MM-dd", null).ToString(TSDifine.DATE_FORMAT) - @DateTime.ParseExact(item.PACKAGE_END_DATE, "yyyy-MM-dd", null).ToString(TSDifine.DATE_FORMAT)</option>   
+                
+                                if (item == packagePeroidList.First())
+                                {
+                                    <script>
+
+                                        $("#FromDate").val('@item.PACKAGE_START_DATE');
+                                        $("#ToDate").val('@item.PACKAGE_END_DATE');
+                                        $('#Loading').foundation('reveal', 'open');
+                                        $.ajax({
+                                            url: '@Url.Action("GetPackageService", "Package")',
+                                            type: 'GET',
+                                            data: { Param: '@item.PACKAGE_ID,@item.PACKAGE_START_DATE,@item.PACKAGE_END_DATE' },
+                                            success: function (data) {
+                                                //alert(data.data);
+                                                $("#PackageServiceBox").html(data.data);
+                                                $('#Loading').foundation('reveal', 'close');
+                                            }
+                                        });
+                                    </script>
+                                }
+                            }
+                        </select>
+                    }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column small-12">
+                <div class="hotel-detail-section"></div>
+            </div>
+            <div class="column small-12 medium-3">
+                <label class="hotel-detail-label">Please choose one of the service</label>
+            </div>
+            <div class="column small-12 medium-9 hotel-detail-text padding-top-25">
+                <div id="PackageServiceBox">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column small-12">
+                <div class="hotel-detail-section"></div>
+            </div>
+            <div class="column small-12 medium-3">
+                <label class="hotel-detail-label">Alternative Hotel Option</label>
+            </div>
+            <div class="column small-12 medium-9 hotel-detail-text padding-top-25">
+                <div id="PackageOptionBox">
+                </div>
+                <div class="tab-content-line right"></div>
+               
+                <div class="display-block">
+                    <div class="small-label float-left">Total Price <div id="PackagePrice" class="price font-red"><br />xx Price</div></div>
+                    
+                    <div class="float-right"><input type="button" value="Select" class="button right" onclick="ShowHints()"/></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row padding-top-25">
+        <div class="column small-12">
+            <div class="hotel-detail-section"></div>
+        </div>
+        <div class="column small-12 medium-3">
+            <label class="hotel-detail-label">Itineray</label>
+        </div>
+        <div class="column small-12 medium-9 hotel-detail-text">
+            @if (Model.ITINERARY_DETAILS != null && Model.ITINERARY_DETAILS.Count() > 0)
+            {
+                foreach (var item in Model.ITINERARY_DETAILS)
+                {
+                    if (i == 0)
+                    {
+                        <div class="top-toggle-tineray display-block" onclick="ContactToggle('@item.DAY')">
+                            <div class="itineray-day">Day @item.DAY </div> <div class="itineray-title">@item.ITINERARY_DAY_DESC
+                            <div class="@item.DAY right" style="display:none;"><img src="/Images/red-arrow1.png" /></div><div class="@item.DAY right"><img src="/Images/red-arrow2.png" /></div> </div>
+                        </div>
+                        <div class="bottom-toggle-tineray" id="@item.DAY">
+                                <div>@Html.Raw(HttpUtility.HtmlDecode(item.ITINERARY_TEXT))</div>
+                        </div>
+                    }
+                    else { 
+                        <div class="top-toggle-tineray display-block" onclick="ContactToggle('@item.DAY')">
+                            <div class="itineray-day">Day @item.DAY </div> <div class="itineray-title">@item.ITINERARY_DAY_DESC
+                            <div class="@item.DAY right" ><img src="/Images/red-arrow1.png" /></div><div class="@item.DAY right" style="display:none;"><img src="/Images/red-arrow2.png" /></div> </div>
+                        </div>
+                        <div class="bottom-toggle-tineray" style="display:none;" id="@item.DAY">
+                            <div>@Html.Raw(HttpUtility.HtmlDecode(item.ITINERARY_TEXT))</div>
+                        </div>
+                    }
+                    i++;
+                @* <div class="top-toggle-tineray display-block" onclick="ContactToggle('@item.DAY')">
+                    <div class="itineray-day">Day @item.DAY </div> <div class="itineray-title">@item.ITINERARY_DAY_DESC
+                    <div class="@item.DAY right" style="display:none;"><img src="/Images/red-arrow1.png" /></div><div class="@item.DAY right"><img src="/Images/red-arrow2.png" /></div> </div>
+                </div>
+                <div class="bottom-toggle-tineray" id="@item.DAY">
+                        <div>@Html.Raw(HttpUtility.HtmlDecode(item.ITINERARY_TEXT))</div>
+                </div>
+                <div>Day @item.DAY @item.ITINERARY_DAY_DESC</div>
+                <div>@HttpUtility.HtmlDecode(item.ITINERARY_TEXT)</div>*@
+                }
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="column small-12">
+            <div class="hotel-detail-section"></div>
+        </div>
+        <div class="column small-12 medium-3">
+            <label class="hotel-detail-label">Include</label>
+        </div>
+        <div class="column small-12 medium-9 hotel-detail-text">
+             @Model.PACKAGE_INCLUSIONS
+        </div>
+    </div>
+    <div class="row">
+        <div class="column small-12">
+            <div class="hotel-detail-section"></div>
+        </div>
+        <div class="column small-12 medium-3">
+            <label class="hotel-detail-label">Exclude</label>
+        </div>
+        <div class="column small-12 medium-9 hotel-detail-text">
+             @Model.PACKAGE_EXCLUSIONS
+        </div>
+    </div>
+    <div class="row">
+        <div class="column small-12">
+            <div class="hotel-detail-section"></div>
+        </div>
+        <div class="column small-12 medium-3">
+            <label class="hotel-detail-label">Note</label>
+        </div>
+        <div class="column small-12 medium-9 hotel-detail-text">
+            <ul>
+             @foreach (var item in Model.PACKAGE_NOTES)
+             {
+                 <li>@item.NOTE_TEXT</li>
+             }
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column small-2 right">
+            <input type="button" value="< Back" class="button btn-gray right " onclick="history.back();" />
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        function ContactToggle(id) {
+            $('#' + id).slideToggle();
+            $('.' + id).toggle();
+        }
+
+        $('select[name=PackagePeroid]').change(function () {
+
+            var obj = $(this).val().split(',');
+
+            $("#FromDate").val(obj[1]);
+            $("#ToDate").val(obj[2]);
+            $('#Loading').foundation('reveal', 'open');
+            $.ajax({
+                url: '@Url.Action("GetPackageService", "Package")',
+                type: 'GET',
+                data: { Param: $(this).val() },
+                success: function (result) {
+                    $("#PackageServiceBox").html(result.data);
+                    $("#PackagePrice").html(result.price + " THB");
+                    $('#Loading').foundation('reveal', 'close');
+                }
+            });
+
+        });
+
+        $(document).ready(function () {
+            
+            $('#slice-content-package').each(function () {
+                if ($(this).find('.item').length > 1) {
+                    $(this).owlCarousel({
+                        dots: true,
+                        autoplaySpeed: 1000,
+                        items: 1,
+                        autoplay: true,
+                        autoplayTimeout: 1000,
+                        loop: true
+                    })
+                } else {
+                    $(this).owlCarousel({
+                        dots: true,
+                        autoplaySpeed: 1000,
+                        items: 1,
+                        autoplay: true,
+                        autoplayTimeout: 1000,
+                        loop: false
+                    })
+                }
+            });
+        });
+        function GetAltHotelOption(packageID, packageStartDate, packageEndDate, elementID, elementName) {
+
+            $("#PackageID").val(packageID);
+            $("#MainElementID").val(elementID);
+            $("#MainElementName").val(elementName);
+            $('#Loading').foundation('reveal', 'open');
+            $.ajax({
+                url: '@Url.Action("GetAltHotelOption", "Package")',
+                type: 'GET',
+                data: {
+                    PackageID: packageID,
+                    StartDate: packageStartDate,
+                    EndDate: packageEndDate,
+                    ElementID: elementID
+                },
+                success: function (data) {
+                    $("#PackageOptionBox").html(data.data);
+                    $("#PackagePrice").html(data.price + " " + data.currency);
+                    $('#Loading').foundation('reveal', 'close');
+                }
+            });
+        }
+
+        function ShowHints() {
+            var IsDisplayHint = true;
+
+            @if(IsDisplayHint)
+            {
+                <text>IsDisplayHint = true;</text>
+            }
+            else   
+            {
+                <text>IsDisplayHint = false;</text>
+            }
+
+            if (IsDisplayHint) {
+                $("#HintsPopup").foundation('reveal', 'open');
+            }
+            else {
+                Book();
+            }
+        }
+
+        function CloseHints() {
+            $("#HintsPopup").foundation('reveal', 'close');
+        }
+
+        function Book() {
+            $("#frm").submit();
+        }
+    </script>
+}
+
+
+@section popup
+{
+<div id="HintsPopup" class="reveal-modal medium" data-reveal>
+
+    <div class="row">
+        <div class="column small-12">
+            Hints
+        </div>
+    </div>
+    <div class="row">
+        @foreach (var item in hints)
+        {
+            <div class="column small-12 ">
+                <p style="text-indent: 50px;" class="hotel-detail-text">@item</p>
+            </div>
+        }
+    </div>
+    <div class="row ">
+        <div class="column small-12 text-right">
+            <input type="button" value="OK" class="button tiny" onclick="Book()" />
+            <input type="button" value="Close" class="button tiny" onclick="CloseHints()" />
+        </div>
+    </div>
+</div>
+}
+
+
+

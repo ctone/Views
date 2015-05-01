@@ -1,0 +1,130 @@
+﻿@model DiethelmTSWebsite2015.Models.HotelSearchCondition
+@using DiethelmTSWebsite2015.Core;
+
+@{
+    Layout = null;
+    List<DiethelmTSWebsite2015.Models.Region> CityList = ViewBag.CityList;
+    string country = Utility.GetCurrentCountryName();
+    string capitalName = Utility.GetCapitalName(country);
+}
+
+
+
+@using (Html.BeginForm("Search", "Hotel"))
+{
+    <input type="hidden" name="IsQuickSearch" value="true" />
+
+    <div class="row quick-search-cover-hotel">
+        <div class="small-12 columns">
+            <div class="row">
+                <div class="small-12 columns"><label>Where do you want to go?</label> </div>
+                <div class="small-12 columns">
+                    <select id="City" name="City">
+                        @foreach (var item in CityList)
+                        {
+                            if (item.RegionName.Trim() == capitalName.Trim())
+                            {
+                                <option value="@item.RegionName.Trim()" selected>@item.RegionName.Trim()</option>
+                            }
+                            else
+                            {
+                                <option value="@item.RegionName.Trim()">@item.RegionName.Trim()</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="small-12 medium-6 columns">
+            <div class="row">
+                <div class="small-12 columns"><label>Check-in date</label></div>
+                <div class="small-12 columns">
+                    @Html.TextBoxFor(model => model.CheckInDate, new { @Value = DateTime.Now.ToString("dd-MM-yyyy") })
+                </div>
+            </div>
+        </div>
+        <div class="small-12 medium-6 columns">
+            <div class="row">
+                <div class="small-12 columns"><label>Number of Nights</label></div>
+                <div class="small-12 columns">
+                    <select name="Nights">
+                        @*@Html.TextBoxFor(model => model.Nights, new { @onkeypress = "isNumberKey(event)", @Value = "1" })*@
+                        <option value="1" selected>1 </option>
+                        <option value="2">2 </option>
+                        <option value="3">3 </option>
+                        <option value="4">4 </option>
+                        <option value="5">5 </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        @Html.HiddenFor(model => model.nGuest, new { @onkeydown = "isNumberKey(event)", @Value = "2" })
+        @*<div class="small-12 medium-1 columns">
+                <div class="row">
+                    <div class="small-6 medium-12 columns"><label>Guests</label> </div>
+                    <div class="small-6 medium-12 columns">
+                        @Html.HiddenFor(model => model.nGuest, new { @onkeydown = "isNumberKey(event)", @Value = "2" })
+                    </div>
+                </div>
+            </div>*@
+        <div class="small-12 columns right ">
+            <input type="submit" value="Go" class="tiny expand button radius right" />
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            $.datepicker.setDefaults($.datepicker.regional['en']);
+            $("#CheckInDate").datepicker({
+                dateFormat: "dd-mm-yy",
+                isBE: false,
+                autoConversionField: false,
+                nextText: ' ', 
+                prevText: ' ',
+                onClose: function () { $(this).attr('readonly', true); }
+            });
+            $("#CheckInDate").keypress(function (e) {
+                e.preventDefault();
+            });
+            
+        });
+
+        function ValidateInput() {
+
+            
+
+            if ($("#CheckInDateHotelSmall").val() == "") {
+                alert("Please input CheckInDate");
+                $("#CheckInDateHotelSmall").focus();
+                return false;
+            }
+
+            if ($("#NightsHotelSmall").val() == "") {
+                alert("Please input number of Nights");
+                $("#NightsHotelSmall").focus();
+                return false;
+            }
+            
+            
+            var HotelMaxGuestPerRoom = '@System.Configuration.ConfigurationManager.AppSettings["HotelMaxGuestPerRoom"].ToString()';
+
+            if ($("#nGuest").val() == "") {
+                alert("Please input guest");
+                $("#nGuest").focus();
+                return false;
+            }
+            else if (parseInt($("#nGuest").val()) > parseInt(HotelMaxGuestPerRoom)) {
+                alert("Number of guest muse < " + HotelMaxGuestPerRoom);
+                $("#nGuest").focus();
+                return false;
+            }
+
+            
+            
+            
+            return true;
+        }
+
+
+    </script>
+}

@@ -1,0 +1,92 @@
+﻿@model DiethelmTSWebsite2015.Models.Shopping
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Shopping</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.CountryID)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.CountryID)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.CityID)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.CityID)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.ShopName)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.ShopName)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Place)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Place)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.PriceLevel)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.PriceLevel)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Map)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Map)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Status)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Status)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.CreateDate)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.CreateDate)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.CreateBy)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.CreateBy)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.UpdateDate)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.UpdateDate)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.UpdateBy)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.UpdateBy)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

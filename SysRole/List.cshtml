@@ -1,0 +1,72 @@
+﻿@using System.Runtime.InteropServices.ComTypes
+@using PagedList
+@using PagedList.Mvc
+@model PagedList.IPagedList<DiethelmTSWebsite2015.Models.SysRole>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    DiethelmTSWebsite2015.Biz.SysUserBiz biz = new DiethelmTSWebsite2015.Biz.SysUserBiz();
+    var userList = biz.GetUser(DiethelmTSWebsite2015.Core.Types.UserType.All);
+    
+}
+
+<div class="row">
+    <div class="columns small-6 large-6"><h3>Role</h3></div>
+    <div class="columns small-6 large-6 padding-top-10 text-right">
+        
+        <a href="@Url.Action("Create")" class="button radius tiny">Create</a>
+        <a onclick="history.back();" class="button radius tiny">Back</a>
+    </div>
+</div>
+
+<div class="table-container">
+    <div class="table-row-head row">
+        <div class="table-column columns small-8">Role Name</div>
+        <div class="table-column columns small-3">Last Update</div>
+        <div class="table-column columns small-1">Tools</div>
+    </div>
+    @foreach (var item in Model)
+    {
+        <div class="table-row row">
+            <div class="table-column columns small-8">
+                @Html.DisplayFor(modelItem => item.RoleName)
+            </div>
+                <div class="table-column columns small-3 text-center">
+                    @item.UpdateDate.ToString("dd-MMM-yyyy") (@DiethelmTSWebsite2015.Biz.SysUserBiz.GetUserName(userList, item.UpdateBy))
+                </div>
+                <div class="table-column columns small-1 text-center">
+                    <a href="@Url.Action("Edit", new { id = item.ID })"><img src="/Images/icon_edit.png" title="Edit"> </a>
+                    <a href="#" onclick="Delete('@item.ID')"><img src="/Images/icon_delete.png" title="Delete"></a>
+                </div>
+        </div>
+    }
+</div>
+
+@if (Model != null)
+{
+    <div class="float-right">
+        @Html.PagedListPager((IPagedList) Model, page => Url.Action("List","SysRole", new {page = page}), (PagedListRenderOptions) ViewBag.PagedListRender)
+    </div>
+}
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+            function Delete(id) {
+                if (confirm("Do you want to delete?")) {
+                    $.ajax({
+                        url: '@Url.Action("Delete", "SysRole")?id=' + id,
+                        type: 'GET',
+                        async: false,
+                        success: function (result) {
+                            location.reload();
+                        }
+                    });
+                }
+            }
+
+    </script>
+}

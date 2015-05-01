@@ -1,0 +1,163 @@
+﻿@using DiethelmTSWebsite2015.Core
+@using DiethelmTSWebsite2015.Biz
+@using DiethelmTSWebsite2015.Models;
+@model IEnumerable<DiethelmTSWebsite2015.Models.Weather>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+
+    DiethelmTSWebsite2015.Core.Utility.ReloadRouteData();
+    DTTDBContext db = new DTTDBContext();
+    object obj = Request.RequestContext.RouteData.Values["country"];
+    string country = obj == null ? string.Empty : obj.ToString();
+    string countryTab = DiethelmTSWebsite2015.Core.HtmlHelper.GenerateTabCountryFrontend(country);
+    CountryCollection list = new CountryCollection();
+    var countryList = list.ToList();
+    byte countryID = Utility.GetCurrentCountryID();
+    string countryname = Utility.GetCurrentCountryName();
+    if (string.IsNullOrEmpty(country))
+    {
+        //DISPLAY COUNTRY POPUP ... REDIRECT
+    };
+    string active = "";
+    string cityName = "";
+    //if (AppSession.Instance.IsLogin()) {}
+
+}
+<div class="row ">
+    <div class="small-12 columns post-breadcumb">
+        <a onclick="history.back();" class="right">< Back</a>
+    </div>
+</div>
+<div class="row step-title">
+    <div class="small-12 medium-4 columns">
+        <h3 class="step-title-label">Seasons  &bull; <font id="country-header">@countryname</font></h3> 
+    </div>
+    <div class="small-12 medium-8 columns list-heading-right">
+        @*<font id="country-header">@countryname</font><font class="font-red"> &bull; Seasons</font>*@
+    </div>
+</div>
+
+<div class="row herizontal-tabs margin-top30">
+    @Html.Raw(countryTab)
+</div>
+<div class="row ">
+    <div class="small-12 columns country-header-cover ">  </div>
+    <div class="small-12 columns country-image-cover"> <img src="/Images/@countryname-Headercover.png" id="img-cover" width="100%"> </div>
+</div>
+
+<div class="row ">
+    <div class="small-12 columns font-red margin-top15" style="font-weight: bold;">Weather :   </div>
+    <div class="small-12 columns hide-for-small" style="font-size:13px;">
+        <font style="color: #ffa900; font-size:25px;">&#9679;</font>Ideal &nbsp;&nbsp; 
+        <font style="color: #00f33c; font-size: 25px;">&#9679;</font> Good &nbsp;&nbsp; 
+        <font style="color: #0074e8; font-size: 25px;">&#9679;</font> Wet &nbsp;&nbsp; 
+        <font style="color: #00e8ff; font-size: 25px;">&#9679;</font> Cool &nbsp;&nbsp; 
+        <font style="color: #ff0000; font-size: 25px;">&#9679;</font> Not Reccomended &nbsp;&nbsp;
+    </div>
+    <div class="small-12 columns hide-for-medium-up" style="font-size:13px;">
+        <font style="color: #ffa900; font-size:25px;">&#9679;</font> Ideal &nbsp;&nbsp; <br>
+        <font style="color: #00f33c; font-size: 25px;">&#9679;</font> Good &nbsp;&nbsp; <br>
+        <font style="color: #0074e8; font-size: 25px;">&#9679;</font> Wet &nbsp;&nbsp; <br>
+        <font style="color: #00e8ff; font-size: 25px;">&#9679;</font> Cool &nbsp;&nbsp; <br>
+        <font style="color: #ff0000; font-size: 25px;">&#9679;</font> Not Reccomended &nbsp;&nbsp;
+    </div>
+</div>
+<div class="list-cover margin-top15">
+    @foreach (var item in countryList)
+    {
+
+        if (item.ID == countryID)
+        {
+            active = "active";
+        }
+        else
+        {
+            active = "";
+        }
+        <div class="content @active" id="panel-@item.ID">
+            <div class="row front-list-title ">
+                <div class="small-6 medium-3 columns">
+                    Area
+                </div>
+                <div class="small-6 medium-2 columns">
+                    City
+                </div>
+                <div class="small-12 medium-7 columns ">
+                    <div class=" row text-center">
+                        <div class="small-1 columns ">Jan</div>
+                        <div class="small-1 columns ">Feb</div>
+                        <div class="small-1 columns ">Mar</div>
+                        <div class="small-1 columns ">Apr</div>
+                        <div class="small-1 columns ">May</div>
+                        <div class="small-1 columns ">Jun</div>
+                        <div class="small-1 columns ">Jul</div>
+                        <div class="small-1 columns ">Aug</div>
+                        <div class="small-1 columns ">Sep</div>
+                        <div class="small-1 columns ">Oct</div>
+                        <div class="small-1 columns ">Nov</div>
+                        <div class="small-1 columns ">Dec</div>
+                    </div>
+                </div>
+
+            </div>
+
+            @{
+        var shoppingByCountry = Model.Where(f => f.CountryID == item.ID).ToList();
+            }
+            @for (int i = 0; i < shoppingByCountry.Count(); i++)
+            {
+
+                int CityID = shoppingByCountry[i].CityID;
+                var city = db.Regions.Where(c => c.RegionID == CityID).ToList();
+
+                if (city != null)
+                {
+                    cityName = city.First().RegionName;
+                    city = null;
+                }
+                else
+                {
+                    cityName = "-";
+                }
+
+
+                <div class="row front-list list-season" >
+                    <div class="small-6 medium-3 columns">@shoppingByCountry[i].AreaID</div>
+                    <div class="small-6 medium-2 columns">@cityName</div>
+                    <div class="small-12 medium-7 columns ">
+                        <div class="row text-center">
+                            <div class="small-1 columns " style="color: @Utility.GetWeatherColor(shoppingByCountry[i].January)">&#9679;</div>
+                            <div class="small-1 columns " style="color: @Utility.GetWeatherColor(shoppingByCountry[i].February)">&#9679;</div>
+                            <div class="small-1 columns " style="color: @Utility.GetWeatherColor(shoppingByCountry[i].March)">&#9679;</div>
+                            <div class="small-1 columns " style="color: @Utility.GetWeatherColor(shoppingByCountry[i].April)">&#9679;</div>
+                            <div class="small-1 columns " style="color: @Utility.GetWeatherColor(shoppingByCountry[i].May)">&#9679;</div>
+                            <div class="small-1 columns " style="color: @Utility.GetWeatherColor(shoppingByCountry[i].June)">&#9679;</div>
+                            <div class="small-1 columns " style="color: @Utility.GetWeatherColor(shoppingByCountry[i].July)">&#9679;</div>
+                            <div class="small-1 columns " style="color: @Utility.GetWeatherColor(shoppingByCountry[i].August)">&#9679;</div>
+                            <div class="small-1 columns " style="color: @Utility.GetWeatherColor(shoppingByCountry[i].September)">&#9679;</div>
+                            <div class="small-1 columns " style="color: @Utility.GetWeatherColor(shoppingByCountry[i].October)">&#9679;</div>
+                            <div class="small-1 columns " style="color: @Utility.GetWeatherColor(shoppingByCountry[i].November)">&#9679;</div>
+                            <div class="small-1 columns " style="color: @Utility.GetWeatherColor(shoppingByCountry[i].December)">&#9679;</div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    }
+</div>
+
+
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        function ChooseCountryTab(Country) {
+            $('#country-header').html(Country);
+            $('#img-cover').attr("src", "/Images/" + Country + "-Headercover.jpg");
+        }
+    </script>
+}

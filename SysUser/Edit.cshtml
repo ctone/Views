@@ -1,0 +1,83 @@
+﻿@model DiethelmTSWebsite2015.Models.SysUser
+
+@{
+    ViewBag.Title = "Edit";
+}
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Edit User</legend>
+        @Html.HiddenFor(model => model.ID)
+        <div class="row">
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.Title)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.Title)
+                @Html.ValidationMessageFor(model => model.Title)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.FirstName)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.FirstName)
+                @Html.ValidationMessageFor(model => model.FirstName)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.LastName)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.LastName)
+                @Html.ValidationMessageFor(model => model.LastName)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.UserName)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.UserName)
+                @Html.ValidationMessageFor(model => model.UserName)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.Password)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.Password)
+                @Html.ValidationMessageFor(model => model.Password)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.ConfirmPassword)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.ConfirmPassword)
+                @Html.ValidationMessageFor(model => model.ConfirmPassword)
+            </div>
+
+            <div class="columns small-12 push-2">
+                @Html.EditorFor(model => model.IsAdmin) Is Admin
+                @Html.ValidationMessageFor(model => model.IsAdmin)
+            </div>
+            <div class="columns small-12 push-2">
+                @Html.EditorFor(model => model.IsActive) Is Active
+                @Html.ValidationMessageFor(model => model.IsActive)
+            </div>
+            @Html.HiddenFor(model => model.Status)
+            @Html.HiddenFor(model => model.UserName)
+            @Html.HiddenFor(model => model.Password)
+            @Html.HiddenFor(model => model.ConfirmPassword)
+            @Html.HiddenFor(model => model.CreateDate)
+            @Html.HiddenFor(model => model.CreateBy)
+            <div class="columns small-12 text-right">
+                <input type="submit" value="Save" class="button radius tiny" /> <input type="button" value="Cancel" class="button radius tiny" onclick="history.back();" />
+            </div>
+        </div>
+    </fieldset>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,10 @@
+﻿@model List<DiethelmTSWebsite2015.Models.Region>
+@{
+    Layout = null;
+}
+
+    <option value="Any">Any</option>
+    @foreach (var item in Model)
+    {
+        <option value="@item.RegionName">@item.RegionName</option>
+    }

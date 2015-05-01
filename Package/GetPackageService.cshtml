@@ -1,0 +1,30 @@
+﻿@model DiethelmWebServiceClient.TSWS.DetailsPackage
+
+@{
+    Layout = null;
+    int PackageID = ViewBag.PackageID;
+    string StartDate = ViewBag.StartDate;
+    string EndDate = ViewBag.EndDate;
+    int mainElementID = 0;
+    string mainElementName = "";
+}
+
+@foreach (var item in Model.PACKAGE_MAIN_ELEMENTS)
+{
+    string str = "";
+
+    if (item == Model.PACKAGE_MAIN_ELEMENTS.First())
+    {
+        str = "checked";
+        mainElementID = item.PACKAGE_MAIN_ELEMENT_ID;
+        mainElementName = item.PACKAGE_MAIN_ELEMENT_NAME;
+    }
+    
+    <div>
+        <input type="radio" name="[{0}].RoomTypeIDAndServiceID" @str onclick="GetAltHotelOption('@PackageID','@StartDate','@EndDate','@item.PACKAGE_MAIN_ELEMENT_ID','@item.PACKAGE_MAIN_ELEMENT_NAME')" /> @item.PACKAGE_MAIN_ELEMENT_NAME
+    </div>
+}
+
+<script>
+    GetAltHotelOption('@PackageID','@StartDate','@EndDate','@mainElementID','@mainElementName');
+</script>

@@ -1,0 +1,288 @@
+﻿@model DiethelmTSWebsite2015.Models.SysBanner
+
+@{
+    ViewBag.Title = "Create";
+    var bannerTypes = ViewBag.BannerTypes as List<SelectListItem>;
+    string createID = Guid.NewGuid().ToString();
+    string country = Request.RequestContext.RouteData.Values["country"].ToString();
+    DiethelmTSWebsite2015.Biz.CountryCollection countryColl = new DiethelmTSWebsite2015.Biz.CountryCollection();
+}
+
+@section Header {
+    @Scripts.Render("~/bundles/ckeditor")
+}
+
+<h2>Create</h2>
+<fieldset>
+    <legend>SysBanner</legend>
+
+    @using (Html.BeginForm("Create", "SysBanner", FormMethod.Post, new { id = "main-form" }))
+    {
+        @Html.ValidationSummary(true)
+         <input type="hidden" id="CountryID" name="CountryID" value="@countryColl[country].ID" />
+        <input type="hidden" name="CreateId" value="@createID"/>
+        <input type="hidden" name="CountryId" value="@country"/>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Title)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Title)
+            @Html.ValidationMessageFor(model => model.Title)
+        </div>
+        
+        @*<div class="editor-label">
+            @Html.Label("Controller Name")
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.ControllerName)
+            @Html.ValidationMessageFor(model => model.ControllerName)
+        </div>*@
+
+        <div class="editor-label">
+            @Html.Label("BannerTypes")
+        </div>
+        <div class="editor-field">
+            @Html.DropDownList("BannerTypes", bannerTypes, "== เลือกประเภท Banner ==")
+        </div>
+
+        <div class="editor-label banner-content">
+            @Html.LabelFor(model => model.Description)
+        </div>
+        <div class="editor-field banner-content">
+            @Html.TextArea("txtDescription", htmlAttributes: new { @class = "ckeditor" })
+            @Html.HiddenFor(model => model.Description)
+        </div>
+
+        <div class="editor-label banner-link">
+            @Html.LabelFor(model => model.Link)
+        </div>
+        <div class="editor-field banner-link">
+            @Html.EditorFor(model => model.Link)
+            @Html.ValidationMessageFor(model => model.Link)
+        </div>
+    
+        <div class="editor-label">
+            &nbsp;
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.IsPublish) Publish
+        </div>
+
+        <div class="editor-label">
+            <img id="img-banner" src="@Url.Content("~/Images/Noimage.jpg")"  />
+            <br />
+            <img src="@Url.Content("~/Images/delimg.png")" onclick="RemoveImg('banner') " />
+            <br />
+            @Html.LabelFor(model => model.Image)
+        </div>
+        <div class="editor-field">
+            <input type="button" value="Select File" onclick=" $('#upload-banner').trigger('click'); ">
+            &nbsp; &nbsp;<text id="fileName-banner"></text><text id="success-banner-s" style="color: greenyellow; display: none;">&nbsp;&nbsp; Success</text>&nbsp;&nbsp;
+            <img src="@Url.Content("~/Images/loading.gif")" id="loading-banner" style="display: none;"/>
+            @Html.HiddenFor(model => model.Image)
+        </div>
+   
+    }
+
+    <form id="frmUpload-banner" action="@Url.Action("Upload", "SysBanner")" method="post" enctype="multipart/form-data">
+        <input type="file" name="files[]" id="upload-banner" style="display: none;" accept="image/*" />
+    </form>
+    <div class="columns small-12 editor-label">
+        Attachment Files
+            <ul id="uploadResult"></ul>
+    </div>
+
+    <div class="columns small-12 editor-field">
+        <form id="frmAttachmentUpload" action="@Url.Action("UploadBannerAttachment", "SysBanner")?CreateID=@createID" method="post" enctype="multipart/form-data" class="dropzone">
+            <input type="file" name="files[]" id="att-upload" style="display: none;" />
+        </form>
+    </div>
+</fieldset>
+<div class="columns small-12 text-right padding-top-20">
+    <input type="button" onclick="Submit();" value="Save" class="button radius tiny" />
+    &nbsp;
+    <input type="button" value="Cancel" class="button radius tiny" onclick="history.back();" />
+</div>
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryfileupload")
+
+    <script src="~/Scripts/jquery.filedrop.js"></script>
+
+    <script type="text/javascript">
+
+        function Submit() {
+
+            var description = CKEDITOR.instances.txtDescription.getData();
+            $("#Description").val(description);
+
+            $('#main-form').submit();
+        }
+
+        function RemoveImg(id) {
+            if (confirm("Do you want to remove thumbnail?")) {
+
+                if (id == 'banner') {
+                    $("#Image").val("");
+                }
+
+                $("#img-" + id).attr("src", '@Url.Content("~/Images/Noimage.jpg")');
+                $("#fileName-" + id).hide();
+                $("#success-" + id).hide();
+            }
+        }
+
+        function InitFileUpload(id) {
+            $("#frmUpload-" + id).fileupload({
+                add: function (e, data) {
+                    var goUpload = true;
+                    var uploadFile = data.files[0];
+
+                    $("#btn-submit").prop('disabled', true);
+                    $("#fileName-" + id).html(uploadFile.name);
+                    $("#success-" + id).hide();
+
+                    if (!(/\.(jpg|png|JPG|PNG)$/i).test(uploadFile.name)) {
+                        alert('สามารถอัพโหลดได้เฉพาะไฟล์ .jpg และ .png เท่านั้น');
+                        $("#fileName-" + id).html("");
+                        goUpload = false;
+                    }
+                    /*  if (uploadFile.size > 200 * 1024 * 1024) {
+                          alert('Please upload a smaller image, max size is 200 MB [' + uploadFile.name + ']');
+                          goUpload = false;
+                      } */
+                    if (goUpload) {
+                        $("#loading-" + id).show();
+                        data.progressdiv = $("#uploading-origin").clone().attr("id", "").css("display", "").attr("title", uploadFile.name);
+                        data.progressdiv.appendTo($("#drop-l"));
+                        data.progressdiv.find(".glyphicon-repeat").on("click", function (event) {
+                            event.stopPropagation();
+                            data.progressdiv.find(".loading").show();
+                            data.progressdiv.find(".retry").hide();
+                            data.progressdiv.find(".progress-bar").css("width", "0%");
+                            data.progressdiv.find(".progress-bar").removeClass("progress-bar-danger");
+                            data.submit();
+                        });
+                        data.progressdiv.find(".glyphicon-remove").on("click", function (event) {
+                            event.stopPropagation();
+                            data.progressdiv.remove();
+                            delete data;
+                        });
+
+                        data.progressdiv.on("click", function (event) {
+                            event.stopPropagation();
+                        });
+                        $("#drop-l").removeClass("background");
+                        data.submit();
+                    }
+
+                },
+                progress: function (e, data) {
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    data.progressdiv.find(".progress-bar").css("width", progress + "%");
+                },
+                done: function (e, data) {
+                    $("#loading-" + id).hide();
+                    $("#success-" + id).show();
+                    $("#btn-submit").prop('disabled', false);
+                    $("#Body").val(data.result);
+                    setTimeout(function () {
+                        data.progressdiv.remove();
+                        if (!$("#drop-l").children().length) {
+                            $("#drop-l").addClass("background");
+                        }
+                    }, 500);
+
+                    var imgFileName = data.result;
+
+                    if (id == 'banner') {
+                        $("#Image").val(imgFileName);
+                    }
+
+                    $("#img-" + id).attr("src", '@Url.Content("~/assets/banner/")' + imgFileName);
+
+                },
+                fail: function (e, data) {
+
+                    data.progressdiv.find(".loading").hide();
+                    data.progressdiv.find(".retry").show();
+                    data.progressdiv.find(".progress-bar").css("width", "100%");
+                    data.progressdiv.find(".progress-bar").addClass("progress-bar-danger");
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $('.banner-content, .banner-link').hide();
+
+            $('select[name=BannerTypes]').change(function () {
+                var item = this.value;
+                if (item == "1") {
+                    $('.banner-link').hide();
+                    $('.banner-content').show();
+                } else if (item == "2") {
+                    $('.banner-content').hide();
+                    $('.banner-link').show();
+                } else {
+                    $('.banner-content, .banner-link').hide();
+                }
+            });
+
+            $('select[name=BannerTypes]').trigger('change');
+
+            InitFileUpload("banner");
+
+            Dropzone.options.frmAttachmentUpload = {
+                init: function () {
+                    // config
+                    this.options.addRemoveLinks = true;
+                    this.options.dictRemoveFile = "Delete";
+                    var hasError = false;
+                    this.on("complete", function (file) {
+                        var res = JSON.parse(file.xhr.responseText);
+                        if (res.id != 0) {
+                            if (this.getQueuedFiles().length == 0 && this.getUploadingFiles().length == 0 && !hasError) {
+                                alert('All files have been uploaded successfully');
+                            }
+                        } else {
+                            console.log(res.message);
+                            hasError = true;
+                            this.emit("removedfile", file);
+                            alert('Error occurs during uploading file to server');
+                        }
+                    });
+
+                    this.on("removedfile", function (file) {
+                        var res = JSON.parse(file.xhr.responseText);
+                        if (res.id == 0)
+                            return;
+
+                        if (confirm("Do you want to remove attachment?")) {
+                            $.ajax({
+                                url: '@Url.Action("DeleteBannerAttachment", "SysBanner")?attachID=' + res.id,
+                                type: 'GET',
+                                async: false,
+                                success: function (data) {
+                                    if (!data.result) {
+                                        alert('Error occurs during deleting the file');
+                                        return false;
+                                    }
+                                }
+                            });
+                        } else {
+                            return false;
+                        }
+
+                    });
+                }
+            };
+        });
+    </script>
+}

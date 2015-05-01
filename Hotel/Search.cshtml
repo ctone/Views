@@ -1,0 +1,217 @@
+﻿@using System.Web.UI.WebControls
+@using DiethelmTSWebsite2015.Core
+
+@{
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+}
+<div class="row step-title">
+    <div class="small-12 medium-4 columns">
+        <h3 class="step-title-label">Search Hotel</h3>
+    </div>
+    <div class="small-12 medium-8 columns" style="background-color:#EEEEEE;padding:9px;">
+        <img src="~/Images/progress_s1.png" />
+    </div>
+</div>
+
+<div class="row">
+    <div class="small-12 medium-4 columns">
+        <div id="HotelSearchBox"></div>
+        <div id="HotelFilterBox"></div>
+    </div>
+    <div class="small-12 medium-8 columns">
+        <div class="row">
+            <div class="small-12 columns">
+                <h3 class="text-red" id="HotelSummaryResult"></h3>
+            </div>
+        </div>
+        <div id="HotelSortBox" class="row">
+
+        </div>
+        <div class="row">
+            @*<div id="HotelSummaryResult" class="column large-12">
+
+            </div>*@
+                @using (Html.BeginForm("Detail", "Hotel", FormMethod.Post, new { id = "frmDetail" }))
+                {
+                    <div class="column small-12 ">
+                        <input type="hidden" id="ServiceID" name="ServiceID" value="" />
+
+                        <div id="HotelSearchResult" class="row">
+                            @Html.ValidationSummary(false)@*ใช้แสดง error*@
+                        </div>
+                        <div class="row load-more-search-result">
+                            <div class="column large-12">
+                                <input type="button" value="Load More" id="LoadMore" class="button expand hide btn-load" onclick="LoadMoreResult()" />
+                            </div>
+                        </div>
+                    </div>
+                }
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="@Url.Content("~/Scripts/jquery.cookie.js")"></script>
+    <script src="@Url.Content("~/Scripts/TS/Hotel.js")"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            LoadHotelSearchConditionBox();
+            LoadHotelSortBox();
+
+            
+
+        });
+
+        function LoadHotelSortBox() {
+            $.ajax({
+                url: '@Url.Action("Sort", "Hotel")',
+                type: 'GET',
+                success: function (data) {
+                    $('#HotelSortBox').html(data);
+                }
+            });
+        }
+
+        function LoadHotelSearchConditionBox() {
+            $.ajax({
+                url: '@Url.Action("SearchCondition", "Hotel")',
+                type: 'POST',
+                success: function (data) {
+                    $('#HotelSearchBox').html(data);
+                }
+            });
+        }
+
+        function GotoDetail(serviceID) {
+            PrepareSearchConditionData();//เตรียมข้อมูล search condition data เพื่อส่งไปยังหน้า detail
+            $("#ServiceID").val(serviceID);
+            $("#frmDetail").submit();
+        }
+
+        $(document).ready(function () {
+            $("#frmDetail").submit(function (e) {
+                CheckActiveLogin("@Url.Action("CheckActiveLogin","Home")", function (result) {
+                    if (!result) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+
+        function LoadMoreResult() {
+            $.ajax({
+                url: '@Url.Action("LoadMoreResult", "Hotel")',
+                type: 'Get',
+                success: function (data) {
+
+                    $('#HotelSearchResult').append(data);
+                    ShowLoadMoreButton();
+                }
+            });
+        }
+
+        function LoadSummaryResult() {
+            $.ajax({
+                url: '@Url.Action("SummaryResult", "Hotel")',
+                type: 'Get',
+                success: function (data) {
+                    $('#HotelSummaryResult').html(data);
+                }
+            });
+        }
+
+        function PrepareSearchConditionData() {
+            //Load ค่าจาก search condition จาก cookie เข้า obj เพื่อที่จะส่งเข้าไปในหน้า Detail
+            var obj = $.cookie("HotelSearchCondition");
+            var searchObj = null;
+            if (obj) {
+
+                searchObj = queryStringToJSON(obj);
+
+                //fillSearchForm(searchObj);
+                //SearchHotel();
+            }
+
+            var checkInDate, checkOutDate, roomAmount, city;
+            var rooms = [];
+            if (searchObj) {
+                checkInDate = searchObj.CheckInDate;
+                checkOutDate = searchObj.CheckOutDate;
+                roomAmount = searchObj.RoomAmount;
+                rooms = searchObj.Rooms;
+                city = searchObj.City;
+            } else {
+                checkInDate = $("#CheckInDate").val();
+                checkOutDate = $("#CheckOutDate").val();
+                roomAmount = $("#RoomAmount").val();
+                city = $("#City").val();
+                $('#searchfrm').find('.room').each(function (i) {
+                    var room = {};
+                    var adults = $(this).find('select[name=Adults] option:selected').val();
+                    room.Adults = adults;
+                    room.Children = [];
+
+                    var childAges = $(this).find('.child-container .child-age');
+
+                    childAges.each(function (j) {
+                        var childAge = {};
+                        var age = $(this).find('select[name=ChildAge] option:selected').val();
+                        childAge.Age = age;
+                        room.Children.push(childAge);
+                    });
+
+                    rooms.push(room);
+                });
+            }
+
+            //เอาค่ามาสร้าง hidden field แล้ว append ลง form เพื่อที่จะ submit และส่งค่าไปยังหน้า detail
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'CheckInDate',
+                value: checkInDate
+            }).appendTo('#frmDetail');
+
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'CheckOutDate',
+                value: checkOutDate
+            }).appendTo('#frmDetail');
+
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'RoomAmount',
+                value: roomAmount
+            }).appendTo('#frmDetail');
+
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'City',
+                value: city
+            }).appendTo('#frmDetail');
+
+            for (var i = 0; i < rooms.length; i++) {
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'Rooms[' + i + '].Adults[0]',
+                    value: rooms[i].Adults
+                }).appendTo('#frmDetail');
+
+                if (rooms[i].Children) {
+                    for (var j = 0; j < rooms[i].Children.length; j++) {
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'Rooms[' + i + '].Children[' + j + '].Age',
+                            value: rooms[i].Children[j].Age
+                        }).appendTo('#frmDetail');
+                    }
+                }
+            }
+        }
+    </script>
+
+}

@@ -1,0 +1,92 @@
+﻿@model DiethelmTSWebsite2015.Models.PackageSort
+@using DiethelmTSWebsite2015.Biz
+
+@{
+    Layout = null;
+    int i = 0;
+}
+
+@*<dl class="tabs herizontal-tabs">
+    <dd class="active"><a href="#sortname">Name</a></dd>
+    <dd><a href="#sortprice">Price</a></dd>
+</dl>*@
+
+<ul class="herizontal-tabs tabs" data-tab>
+    @foreach (var item in Model.SortColumn.ToSelectList())
+    {
+        if(i==0)
+        {
+            <li class="tab-title">
+                <a onclick="SetSort('@item.Value')">@item.Value <img class="sortImg" src="/Images/red-arrow3.png"  /></a>
+            </li>
+        }
+        else
+        {
+            <li class="tab-title">
+                <a><span onclick="SetSort('@item.Value')">@item.Value</span> <img class="sortImg" src="/Images/red-arrow3.png" onclick="SetSort('@item.Value')" /></a>
+            </li>
+        }
+        i++;
+    }
+
+</ul>
+<div style="display:none;">
+    @Html.DropDownListFor(model => model.SortColumn, Model.SortColumn.ToSelectList())
+    @Html.DropDownListFor(model => model.SortType, Model.SortType.ToSelectList())
+</div>
+
+
+<script type="text/javascript">
+    var sortType = 0;
+
+    $(document).ready(function () {
+
+        var obj = $.cookie("@DataManager.Package.SORT_COOKIE_NAME");
+        var sortObj = null;
+        if (obj) {
+
+            sortObj = queryStringToJSON(obj);
+            fillSortForm(sortObj);
+        }
+
+
+        $('select[name=SortColumn]').change(function () {
+            SortProcess(true);
+        });
+
+        $('select[name=SortType]').change(function () {
+            SortProcess(true);
+        });
+
+    });
+    function SetSort(sortColumn) {
+        $('#SortColumn').val(sortColumn);
+
+        if (sortType % 2) {
+            $('#SortType').val("Descending");
+            $('.sortImg').attr('src', '/Images/red-arrow3.png');
+        } else {
+            $('#SortType').val("Ascending");
+            $('.sortImg').attr('src', '/Images/red-arrow2.png');
+        }
+        sortType = sortType + 1;
+        SortProcess(true);
+    }
+
+
+    function SortProcess(IsResetPaging) {
+        $.ajax({
+            url: '@Url.Action("SortProcess", "Package")',
+                type: 'GET',
+                data: {
+                    SortColumn: $('#SortColumn').val(),
+                    SortType: $('#SortType').val(),
+                    IsResetPaging: IsResetPaging
+                },
+                success: function (data) {
+                    $('#PackageSearchResult').html(data);
+                    ShowLoadMoreButton();
+                }
+            });
+        }
+</script>

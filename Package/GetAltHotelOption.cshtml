@@ -1,0 +1,34 @@
+﻿@model DiethelmWebServiceClient.TSWS.GetPackageDepartureDetailsResponse
+
+@{
+    Layout = null;
+    DiethelmWebServiceClient.TSWS.Package_MainElement mainElement = null;
+
+    if(Model.GetPackageDepartureDetailsResponseData.Package_MainElements != null && Model.GetPackageDepartureDetailsResponseData.Package_MainElements.Count() > 0)
+    {
+        mainElement = Model.GetPackageDepartureDetailsResponseData.Package_MainElements[0];
+    }
+}
+
+@if(mainElement != null)
+{
+    foreach (var item in mainElement.PackageService)
+    {
+        <div>
+            Day @item.DaySequenceNumber
+        </div>
+        <div>
+            <input type="radio" name="Day_@item.DaySequenceNumber" checked="checked" /> @item.ServiceName
+        </div>
+    
+        if (item.Package_AlternateServices != null && item.Package_AlternateServices.Count() > 0)
+        {
+            foreach (var alt in item.Package_AlternateServices)
+            {
+                <div>
+                    <input type="radio" name="Day_@item.DaySequenceNumber" checked="checked" /> @item.ServiceName
+                </div>
+            }
+        }
+    }
+}

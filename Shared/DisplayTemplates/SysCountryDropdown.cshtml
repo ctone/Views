@@ -1,0 +1,31 @@
+﻿@model byte
+@{
+    Layout = null;
+    DiethelmTSWebsite2015.Biz.CountryCollection c = new DiethelmTSWebsite2015.Biz.CountryCollection();
+}
+
+<select id="CountryID" name="CountryID">
+    @if (Model != null)
+    {
+        foreach (var item in c.ToList())
+        {
+            if (item.ID == Model)
+            {
+                <option value="@item.ID" selected>@item.Name</option>
+            }
+            else
+            {
+                <option value="@item.ID">@item.Name</option>
+            }
+        }
+    }
+    else
+    { 
+        foreach (var item in c.ToList())
+        {
+           
+                <option value="@item.ID">@item.Name</option>
+        }
+    }
+    
+</select>

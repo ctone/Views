@@ -1,0 +1,55 @@
+﻿@using DiethelmTSWebsite2015.Core
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+    DiethelmTSWebsite2015.Biz.DataManager dataManager = DiethelmTSWebsite2015.Biz.DataManager.Instance;
+    var isLogin = dataManager.IsAgencyLogin();
+}
+@if (isLogin)
+{
+    <div id="TransferSearchBox"></div>
+}
+@using (Html.BeginForm("Detail", "Transfer", FormMethod.Post, new { id = "frmDetail"}))
+{
+    <input type="hidden" id="PackageID" name="PackageID" value=""/>
+    <input type="hidden" id="IsLandingPage" name="IsLandingPage" value="true"/>
+    
+<div class="row">
+
+    <!-- Landing Data -->
+    <div class="small-12 columns margin-top30" id="SpecialPromotion">
+        <div class="row ">
+            @{  Html.RenderAction("LandingData", "Transfer", new { country = Utility.GetCurrentCountryName() });  }
+        </div>
+    </div>
+</div>
+}
+
+@section banner
+{
+    @{  Html.RenderAction("ShowBanner", "SysBanner", new { country = Utility.GetCurrentCountryName() });  }
+}
+
+@section Scripts {
+
+    <script src="@Url.Content("~/Scripts/TS/Package.js")"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            
+            $.ajax({
+                url: '@Url.Action("QuickSearch", "Transfer")',
+                type: 'GET',
+                success: function (data) {
+                    $('#TransferSearchBox').html(data);
+                }
+            });
+
+        });
+
+        function GotoDetail(serviceID) {
+            $("#PackageID").val(serviceID);
+            $("#frmDetail").submit();
+        }
+    </script>
+}

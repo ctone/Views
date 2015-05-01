@@ -1,0 +1,70 @@
+﻿@using System.IdentityModel.Tokens
+@model DiethelmTSWebsite2015.Models.SysUserPermissionView
+
+@{
+    ViewBag.Title = "Edit";
+    var users = ViewBag.Users as List<SelectListItem>;
+
+}
+<fieldset>
+    <legend>Edit User Permission</legend>
+@using (Html.BeginForm("Edit", "SysPermission", FormMethod.Post, new{id="main-form"})) {
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x=>x.UserId)
+    <div class="row">
+        <div class="columns small-2 editor-label">
+            @Html.Label("UserSelect", "User")
+        </div>
+        <div class="columns small-10 editor-field">
+            @Html.DropDownList("UserSelect", users, "-- Select User --",new { disabled="disabled", @readonly = "readonly" }) 
+        </div>
+        
+        <div class="columns small-2 editor-label">
+            Permission
+        </div>
+        <div class="columns small-10 editor-field">
+            @foreach (var role in Model.Roles)
+            {
+                <div class="row">
+                    <label class="column large-4 checkbox">
+                        @if (role.Selected)
+                        {
+                            <input type="checkbox" checked='checked' name="SelectedRoles" value="@role.RoleId"/>
+                        }
+                        else
+                        {
+                            <input type="checkbox" name="SelectedRoles" value="@role.RoleId"/>
+                        }
+                        @role.RoleName
+                    </label>
+                </div>
+            }
+        </div>
+        @*<div class="columns small-2 editor-label">
+            <label>Special Permission </label>
+        </div>
+        <div class="columns small-10 editor-field">
+           <a href="@Url.Action("Edit", "SysCustomizedFeature", new { id = Model.UserId })">Create/Delete Permission</a>
+        </div>*@
+         @Html.ValidationSummary(false)        
+        <div class="columns small-12 text-right">
+            <a onclick="Submit();" class="button radius tiny" >Save</a>
+            &nbsp;
+            <a onclick=" history.back(); " class="button radius tiny">Back</a>
+        </div>
+    </div>
+    
+}
+</fieldset>
+@section scripts
+{
+    <script>
+        function Submit() {
+            $('#main-form').submit();
+        }
+
+        $(document).ready(function() {
+            $('select[name=UserId]').trigger('change');
+        });
+    </script>
+}

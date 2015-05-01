@@ -1,0 +1,134 @@
+﻿@using DiethelmTSWebsite2015.Core
+@using DiethelmTSWebsite2015.Biz
+@using DiethelmTSWebsite2015.Models;
+@model IEnumerable<DiethelmTSWebsite2015.Models.SysPost>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+
+    DiethelmTSWebsite2015.Core.Utility.ReloadRouteData();
+    DTTDBContext db = new DTTDBContext();
+    object obj = Request.RequestContext.RouteData.Values["country"];
+    string country = obj == null ? string.Empty : obj.ToString();
+    string countryTab = DiethelmTSWebsite2015.Core.HtmlHelper.GenerateTabCountryFrontend(country);
+    CountryCollection list = new CountryCollection();
+    var countryList = list.ToList();
+    byte countryID = Utility.GetCurrentCountryID();
+    string countryname = Utility.GetCurrentCountryName();
+    if (string.IsNullOrEmpty(country))
+    {
+        //DISPLAY COUNTRY POPUP ... REDIRECT
+    };
+    string active = "";
+    //if (AppSession.Instance.IsLogin()) {}
+    int j = 1;
+    string classCover = "";
+}
+<div class="row ">
+    <div class="small-12 columns post-breadcumb">
+        <a onclick="history.back();" class="right">< Back</a>
+    </div>
+</div>
+
+<div class="row step-title">
+    <div class="small-12 medium-4 columns">
+        <h3 class="step-title-label">Our Teams  &bull; <font id="country-header">@countryname</font></h3>
+    </div>
+    <div class="medium-8 columns list-heading-right hide-for-small">
+    </div>
+</div>
+
+<div class="row herizontal-tabs margin-top30">
+    @Html.Raw(countryTab)
+</div>
+<div class="row ">
+    <div class="small-12 columns country-header-cover"> </div>
+    <div class="small-12 columns country-image-cover"> <img src="/Images/@countryname-Headercover.png" id="img-cover" width="100%"> </div>
+</div>
+
+<div class="row our-team-tab">
+    <div class="small-12 columns "><h3 class="font-red">Meet our team</h3>  </div>
+    <div class="small-12 columns font-gray"> Let us introduce oursleves! Meet some members of our team. The warmly welcome you and look forward to arranging your Journey of Lifetime! </div>
+</div>
+
+<div class="list-cover ">
+    @foreach (var item in countryList)
+    {
+
+        if (item.ID == countryID)
+        {
+            active = "active";
+        }
+        else
+        {
+            active = "";
+        }
+        <div class="content @active" id="panel-@item.ID">
+            @{
+        var shoppingByCountry = Model.Where(f => f.CountryID == item.ID).ToList();
+            }
+            <div class="row">
+                @for (int i = 0; i < shoppingByCountry.Count(); i++)
+                {
+                    if (j == 1)
+                    {
+                        classCover = "our-team-block-left";
+                        j++;
+                    }
+                    if (j == 2)
+                    {
+                        classCover = "";
+                        j++;
+                    }
+                    if (j == 3)
+                    {
+                        classCover = "our-team-block-right";
+                        j = 1;
+                    }
+
+                    <div class="small-12 columns medium-4 our-team-block margin-bottom-15" data-reveal-id="item-@shoppingByCountry[i].ID">
+                        <img src="/assets/thumbnail/@shoppingByCountry[i].Image" width="100%">
+                        <br>
+                        <font class="font-bold">@shoppingByCountry[i].Title</font> <br>
+                        <font class="font-gray">@shoppingByCountry[i].ShortDescription </font>
+                    </div>
+
+                    <div id="item-@shoppingByCountry[i].ID" class="reveal-modal small reveal-modal-list" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+                        <div class="row header-popup">
+                            <div class="small-12 ">
+                                Our Team
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="small-12 columns font-red"><img src="/assets/thumbnail/@shoppingByCountry[i].Image" width="100%"></div>
+                            <div class="small-12 columns font-red margin-top30"><h3 class="font-red">@shoppingByCountry[i].Title</h3> </div>
+                            <div class="small-12 columns font-gray"><h4>@shoppingByCountry[i].ShortDescription</h4></div>
+                            <div class="small-12 columns font-red margin-top15 font-bold">Bio</div>
+                            <div class="small-12 columns">@Html.Raw(shoppingByCountry[i].Description)  </div>
+                        </div>
+
+                        <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+
+
+
+
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        function ChooseCountryTab(Country) {
+            $('#country-header').html(Country);
+            $('#img-cover').attr("src", "/Images/" + Country + "-Headercover.jpg");
+        }
+
+    </script>
+}

@@ -1,0 +1,252 @@
+﻿@model DiethelmTSWebsite2015.Models.PackageFilter
+@using DiethelmTSWebsite2015.Biz
+
+@{
+    Layout = null;
+
+    string tourType = "";
+    string packageCat = "";
+    string speakingGuide = "";
+    int k = 0;
+
+    if (Model.TourType != null && Model.TourType.Length > 0)
+    {
+        tourType = Model.TourType.Substring(0, Model.TourType.Length - 1);
+    }
+
+    if (Model.PackageCat != null && Model.PackageCat.Length > 0)
+    {
+        packageCat = Model.PackageCat.Substring(0, Model.PackageCat.Length - 1);
+    }
+
+    if (Model.SpeakingGuide != null && Model.SpeakingGuide.Length > 0)
+    {
+        speakingGuide = Model.SpeakingGuide.Substring(0, Model.SpeakingGuide.Length - 1);
+    }
+}
+
+<div class="row">
+    <div class="columns small-12 editor-label search-label">
+        Tour type
+    </div>
+    <div class="columns small-12 editor-field search-checkbox">
+        @if (string.IsNullOrEmpty(tourType))
+        {
+            foreach (var item in Model.TourTypeList)
+            {
+                <input type="radio" name="TourTypeFilter" id="TourTypeFilter-@k" onclick="Filter(true)" value="@item.ServiceTypeRatingID" />
+                <label for="TourTypeFilter-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                k++;
+            }
+            <input type="radio" id="TourTypeFilter-@k" name="TourTypeFilter" onclick="Filter(true)" value="" /><label for ="TourTypeFilter-@k">All</label>
+        }
+        else
+        {
+            foreach (var item in Model.TourTypeList)
+            {
+                string[] arrTourType = tourType.Split(',');
+                if (arrTourType.Where(t => t == item.ServiceTypeRatingID.ToString()).Count() > 0)
+                {
+                    <input type="radio" name="TourTypeFilter" id="TourTypeFilter-@k" onclick="Filter(true)" checked="checked" value="@item.ServiceTypeRatingID" />
+                    <label for="TourTypeFilter-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                }
+                else
+                {
+                    <input type="radio" name="TourTypeFilter" id="TourTypeFilter-@k" onclick="Filter(true)" value="@item.ServiceTypeRatingID" />
+                    <label for="TourTypeFilter-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                }
+                k++;
+            }
+            <input type="radio" name="TourTypeFilter" id="TourTypeFilter-@k" onclick="Filter(true)" value="" /><label for="TourTypeFilter-@k">All</label>
+        }
+    </div>
+
+    <div class="columns small-12 editor-label search-label">
+       Package category
+    </div>
+    <div class="columns small-12 editor-field search-checkbox">
+        @{ k = 0;
+         }
+        
+        @if (string.IsNullOrEmpty(packageCat))
+        {
+            foreach (var item in Model.PackageCatList)
+            {
+            <input type="checkbox" name="PackageCatFilter[]" id="PackageCatFilter-@k" onclick="Filter(true)" value="@item.ServiceTypeRatingID" /> 
+            <label for="PackageCatFilter-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                k++;
+            }
+        }
+        else
+        {
+            foreach (var item in Model.PackageCatList)
+            {
+                string[] arrPackageCat = packageCat.Split(',');
+                if (arrPackageCat.Where(t => t == item.ServiceTypeRatingID.ToString()).Count() > 0)
+                {
+            <input type="checkbox" name="PackageCatFilter[]" id="PackageCatFilter2-@k" checked="checked" onclick="Filter(true)" value="@item.ServiceTypeRatingID" /> 
+                        <label for="PackageCatFilter2-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                k++;
+
+                }
+            }
+        }
+
+    </div>
+
+
+    <div class="columns small-12 editor-label  search-label">
+       Speaking guide
+    </div>
+    <div class="columns small-12 editor-field search-checkbox">
+        @{ k = 0;
+         }
+        @if (string.IsNullOrEmpty(speakingGuide))
+        {
+            foreach (var item in Model.SpeakingGuideList)
+            {
+            <input type="checkbox" name="SpeakingGuideFilter[]" id="SpeakingGuideFilter-@k" onclick="Filter(true)" value="@item.ServiceTypeRatingID" /> 
+            <label for="SpeakingGuideFilter-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                k++;
+            }
+        }
+        else
+        {
+            foreach (var item in Model.SpeakingGuideList)
+            {
+                string[] arrSpeakingGuide = speakingGuide.Split(',');
+                if (arrSpeakingGuide.Where(t => t == item.ServiceTypeRatingID.ToString()).Count() > 0)
+                {
+            <input type="checkbox" name="SpeakingGuideFilter[]" id="SpeakingGuideFilter2-@k" onclick="Filter(true)" checked="checked" value="@item.ServiceTypeRatingID" />             
+                <label for="SpeakingGuideFilter2-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                    k++;
+                }
+            }
+        }
+    </div>
+
+
+    <div class="columns small-12 editor-label  search-label">
+        Tour length
+    </div>
+    <div class="columns small-12 editor-field">
+        <select id="Duration" name="Duration">
+            <option value="">Select</option>
+        @foreach (var item in Model.DurationList)
+        {
+            <option value="@item.ServiceTypeRatingID">@item.ServiceTypeRatingName.Trim()</option>
+        }
+        </select>
+    </div>
+
+    <div class="columns small-12 editor-label  search-label">
+        Tour comfort
+    </div>
+    <div class="columns small-12 editor-field">
+        <select id="TourComfort" name="TourComfort">
+            <option value="">Select</option>
+        @foreach (var item in Model.TourComfortList)
+        {
+            <option value="@item.ServiceTypeRatingID">@item.ServiceTypeRatingName.Trim()</option>
+        }
+        </select>
+    </div>
+
+    <div class="columns small-12 editor-label search-label">
+        Tour level
+    </div>
+    <div class="columns small-12 editor-field">
+        <select id="TourLevel" name="TourLevel">
+            <option value="">Select</option>
+        @foreach (var item in Model.TourLevelList)
+        {
+            <option value="@item.ServiceTypeRatingID">@item.ServiceTypeRatingName.Trim()</option>
+        }
+        </select>
+    </div>
+
+
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        //initialize search data from cookie
+        var obj = $.cookie("@DataManager.Hotel.FILTER_COOKIE_NAME");
+        var filterObj = null;
+        if (obj) {
+
+            filterObj = queryStringToJSON(obj);
+            fillFacilityForm(filterObj);
+            //Filter(false); TODONOP: check function filter ตอนกด back อีกที
+        }
+
+
+    });
+
+    $('select[name=Duration]').change(function () {
+        Filter(true);
+    });
+
+    $('select[name=TourComfort]').change(function () {
+        Filter(true);
+    });
+
+    $('select[name=TourLevel]').change(function () {
+        Filter(true);
+    });
+
+    function Filter(isResetPaging) {
+
+        var chkPackageCatVal = "";
+        $('input[name="PackageCatFilter[]"]:checked').each(function () {
+            chkPackageCatVal += $(this).val() + ",";
+        });
+
+        //var chkTourTypeVal = "";
+        //$('input[name="TourTypeFilter[]"]:checked').each(function () {
+        //    chkTourTypeVal += $(this).val() + ",";
+        //});
+
+
+        var chkTourTypeVal = "";
+        var rdoVal = $("input:radio[name ='TourTypeFilter']:checked").val();
+        if (rdoVal != null && rdoVal != "") {
+            chkTourTypeVal = rdoVal + ",";
+        }
+        else {
+            chkTourTypeVal = rdoVal;
+        }
+
+        var chkSpeakingGuideVal = "";
+        $('input[name="SpeakingGuideFilter[]"]:checked').each(function () {
+            chkSpeakingGuideVal += $(this).val() + ",";
+        });
+
+        $('#PackageSearchResult').html("Loading....");
+
+        $.ajax({
+            url: '@Url.Action("Filter", "Package")',
+            type: 'POST',
+            data: {
+                PackageCatSelected: chkPackageCatVal,
+                TourTypeSelected: chkTourTypeVal,
+                SpeakingGuideSelected: chkSpeakingGuideVal,
+                Duration: $("#Duration").val(),
+                TourComfort: $("#TourComfort").val(),
+                TourLevel: $("#TourLevel").val(),
+                IsResetPaging: isResetPaging
+            },
+            success: function (data) {
+                $('#PackageSearchResult').html(data);
+                LoadSummaryResult();
+                ShowLoadMoreButton();
+            }
+        });
+
+    }
+
+
+</script>

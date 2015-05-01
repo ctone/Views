@@ -1,0 +1,143 @@
+﻿@model DiethelmTSWebsite2015.Models.TransferFilter
+@using DiethelmTSWebsite2015.Biz
+
+@{
+    Layout = null;
+
+    string tourType = "";
+    string speakingGuide = "";
+    int k = 0;
+
+    if (Model.TransferType != null && Model.TransferType.Length > 0)
+    {
+        tourType = Model.TransferType.Substring(0, Model.TransferType.Length - 1);
+    }
+
+    if (Model.SpeakingGuide != null && Model.SpeakingGuide.Length > 0)
+    {
+        speakingGuide = Model.SpeakingGuide.Substring(0, Model.SpeakingGuide.Length - 1);
+    }
+}
+
+<div class="row">
+    <div class="columns small-12 editor-label search-label">
+        Transfer type
+    </div>
+    <div class="columns small-12 editor-field search-checkbox">
+        @if (string.IsNullOrEmpty(tourType))
+        {
+            foreach (var item in Model.TransferTypeList)
+            {
+                <input type="radio" name="TransferTypeFilter" id="TourTypeFilter-@k" onclick="Filter(true)" value="@item.ServiceTypeRatingID" />
+                        <label for="TourTypeFilter-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                k++;
+            }
+            <input type="radio" id="TourTypeFilter-@k" name="TransferTypeFilter" onclick="Filter(true)" value="" /><label for="TourTypeFilter-@k">All</label>
+        }
+        else
+        {
+            foreach (var item in Model.TransferTypeList)
+            {
+                string[] arrTourType = tourType.Split(',');
+                if (arrTourType.Where(t => t == item.ServiceTypeRatingID.ToString()).Count() > 0)
+                {
+                    <input type="radio" name="TransferTypeFilter" id="TourTypeFilter-@k" onclick="Filter(true)" checked="checked" value="@item.ServiceTypeRatingID" />
+                    <label for="TourTypeFilter-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                }
+                else
+                {
+                    <input type="radio" name="TransferTypeFilter" id="TourTypeFilter-@k" onclick="Filter(true)" value="@item.ServiceTypeRatingID" />
+                    <label for="TourTypeFilter-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                }
+                k++;
+            }
+            <input type="radio" name="TransferTypeFilter" id="TourTypeFilter-@k" onclick="Filter(true)" value="" /><label for="TourTypeFilter-@k">All</label>
+        }
+
+    </div>
+
+    <div class="columns small-12 editor-label  search-label">
+       Speaking guide
+    </div>
+    <div class="columns small-12 editor-field search-checkbox">
+        @{ k = 0;
+         }
+        @if (string.IsNullOrEmpty(speakingGuide))
+        {
+            foreach (var item in Model.SpeakingGuideList)
+            {
+            <input type="checkbox" name="SpeakingGuideFilter[]" id="SpeakingGuideFilter-@k" onclick="Filter(true)" value="@item.ServiceTypeRatingID" /> 
+            <label for="SpeakingGuideFilter-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                k++;
+            }
+        }
+        else
+        {
+            foreach (var item in Model.SpeakingGuideList)
+            {
+                string[] arrSpeakingGuide = speakingGuide.Split(',');
+                if (arrSpeakingGuide.Where(t => t == item.ServiceTypeRatingID.ToString()).Count() > 0)
+                {
+            <input type="checkbox" name="SpeakingGuideFilter[]" id="SpeakingGuideFilter2-@k" onclick="Filter(true)" checked="checked" value="@item.ServiceTypeRatingID" />             
+                <label for="SpeakingGuideFilter2-@k">@item.ServiceTypeRatingName.Trim()</label><br />
+                    k++;
+                }
+            }
+        }
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        //initialize search data from cookie
+        var obj = $.cookie("@DataManager.Hotel.FILTER_COOKIE_NAME");
+        var filterObj = null;
+        if (obj) {
+
+            filterObj = queryStringToJSON(obj);
+            //Filter(false); TODONOP: check function filter ตอนกด back อีกที
+        }
+
+    });
+
+    function Filter(isResetPaging) {
+        var chkTourTypeVal = "";
+        var rdoVal = $("input:radio[name ='TransferTypeFilter']:checked").val();
+        if (rdoVal != null && rdoVal != "") {
+            chkTourTypeVal = rdoVal + ",";
+        }
+        else {
+            chkTourTypeVal = rdoVal;
+        }
+
+
+        var chkSpeakingGuideVal = "";
+        $('input[name="SpeakingGuideFilter[]"]:checked').each(function () {
+            chkSpeakingGuideVal += $(this).val() + ",";
+        });
+
+        $('#PackageSearchResult').html("Loading....");
+
+        $.ajax({
+            url: '@Url.Action("Filter", "Transfer")',
+            type: 'POST',
+            data: {
+                TransferTypeSelected: chkTourTypeVal,
+                SpeakingGuideSelected: chkSpeakingGuideVal,
+                IsResetPaging: isResetPaging
+            }, 
+            success: function (data) {
+                $('#PackageSearchResult').html(data);
+                LoadSummaryResult();
+                ShowLoadMoreButton();
+            }
+        });
+
+    }
+
+
+</script>

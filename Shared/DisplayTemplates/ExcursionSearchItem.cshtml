@@ -1,0 +1,43 @@
+﻿@using DiethelmTSWebsite2015.Core
+
+@model DiethelmTSWebsite2015.Models.ExcursionSearchResult
+
+<div class="small-12 medium-4 columns content-detail left" style="height:350px;" onclick="GotoDetail('@Model.ExcursionID')">
+    <div class="row">
+        <div class="small-12 medium-12 columns  search-result-pic">
+            <img src="@Model.Image" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" title="@Model.ExcursionName" alt="@Model.ExcursionID" />
+        </div>
+        <div class="small-12 columns display-block">
+            @if (Model.Available=="Yes") {
+                <img src="/Images/status.png" class="float-left"  />
+            }
+            else if (Model.Available=="No"){
+                <img src="/Images/OnRequest.png" class="float-left"  />
+            }
+            @if (Model.TourType == DiethelmTSWebsite2015.Models.ExcursionTourType.Join)
+            { 
+                <img src="/Images/Join.png" class="float-right"  />
+            }
+            @if (Model.TourType == DiethelmTSWebsite2015.Models.ExcursionTourType.Private)
+            {
+                <img src="/Images/Private.png" class="float-right"  />
+            }
+        </div>
+        <div class="small-12 columns">
+            <div class="row content-detail-title-small">
+                <div class="small-12 medium-12 columns">
+                    <h6>@Model.ExcursionName</h6>
+                </div>
+                <div class="small-12 columns">
+                <div class="price-red"><b> THB @Math.Ceiling(Model.Price).ToString("#,##0") </b></div>
+                </div>
+                <div class="small-12 medium-12 columns" style="padding-top:10px;">
+                    <span class="content-detail-desc">@Utility.GetShortText(Model.ExcursionDescription, "...")</span>
+                </div>
+                <div class="small-12 medium-12 columns link-readmore">
+                   read more
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

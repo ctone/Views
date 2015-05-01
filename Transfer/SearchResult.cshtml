@@ -1,0 +1,31 @@
+﻿@model List<DiethelmTSWebsite2015.Models.TransferSearchResult>
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("Detail", "Transfer", FormMethod.Post, new { id = "frmDetail"}))
+{
+        <div class="small-12 columns search-result-area">
+            <div class="row">
+                @if((Model != null) && (Model.Count() > 0))
+                {
+                    foreach (var item in Model)
+                    {
+                        @Html.DisplayFor(modelItem => item, "TransferSearchItem")
+                    }
+                }
+                else
+                {
+                //TODO:
+                }
+            </div>
+        </div>
+    <script>
+        function GotoDetail(packageID, packageCode) {
+
+            $("#PackageID").val(packageID);
+            $("#frmDetail").submit();
+        }
+    </script>
+    }

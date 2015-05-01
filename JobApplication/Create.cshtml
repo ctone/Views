@@ -1,0 +1,115 @@
+﻿@using DiethelmTSWebsite2015.Biz;
+@model DiethelmTSWebsite2015.Models.JobApplication
+
+@{
+    ViewBag.Title = "Create";
+
+
+    string country = Request.RequestContext.RouteData.Values["country"].ToString();
+    DiethelmTSWebsite2015.Biz.CountryCollection countryColl = new DiethelmTSWebsite2015.Biz.CountryCollection();
+
+    DiethelmTSWebsite2015.Biz.SysCategoryBiz biz = new DiethelmTSWebsite2015.Biz.SysCategoryBiz();
+    var catList = biz.Get(countryColl[country].ID);
+
+}
+@section Header {
+    @Scripts.Render("~/bundles/ckeditor")
+}
+<h2>Create</h2>
+
+@using (Html.BeginForm("Create", "JobApplication", FormMethod.Post, new { id = "main-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    @Html.HiddenFor(model => model.Status, new { Value = 1 })
+    @Html.HiddenFor(model => model.CreateDate, new { Value = DateTime.Now })
+    @Html.HiddenFor(model => model.UpdateDate, new { Value = DateTime.Now })
+    <input type="hidden" id="CountryID" name="CountryID" value="@countryColl[country].ID" />
+    <fieldset>
+        <legend>JobApplication</legend>
+        <div class="row">
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.JobTitle)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.JobTitle)
+                @Html.ValidationMessageFor(model => model.JobTitle)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.Responsibilities)
+            </div>
+            <div class="columns small-12 columns small-10 editor-field padding-bottom-15">
+
+                @Html.TextArea("txtDescription", htmlAttributes: new { @class = "ckeditor" })
+                @Html.HiddenFor(model => model.Responsibilities)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.Qualifications)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.Qualifications)
+                @Html.ValidationMessageFor(model => model.Qualifications)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.Destination)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.Destination)
+                @Html.ValidationMessageFor(model => model.Destination)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.PublicationDate)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.PublicationDate)
+                @Html.ValidationMessageFor(model => model.PublicationDate)
+            </div>
+
+
+            <div class="columns small-12 text-right padding-top-20">
+                <input type="button" onclick="Submit();" value="Save" class="button radius tiny" />
+                &nbsp;
+                <input type="button" value="Cancel" class="button radius tiny" onclick="history.back();" />
+            </div>
+        </div>
+    </fieldset>
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $.datepicker.setDefaults($.datepicker.regional['en']);
+        $("#PublicationDate").datepicker({
+            dateFormat: "dd-mm-yy",
+            isBE: false,
+            autoConversionField: false,
+            onClose: function () { $(this).attr('readonly', true); }
+        });
+        $("#PublicationDate").keypress(function (e) {
+            e.preventDefault();
+        });
+
+
+        $.validator.addMethod("date", function (value, element) {
+            return this.optional(element) || /^\d\d?-\d\d-\d\d\d\d/.test(value);
+        }, "Please specify the date in DD-MM-YYYY format");
+
+
+        function Submit() {
+            var description = CKEDITOR.instances.txtDescription.getData();
+            $("#Responsibilities").val(description);
+        $('#main-form').submit();
+    }
+
+
+    </script>
+}
+
+

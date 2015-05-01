@@ -1,0 +1,58 @@
+﻿@model DiethelmTSWebsite2015.Models.SysFeature
+
+@{
+    ViewBag.Title = "Create";
+}
+<fieldset>
+    <legend>Create Feature</legend>
+@using (Html.BeginForm("Create", "SysFeature", FormMethod.Post, new { id = "main-form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <div class="columns small-12 large-2 editor-label">
+            @Html.LabelFor(model => model.ControllerName, "ชื่อ Controller ")
+        </div>
+        <div class="columns small-12 large-10 editor-field">
+            @Html.EditorFor(model => model.ControllerName)
+        </div>
+        @*<div class="columns small-2 editor-label">
+            @Html.LabelFor(model => model.Viewable, "ดูข้อมูล :")
+        </div>
+        <div class="columns small-10 editor-field">
+            @Html.EditorFor(model => model.Viewable)
+        </div>
+        <div class="columns small-2 editor-label">
+            @Html.LabelFor(model => model.Addable, "เพิ่มข้อมูล :")
+        </div>
+        <div class="columns small-10 editor-field">
+            @Html.EditorFor(model => model.Addable)
+        </div>
+        <div class="columns small-2 editor-label">
+            @Html.LabelFor(model => model.Editable, "แก้ไขข้อมูล :")
+        </div>
+        <div class="columns small-10 editor-field">
+            @Html.EditorFor(model => model.Editable)
+        </div>
+        <div class="columns small-2 editor-label">
+            @Html.LabelFor(model => model.Deletable, "ลบข้อมูล :")
+        </div>
+        <div class="columns small-10 editor-field">
+            @Html.EditorFor(model => model.Deletable)
+        </div>*@
+        @Html.ValidationSummary(false)
+        <div class="columns small-12 text-right">
+            <a onclick=" Submit(); "  class="button radius tiny" >Save</a>
+            &nbsp;
+            <a onclick=" history.back(); "  class="button radius tiny">Back</a>
+        </div>
+    </div>
+}
+</fieldset>
+@section Scripts{
+    <script>
+        function Submit() {
+            $('#main-form').submit();
+        }
+    </script>
+}

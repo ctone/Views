@@ -1,0 +1,128 @@
+﻿@using System.IdentityModel.Tokens
+@model DiethelmTSWebsite2015.Models.SysUserPermissionView
+
+@{
+    ViewBag.Title = "Create";
+    var users = ViewBag.Users as List<SelectListItem>;
+
+}
+<fieldset>
+    <legend>Create User Permission</legend>
+@using (Html.BeginForm("Create","SysPermission", FormMethod.Post, new {id="main-form"})) {
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="columns small-2 editor-label">
+            @Html.Label("UserId", "User")
+        </div>
+        <div class="columns small-10 editor-field">
+            @Html.DropDownList("UserId", users, "-- Select User --") 
+        </div>
+        <div class="columns small-2 editor-label">
+            Permission :
+        </div>
+        <div class="columns small-10 editor-field">
+            @foreach (var role in Model.Roles)
+            {
+                <div class="row">
+                    <label class="column large-4 checkbox">
+                        <input type="checkbox" name="SelectedRoles" value="@role.RoleId"/>
+                        @role.RoleName
+                    </label>
+                </div>
+            }
+        </div>
+         @Html.ValidationSummary(false)
+        <div class="columns small-12 text-right">
+            <a onclick=" Submit(); " class="button radius tiny" >Save</a>
+            &nbsp;
+            <a onclick=" history.back(); " class="button radius tiny">Back</a>
+        </div>
+    </div>
+}
+</fieldset>
+@section scripts
+{
+    <script>
+        function Submit() {
+            $('#main-form').submit();
+        }
+    </script>
+    @*<script src="@Url.Content("~/Scripts/userpermission.js")"></script>*@
+    @*<script>
+        $(document).ready(function() {
+            $('select[name=UserSelect]').change(function() {
+                var item = $('select[name=UserSelect] option:selected');
+                $('input[name=UserId]').val(item.val());
+                $('input[name=Username]').val(item.text());
+            });
+
+            $('#addRole').click(function() {
+                var item = {};
+                var selected = $('select[name=RoleSelect] option:selected');
+                item.id = selected.val();
+                item.name = selected.text();
+
+                createPermissionRow(item, 1);
+            });
+
+            $('#addFeature').click(function () {
+                var item = {};
+                var selected = $('select[name=FeatureSelect] option:selected');
+                item.id = selected.val();
+                item.name = selected.text();
+
+                createPermissionRow(item, 2);
+            });
+        });
+
+        function createPermissionRow(obj, level) {
+            var container = $('#permissionContainer');
+            var rows = container.find('tr');
+            var length = rows.length;
+            var prefix = 'Permissions[' + (length - 1) + '].';
+            var name = '';
+            var row = $('<tr/>');
+
+            var colName = $('<td/>');
+            var colLevel = $('<td/>');
+            if (level == 1) {
+                name = prefix + "RoleId";
+                var hiddenRole = $('<input/>').attr({
+                    'type': 'hidden',
+                    'name': name,
+                    'value': obj.id
+                });
+
+                row.append(hiddenRole);
+
+                colName.html(obj.name);
+                colLevel.html('Role');
+            } else {
+                name = prefix + "FeatureId";
+                var hiddenFeature = $('<input/>').attr({
+                    'type': 'hidden',
+                    'name': name,
+                    'value': obj.id
+                });
+
+                row.append(hiddenFeature);
+
+                colName.html(obj.name);
+                colLevel.html('Feature');
+            }
+
+            name = prefix + "Level";
+            var hiddenPermissionLevel = $('<input/>').attr({
+                'type': 'hidden',
+                'name': name,
+                'value': level
+            });
+
+            row.append(hiddenPermissionLevel);
+            row.append(colName);
+            row.append(colLevel);
+
+            container.find('tbody').append(row);
+        }
+    </script>*@
+}

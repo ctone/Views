@@ -1,0 +1,55 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model PagedList.IPagedList<DiethelmTSWebsite2015.Models.SysUser>
+
+@{
+    List<DiethelmTSWebsite2015.Models.SysUser> list = Model.ToList();
+}
+
+<div class="row">
+    <div class="columns small-6 large-6"><h3>User Permission</h3></div>
+    <div class="columns small-6 large-6 padding-top-10 text-right">
+        <a href="@Url.Action("Create")" class="button radius tiny">Create</a>
+        <a onclick="history.back();" class="button radius tiny">Back</a>
+    </div>
+</div>
+
+
+<div class="table-container">
+    <div class="table-row-head row">
+        <div class="table-column columns small-5">User Name</div>
+        <div class="table-column columns small-2">Admin</div>
+        <div class="table-column columns small-2">Status</div>
+        <div class="table-column columns small-3">Tools</div>
+    </div>
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <div class="table-row row">
+                <div class="table-column columns small-5">
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </div>
+                <div class="table-column columns small-2 text-center">
+                    @Html.DisplayFor(modelItem => item.IsAdmin)
+                </div>
+                <div class="table-column columns small-2 text-center">
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </div>
+               
+                <div class="table-column columns small-3 text-center">
+                    <a href="@Url.Action("Edit", new { id = item.ID })">
+                        <img src="/Images/icon_edit.png">
+                    </a>
+                    <a href="@Url.Action("Delete", new { id = item.ID })">
+                        <img src="/Images/icon_delete.png"></a>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+
+<div class="float-left">
+    @Html.PagedListPager((IPagedList)Model, page => Url.Action("List", "SysPermission", new { page = page }), (PagedListRenderOptions)ViewBag.PagedListRender)
+</div>

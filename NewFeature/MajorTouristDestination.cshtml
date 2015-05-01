@@ -1,0 +1,47 @@
+﻿@using DiethelmTSWebsite2015.Core
+@using DiethelmTSWebsite2015.Biz
+@using DiethelmTSWebsite2015.Models;
+@model IEnumerable<DiethelmTSWebsite2015.Models.SysPost>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+
+    DiethelmTSWebsite2015.Core.Utility.ReloadRouteData();
+    DTTDBContext db = new DTTDBContext();
+    object obj = Request.RequestContext.RouteData.Values["country"];
+    string country = obj == null ? string.Empty : obj.ToString();
+    CountryCollection list = new CountryCollection();
+    var countryList = list.ToList();
+    byte countryID = Utility.GetCurrentCountryID();
+    string countryname = Utility.GetCurrentCountryName();
+
+}
+<div class="row ">
+    <div class="small-12 columns post-breadcumb">
+        <a onclick="history.back();" class="right">< Back</a>
+    </div>
+</div>
+
+<div class="row step-title">
+    <div class="small-12 medium-4 columns">
+        <h4 class="step-title-label">Major Tourist Destination  &bull; <font id="country-header">@countryname</font></h4>
+    </div>
+    <div class="medium-8 columns list-heading-right hide-for-small">
+    </div>
+</div>
+
+<div class="row ">
+    <div class="small-12 columns country-header-cover"> </div>
+    <div class="small-12 columns country-image-cover"> <img src="/Images/@countryname-Headercover.png" id="img-cover" width="100%"> </div>
+</div>
+
+<div class="row margin-top15">
+    <div class="small-12 medium-12 columns content-detail">
+        @foreach (var item in Model)
+        {
+            @Html.DisplayFor(modelItem => item, "ContentTitleAndDetail");
+        }
+    </div>
+</div>
+
+

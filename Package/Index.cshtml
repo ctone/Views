@@ -1,0 +1,72 @@
+﻿@using DiethelmTSWebsite2015.Core
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+
+    object obj = Request.RequestContext.RouteData.Values["country"];
+    string country = obj == null ? string.Empty : obj.ToString();
+    DiethelmTSWebsite2015.Biz.DataManager dataManager = DiethelmTSWebsite2015.Biz.DataManager.Instance;
+    var isLogin = dataManager.IsAgencyLogin();
+    if (string.IsNullOrEmpty(country))
+    {
+        //DISPLAY COUNTRY POPUP ... REDIRECT 
+    };
+
+    //if (AppSession.Instance.IsLogin()) {}
+}
+@if (isLogin)
+{
+    <div id="PackageSearchBox"></div>
+}
+
+@using (Html.BeginForm("Detail", "Package", FormMethod.Post, new { id = "frmDetail"}))
+{
+    <input type="hidden" id="PackageID" name="PackageID" value=""/>
+    <input type="hidden" id="IsLandingPage" name="IsLandingPage" value="true"/>
+    
+<div class="row">
+
+    <!-- SPECIAL PROMOTION -->
+    <div class="small-12 medium-8 columns" id="SpecialPromotion">
+        <div class="row">
+             @{  Html.RenderAction("Preferred", "Package", new { country = Utility.GetCurrentCountryName() });  }     
+        </div>
+    </div>
+
+    <!-- RECOMMENDED -->
+    <div class="small-12 medium-4 columns" id="Recommended">
+        <div class="row">
+             @{  Html.RenderAction("BestSeller", "Package", new { country = Utility.GetCurrentCountryName() });  }     
+
+        </div>
+    </div>
+</div>
+}
+
+@section banner
+{
+    @{  Html.RenderAction("ShowBanner", "SysBanner", new { country = Utility.GetCurrentCountryName() });  }
+}
+
+@section Scripts {
+
+    <script src="@Url.Content("~/Scripts/TS/Package.js")"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $.ajax({
+                url: '@Url.Action("QuickSearch", "Package")',
+                type: 'GET',
+                success: function (data) {
+                    $('#PackageSearchBox').html(data);
+                }
+            });
+
+        });
+
+        function GotoDetail(serviceID) {
+            $("#PackageID").val(serviceID);
+            $("#frmDetail").submit();
+        }
+    </script>
+}

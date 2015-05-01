@@ -1,0 +1,68 @@
+﻿@{
+    List<DiethelmTSWebsite2015.Models.Language> lang = ViewBag.Language;
+}
+
+<div id="box">
+    <div>
+        <div>
+            <input type="radio" name="n1" value="01" />
+            01
+        </div>
+        <div>
+            <input type="radio" name="n1" value="02" />
+            02
+        </div>
+    </div>
+    <div>
+        <div>
+            <input type="radio" name="n2" value="A" />
+            A
+        </div>
+        <div>
+            <input type="radio" name="n2" value="B" />
+            B
+        </div>
+    </div>
+
+    <input type="button" onclick="Go()" value="OK" />
+</div>
+<div>
+    <select id="lang">
+        @foreach (var item in lang)
+        {
+            <option value="@item.LanguageID">@item.LanguageName</option>
+        }
+    </select>
+    <input type="button" onclick="Export()" value="Export" />
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+
+        function Go() {
+            $('#box input:radio:checked').each(function (index) {
+                //array[index] = $(this).attr('id');
+                alert($(this).val());
+            });
+        }
+
+        function Export() {
+            $.ajax({
+                url: '@Url.Action("ExportPDF", "Booking")',
+                type: 'GET',
+                data: {
+                    BookingRefNo: "OP11379",
+                    LanguageId: $("#lang").val()
+                },
+                success: function (data) {
+                    var win = window.open(data, '_blank');
+                    win.focus();
+                }
+            });
+        }
+    </script>
+}

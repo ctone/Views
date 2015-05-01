@@ -1,0 +1,35 @@
+﻿@using DiethelmTSWebsite2015.Core
+@using DiethelmTSWebsite2015.Models
+
+@model IList<SysCategory>
+@{
+    ViewBag.Title = "Diethelm Travel";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+}
+
+<div class="page-title">
+    <div class="row">
+        <div class="large-12 columns">
+            <h2 class="page-title-label">Journeys of a Lifetime</h2>
+        </div>
+    </div>
+</div>
+<div class="row">
+    @foreach (SysCategory item in Model)
+    {
+        @Html.DisplayFor(modelItem => item, "CorporateContentItemByCategory");
+         
+        //  @Html.Partial("~/Views/Shared/DisplayTemplates/CorporateContentItemByCategory.cshtml", item)
+    }
+
+ 
+</div>
+
+@section banner{
+    @{  Html.RenderAction("ShowBanner", "SysBanner",  new { country = Utility.GetCurrentCountryName() });  }
+}
+
+@section popup{
+    
+}
+

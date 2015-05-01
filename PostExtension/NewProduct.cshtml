@@ -1,0 +1,13 @@
+﻿<div id="NewProduct">
+    <div class="row">
+        <div class="small-12 medium-12 columns">
+            <h4 class="content-subject">New Products</h4>
+        </div>
+        <div class="small-12 medium-12 columns content-detail">
+            @foreach (var item in Model)
+            {
+                @Html.DisplayFor(modelItem => item, "ContentHorizontalSmall");
+            }
+        </div>
+    </div>
+</div>

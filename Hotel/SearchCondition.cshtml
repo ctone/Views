@@ -1,0 +1,571 @@
+﻿@using DiethelmTSWebsite2015.Biz
+@using DiethelmTSWebsite2015.Models;
+@model DiethelmTSWebsite2015.Models.HotelSearchCondition
+@{
+    Layout = null;
+    ViewBag.Title = "Search";
+    DTTDBContext db = new DTTDBContext();
+    List<DiethelmTSWebsite2015.Models.Region> CityList = ViewBag.CityList;
+    List<DiethelmTSWebsite2015.Models.ServiceTypeRatingDetails> hotelTheme = ViewBag.HotelTheme;
+    List<DiethelmTSWebsite2015.Models.ServiceTypeRatingDetails> hotelStarRating = ViewBag.HotelStarRating;
+    List<DiethelmTSWebsite2015.Models.PriceRangeInfo> priceRange = ViewBag.PriceRange;
+    int j = 0;
+    string currencyName = "";
+}
+<div class="row">
+    <div class="columns small-12">
+        @using (Html.BeginForm("SearchProcess", "Hotel", FormMethod.Post, new { id = "searchfrm" }))
+        {
+            @Html.HiddenFor(model => model.IsSearch)
+            @Html.HiddenFor(model => model.IsQuickSearch)
+
+            <div class="row">
+                <div class="columns small-12 editor-label search-label">
+                    @Html.LabelFor(model => model.City)
+                </div>
+                <div class="columns small-12 editor-field">
+                    <select id="City" name="City">
+                        @foreach (var item in CityList)
+                        {
+                            <option value="@item.RegionName.Trim()" data-val="@item.RegionID">@item.RegionName.Trim()</option>
+                        }
+                    </select>
+                </div>
+                <div class="columns small-12 editor-label search-label">
+                    <label for="CityArea">City Area</label>
+                </div>
+                <div class="columns small-12 editor-field">
+                    <select id="CityArea" name="CityArea"></select>
+                </div>
+                <div class="small-12 medium-6 columns">
+                    <div class="editor-label search-label">
+                        <label for="CheckInDate">Check-in date</label>
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.CheckInDate)
+                    </div>
+                </div>
+                <div class="small-12 medium-6 columns no-padding-left">
+                    <div class="editor-label search-label">
+                        <label for="CheckOutDate">Check-out date</label>
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.CheckOutDate)
+                    </div>
+                </div>
+                <div class="small-12 medium-6 columns hide">
+                    <div class="editor-label search-label">
+                        <label for="nGuest">Guest</label>
+                    </div>
+                    <div class="editor-field">
+                        <input type="text" disabled value="0" id="nGuest" name="nGuest">
+                    </div>
+                </div>
+                <div class="small-12 medium-6 columns no-padding-left hide">
+                    <div class="editor-label search-label">
+                        <label for="RoomAmount">Rooms</label>
+                    </div>
+                    <div class="editor-field">
+                        <select id="RoomAmount" name="RoomAmount">
+                            <option value="1">1 Room</option>
+                            <option value="2">2 Rooms</option>
+                            <option value="3">3 Rooms</option>
+                            <option value="4">4 Rooms</option>
+                            <option value="5">5 Rooms</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div id="roomContainer">
+
+                </div>
+                <div class="columns small-12 editor-label search-label">
+                    <label for="HotelName">Hotel Name</label>
+                </div>
+                <div class="columns small-12 editor-field">
+                    @Html.EditorFor(model => model.HotelName)
+                </div>
+
+                <div class="columns small-12 editor-field search-field search-checkbox">
+                    <input type="checkbox" name="AvailableOnly" id="AvailableOnly" value="false" />
+                    <label for="AvailableOnly">Show available only</label>
+                </div>
+
+
+
+
+
+                <div id="MoreOption" style="display:none;">
+                    <div class="columns small-12 editor-label search-label">
+                        <label for="HotelStarRating">Star</label>
+                    </div>
+                    <div class="columns small-12 editor-field search-field search-checkbox ">
+                        <ul class="option-radio-list">
+                            @foreach (var item in hotelStarRating)
+                            {
+                                <li>
+                                    <input type="checkbox" name="HotelStarRating[]" id="HotelStarRating-@j" value="@item.ServiceTypeRatingID" />
+                                    <label for="HotelStarRating-@j">@item.ServiceTypeRatingName.Trim()</label>
+                                </li>
+                                j++;
+                            }
+                        </ul>
+                    </div>
+                    <div class="columns small-12 editor-label search-label">
+                        <label for="price">Price</label>
+                    </div>
+                    <div class="columns small-12 editor-field   search-field search-checkbox  ">
+                        <ul class="option-radio-list">
+                            @foreach (var item in priceRange)
+                            {
+
+                                var currency = db.Currency.Where(c => c.CurrencyID == item.CurrencyCode);
+                                currencyName = currency.First().CurrencyISOCode;
+                                <li>
+                                    <input type="checkbox" name="PriceRange[]" id="PriceRange-@j" value="@item.ID" />
+                                    <label for="PriceRange-@j">
+                                        @item.PriceFrom.ToString("#,##0.00") -
+                                        @if (item.PriceTo.HasValue)
+                                        {
+                                            @item.PriceTo.Value.ToString("#,##0.00")
+                                        }
+                                        else
+                                        {
+                                            @item.PriceFrom.ToString("#,##0.00") <text>++</text>
+                                        }
+                                        @currencyName
+                                    </label>
+                                </li>
+                                        j++;
+
+                            }
+                        </ul>
+                        @Html.HiddenFor(model => model.PriceFrom)
+                        @Html.HiddenFor(model => model.PriceTo)
+                    </div>
+                </div>
+
+                <div class="columns small-12 editor-label search-label text-center">
+                    <a onclick="MoreOptionClick()" id="MoreOptionShow">+ More search options</a>
+                    <a onclick="MoreOptionClick()" id="MoreOptionHide" style="display:none;">- Less search options</a>
+                </div>
+
+                <div class="columns small-12 margin-top15">
+                    <input type="button" value="Find Hotel" name="Search" class="button radius expand" onclick="SearchHotel(true)" />
+                </div>
+            </div>
+
+        }
+
+        <div id="cloneTemplate">
+            <div class="child-age columns small-4 left hide">
+                <select name="ChildAge">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">12</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                </select>
+            </div>
+            <div class="row child-row" style="display:none">
+                <div class="columns small-12">
+                    <div class="search-label"><label>Age</label></div>
+                    <div class="child-container row">
+                    </div>
+                </div>
+            </div>
+            <div class="room columns small-12" style="display:none">
+                <div class="row">
+                    <div class="columns medium-12 small-12">
+                        <div class="room-selection">
+                            <div class="row">
+                                <div class="columns medium-6 small-6">
+                                    <label class="search-label">Adults</label>
+                                    <select name="Adults" onchange="SumTravelller()">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                    </select>
+                                </div>
+                                <div class="columns medium-6 small-6">
+                                    <label class="search-label">Children</label>
+                                    <select name="Children" class="child-amount" onchange="SumTravelller()">
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    $.datepicker.setDefaults($.datepicker.regional['en']);
+    $("#CheckInDate").datepicker({
+        dateFormat: "dd-mm-yy",
+        prevText: "", // Display text for previous month link
+        nextText: "", // Display text for next month link
+        minDate: 0,
+        isBE: false,
+        autoConversionField: false,
+        onClose: function () { $(this).attr('readonly', true); },
+        onSelect: function (date) {
+            var date2 = $('#CheckInDate').datepicker('getDate');
+            date2.setDate(date2.getDate() + 1);
+            $('#CheckOutDate').datepicker('setDate', date2);
+            $("#CheckOutDate").datepicker("option", "minDate", date2)
+        }
+
+    });
+    $("#CheckInDate").keypress(function (e) {
+        e.preventDefault();
+    });
+
+    $.datepicker.setDefaults($.datepicker.regional['en']);
+    $("#CheckOutDate").datepicker({
+        dateFormat: "dd-mm-yy",
+        prevText: "", // Display text for previous month link
+        nextText: "", // Display text for next month link
+        minDate: 0,
+        isBE: false,
+        autoConversionField: false,
+        onClose: function () { $(this).attr('readonly', true); }
+    });
+    $("#CheckOutDate").keypress(function (e) {
+        e.preventDefault();
+    });
+
+    //$.validator.addMethod("date", function(value, element) {
+    //    return this.optional(element) || /^\d\d?-\d\d-\d\d\d\d/.test(value);
+    //}, "Please specify the date in DD-MM-YYYY format");
+
+    //$('select[name=Adults]').change(function () {
+    //    var sumAdule = 0;
+    //    $("#roomContainer select[name='Adults']").each(function (index) {
+    //        alert($(this).val());
+    //    });
+    //});
+
+    function SumTravelller() {
+        var sum = 0;
+        $("#roomContainer select[name='Adults']").each(function (index) {
+            sum += parseInt($(this).val());
+        });
+
+        $("#roomContainer select[name='Children']").each(function (index) {
+            sum += parseInt($(this).val());
+        });
+
+        $("#nGuest").val(sum);
+    }
+
+    $(document).ready(function () {
+
+        $("#searchfrm").submit(function (e) {
+            CheckActiveLogin("@Url.Action("CheckActiveLogin","Home")", function (result) {
+                if (!result) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        //initialize search data from cookie
+        var obj = $.cookie("@DataManager.Hotel.SEARCH_COOKIE_NAME");
+        var searchObj = null;
+        if (obj) {
+
+            searchObj = queryStringToJSON(obj);
+            fillSearchForm(searchObj);
+            fillStarRatingForm(searchObj);
+            fillThemeForm(searchObj);
+
+            var selected = $('#City').find('option:selected');
+            var val = selected.data('val');
+            LoadArea(val);
+
+            SearchHotel(false);//TODOTARN: ตอน auto search ให้ disable ปุ่ม search ด้วย
+        }
+
+        $(document).on('click', 'a.resultlink', function (e) {
+            e.preventDefault();
+
+        });
+
+        $(document).on('change', 'select.child-amount', function () {
+            var numberOfChildren = $(this).find('option:selected').val();
+            var room = $(this).closest('.room');
+            room.find('.child-row').remove();
+
+            if (parseInt(numberOfChildren) == 0) {
+                return;
+            }
+
+            var childRow = $('#cloneTemplate .child-row').first().clone();
+            childRow.addChildAge(parseInt(numberOfChildren));
+            room.find('.room-selection').append(childRow);
+            room.find('*').removeClass('hide');
+        });
+
+        $('select[name=RoomAmount]').change(function () {
+            var container = $('#roomContainer');
+            container.clearRoom();
+
+            var numberOfRoom = 0;
+            try {
+                numberOfRoom = parseInt($(this).val());
+            } catch (e) {
+
+            }
+
+            $("#nGuest").val(numberOfRoom);
+
+            container.addNewRoom(numberOfRoom);
+        });
+
+        $('#City').change(function () {
+
+            var selected = $(this).find('option:selected');
+            var val = selected.data('val');
+
+            LoadArea(val);
+        });
+
+        function LoadArea(cityID) {
+
+            $.ajax({
+                url: '@Url.Action("GetArea", "Region")',
+                type: 'GET',
+                data: { CityID: cityID },
+                success: function (data) {
+                    $('#CityArea').html(data);
+                }
+            });
+        }
+
+        $('#searchfrm').submit(function (e) {
+            e.preventDefault();
+        });
+    });
+
+    function ValidateUI() {
+
+
+        if ($("#City").val() == "") {
+            alert("Please input city");//TODOTARN: เปลี่ยน alert เป็น display error text
+            $("#City").focus();
+            return false;
+        }
+
+        if ($("#CheckInDate").val() == "") {
+            alert("Please input CheckInDate");//TODOTARN: เปลี่ยน alert เป็น display error text
+            $("#CheckInDate").focus();
+            return false;
+        }
+
+        if ($("#CheckOutDate").val() == "") {
+            alert("Please input CheckOutDate");//TODOTARN: เปลี่ยน alert เป็น display error text
+            $("#CheckOutDate").focus();
+            return false;
+        }
+
+        if ($("#RoomAmount").val() == "" || $("#RoomAmount").val() == "0") {
+            alert("Please input RoomAmount");//TODOTARN: เปลี่ยน alert เป็น display error text
+            $("#RoomAmount").focus();
+            return false;
+        }
+
+        return true;
+    }
+
+    function SearchHotel(isSearch) {
+
+        CheckActiveLogin("@Url.Action("CheckActiveLogin","Home")", function (result) {
+            if (!result) {
+                return;
+            }
+        });
+
+        $("#HotelFilterBox").html("");
+        $("#IsSearch").val(isSearch);
+
+        if (!ValidateUI())
+            return false;
+
+
+        $('#HotelSearchResult').html("Loading.........................");
+
+        var searchData = ConvertFormToJson($('#searchfrm'));
+        $('#Loading').foundation('reveal', 'open');
+        $.ajax({
+            url: '@Url.Action("SearchProcess", "Hotel")',
+            type: 'POST',
+            data: searchData,
+            contentType: "application/json",
+            success: function (data) {
+
+                $("#HotelSearchResult").html("");
+
+                if (data.error) {
+
+                    var errorMsg = '';
+                    data.error.forEach(function (error) {
+                        errorMsg += '<p>' + error + '</p>';
+                    });
+
+                    $("#HotelSearchResult").html(errorMsg);
+
+                } else {
+
+                    $('#HotelSearchResult').html(data);
+                    ShowLoadMoreButton();
+
+                    if (isSearch) {
+                        LoadHotelSortBox();//โหลด sort ใหม่เนื่องจากมีการ clear ค่า sort ตอนกด search
+                    }
+
+
+                    LoadHotelFilterBox();
+                }
+
+                LoadSummaryResult();
+                $('#Loading').foundation('reveal', 'close');
+
+            }
+        });
+    }
+
+
+    function MoreOptionClick() {
+        $('#MoreOption').toggle('slow');
+        $('#MoreOptionShow').toggle();
+        $('#MoreOptionHide').toggle();
+    }
+
+
+
+    function LoadHotelFilterBox() {
+        $.ajax({
+            url: '@Url.Action("Filter", "Hotel")',
+            type: 'GET',
+            success: function (data) {
+                $('#HotelFilterBox').html(data);
+            }
+        });
+    }
+
+    function ShowLoadMoreButton() {
+
+        $('#LoadMore').addClass("hide");
+
+        $.ajax({
+            url: '@Url.Action("CheckLastPage", "Utility")',
+            type: 'Get',
+            success: function (data) {
+
+                if (data.result) {
+                    $('#LoadMore').addClass("hide");
+                }
+                else {
+                    $('#LoadMore').removeClass("hide");
+                }
+            }
+        });
+    }
+
+    function ConvertFormToJson(form) {
+        var result = {};
+        result.City = form.find('select[name=City]').val();
+        result.CityArea = form.find('select[name=CityArea]').val();
+        result.HotelName = form.find('input[name=HotelName]').val();
+        result.CheckInDate = form.find('input[name=CheckInDate]').val();
+        result.CheckOutDate = form.find('input[name=CheckOutDate]').val();
+        result.RoomAmount = form.find('select[name=RoomAmount]').val();
+        result.IsSearch = form.find('input[name=IsSearch]').val();
+        result.HotelSort = form.find('input[name=HotelSort]').val();
+        result.PriceFrom = form.find('input[name=PriceFrom]').val();
+        result.PriceTo = form.find('input[name=PriceTo]').val();
+        result.IsQuickSearch = form.find('input[name=IsQuickSearch]').val();
+
+        var chkVal = "";
+        $('input[name="HotelStarRating[]"]:checked').each(function () {
+            chkVal += $(this).val() + ",";
+        });
+
+        result.HotelStarRating = chkVal;
+
+        var chkThemeVal = "";
+        $('input[name="HotelTheme[]"]:checked').each(function () {
+            chkThemeVal += $(this).val() + ",";
+        });
+
+        result.HotelTheme = chkThemeVal;
+
+        var avail = form.find('input[name="AvailableOnly"]');
+        if (avail.is(':checked')) {
+            avail.val(true);
+        } else {
+            avail.val(false);
+        }
+        result.AvailableOnly = avail.val();
+
+        var rooms = [];
+        form.find('.room').each(function (i) {
+            var room = {};
+            var adults = $(this).find('select[name=Adults] option:selected').val();
+            room.Adults = adults;
+            room.Children = [];
+
+            var childAges = $(this).find('.child-container .child-age');
+
+            childAges.each(function (j) {
+                var childAge = {};
+                var age = $(this).find('select[name=ChildAge] option:selected').val();
+                childAge.Age = age;
+                room.Children.push(childAge);
+            });
+
+            rooms.push(room);
+        });
+
+        result.Rooms = rooms;
+
+        return JSON.stringify(result);
+    }
+
+</script>

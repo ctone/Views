@@ -1,0 +1,38 @@
+﻿@model IList<DiethelmTSWebsite2015.Models.PackageSearchResult>
+@{
+    Layout = null;
+    string strDisplay = "display:none;";
+    if (Model != null && Model.Count > 0)
+    {
+        strDisplay = "";
+    }
+    int i = 0;
+}
+
+@using (Html.BeginForm("Detail", "Package", FormMethod.Post, new { id = "frmPackageDetail"}))
+{
+    <input type="hidden" id="PackageID" name="PackageID" value=""/>
+    <input type="hidden" id="IsLandingPage" name="IsLandingPage" value="true"/>   
+
+<div id="Recommended">
+    <div class="row" style="@strDisplay">
+        <div class="small-12 medium-12 columns">
+            <h4 class="content-subject">Recommended Tours</h4>
+        </div>
+        <div class="small-12 medium-12 columns content-detail">
+            <div class="row">
+            @foreach (var item in Model)
+            {
+                @Html.DisplayFor(modelItem => item, "ContentVerticalWithPrice");
+                i++;
+                if (i >= 6) 
+                {
+                    break;
+                }
+            }
+            </div>
+        </div>
+    </div>
+</div>
+    
+}

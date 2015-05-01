@@ -1,0 +1,530 @@
+﻿@using DiethelmTSWebsite2015.Core
+@{
+    Utility.ReloadRouteData();
+}
+
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js eq-ie9" lang="en">
+<!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+        <title>@ViewBag.Title @(string.IsNullOrWhiteSpace(ViewBag.Title)?"":"-") Diethelm Travel</title>
+        
+        <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="msvalidate.01" content="A6887ED6185D985D25E0CB65DEAB03AA" />
+        <meta name="google-site-verification" content="jPYwX0faZ2frl8le1vFFKOQbuiREnMLbw_xJ6-NPGRs" />
+        <meta name="keywords" content="@ViewBag.Keywords" />
+        <meta name="description" content="@ViewBag.PageDescription" />
+
+        @Styles.Render("~/Content/foundation/css")
+        @Styles.Render("~/Content/themes/base/css")
+        @Styles.Render("~/Content/banner/css")
+        @Styles.Render("~/Content/css")
+
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/jqueryui")
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/modernizr")
+        @Scripts.Render("~/bundles/foundation")
+        @Scripts.Render("~/bundles/web")
+        @Scripts.Render("~/bundles/banner")
+
+        @{
+            DiethelmTSWebsite2015.Biz.DataManager dataManager = DiethelmTSWebsite2015.Biz.DataManager.Instance;
+            var isLogin = dataManager.IsAgencyLogin();
+            string country = Utility.GetCurrentCountryName();
+            string showcountry = country;
+            string countryname = DiethelmTSWebsite2015.Core.Utility.GetCountryDisplayName(showcountry);
+            string img = DiethelmTSWebsite2015.Core.Utility.GetCountryImageUrl(showcountry);
+            if (country == "" || country == "Corporate")
+            {
+                showcountry = "Corporate";
+                countryname = "Select Country";
+                img = "<img src='/Images/flag_thailand_grey.png' />";
+            }
+            else
+            {
+                countryname = DiethelmTSWebsite2015.Core.Utility.GetCountryDisplayName(showcountry);
+                img = string.Format("<img src='{0}' />", DiethelmTSWebsite2015.Core.Utility.GetCountryImageUrl(showcountry));
+            }
+        }
+
+        @RenderSection("head", required: false)
+    </head>
+    <body>
+        <!-- HEADER -->
+        <header>
+            <input type="hidden" id="hddCountry" value="@Utility.GetCurrentCountryName()" />
+            <input type="hidden" id="hddModule" value="" />
+            <div class="contain-to-grid sticky sticky-bg">
+                <nav class="top-bar red-top-bar " data-topbar role="navigation">
+                    <ul class="title-area">
+                        <li class="name show-for-small"><a href="#"><img class="logo-mobile" src="../../Images/diethelm_travel_logo_mobile.png" alt="Diethelm Travel Logo" title="Diethelm Travel Logo" /></a></li>
+                        <li class="toggle-topbar menu-icon"><a href="#"><span>&nbsp;</span></a></li>
+                    </ul>
+
+                    <section class="top-bar-section">
+                        <!-- Right Nav Section -->
+                        <ul class="right">
+                            <li>
+                                 @if (showcountry == "Corporate")
+                                 {
+                                   if (!isLogin)
+                                    {
+                                        <a href="#" data-reveal-id="SelectCountry" class="login">Login</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="login-info">Welcome <a href='#' data-reveal-id="SelectCountry" onclick="selectModule('Booking/MyOrder');"><b>@dataManager.AgentDetails.LONG_NAME.Substring(0, 16)</b> | <b>@dataManager.AgentDetails.PREFERRED_ORGANIZATION_NAME.Substring(0, 16)</b></a>, not me <a href='@Url.Action("Logout", "Home")' class="login">Logout</a></span> 
+                                    }
+                                }else{
+                                   if (!isLogin)
+                                    {
+                                        <a href="#" data-reveal-id="LoginBox" class="login">Login</a>
+                                    }
+                                   else
+                                   {
+                                         <span class="login-info">Welcome <a href='#' onclick="selectModule('Booking/MyOrder'); return redirectTo('@showcountry')"><b>@dataManager.AgentDetails.LONG_NAME.Substring(0, 16)</b> | <b>@dataManager.AgentDetails.PREFERRED_ORGANIZATION_NAME.Substring(0, 16)</b></a>, not me <a href='@Url.Action("Logout", "Home")' class="login">Logout</a></span> 
+                                   }
+                                }
+                            </li>
+                            <li class="divider"></li>
+                            <li><a href="#" data-reveal-id="SubscribeBox" class="subscribe">Subscribe</a></li>
+                            <li class="divider"></li>
+                            <li class="has-dropdown">
+                                <a href="#">@Html.Raw(img)@countryname</a>
+                                <ul class="dropdown">
+                                    <li><a href="@Url.Action("Country", "Home", new { country = "Bhutan" })"><img src="/Images/flag_bhutan.png" alt="Bhutan" title="Bhutan" />Bhutan</a></li>
+                                    <li><a href="@Url.Action("Country", "Home", new { country = "Cambodia" })"><img src="/Images/flag_cambodia.png" alt="Cambodia" title="Cambodia" />Cambodia</a></li>
+                                    <li><a href="@Url.Action("Country", "Home", new { country = "China" })"><img src="/Images/flag_china.png" alt="China" title="China" />China</a></li>
+                                    <li><a href="@Url.Action("Country", "Home", new { country = "Hongkong" })"><img src="/Images/flag_hong_kong.png" alt="Hong Kong" title="Hong Kong" />Hong Kong</a></li>
+                                    <li><a href="@Url.Action("Country", "Home", new { country = "Laos" })"><img src="/Images/flag_laos.png" alt="Laos" title="Laos" />Laos</a></li>
+                                    <li><a href="@Url.Action("Country", "Home", new { country = "Malaysia" })"><img src="/Images/flag_malaysia.png" alt="Malaysia" title="Malaysia" />Malaysia</a></li>
+                                    <li><a href="@Url.Action("Country", "Home", new { country = "Maldives" })"><img src="/Images/flag_maldives.png" alt="Maldives" title="Maldives" />Maldives</a></li>
+                                    <li><a href="@Url.Action("Country", "Home", new { country = "Myanmar" })"><img src="/Images/flag_myanmar.png" alt="Myanmar" title="Myanmar" />Myanmar</a></li>
+                                    <li><a href="@Url.Action("Country", "Home", new { country = "Singapore" })"><img src="/Images/flag_singapore.png" alt="Singapore" title="Singapore" />Singapore</a></li>
+                                    <li><a href="@Url.Action("Country", "Home", new { country = "Srilanka" })"><img src="/Images/flag_srilanka.png" alt="Sri Lanka" title="Sri Lanka" />Sri Lanka</a></li>
+                                    <li><a href="@Url.Action("Country", "Home", new { country = "Thailand" })"><img src="/Images/flag_thailand.png" alt="Thailand" title="Thailand" />Thailand</a></li>
+                                    <li><a href="@Url.Action("Country", "Home", new { country = "Vietnam" })"><img src="/Images/flag_vietnam.png" alt="Vietnam" title="Vietnam" />Vietnam</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <!-- Left Nav Section -->
+                        <ul class="left hide-for-small">
+                            <li><a rel="nofollow" href="https://www.facebook.com/diethelmtravel"><img class="social-button" src="/Images/facebook-32.png" alt="@Resources.master.altFB" title="@Resources.master.altFB" /></a></li>
+                            <li><a rel="nofollow"><img class="social-button" src="/Images/google-plus-32.png" alt="@Resources.master.altGooglePlus" title="@Resources.master.altGooglePlus" /></a></li>
+                            <li><a rel="nofollow"><img class="social-button" src="/Images/linkedin-32.png" alt="@Resources.master.altLinkedIn" title="@Resources.master.altLinkedIn" /></a></li>
+                            <li><a style="padding-top:5px;">RSS</a></li>
+                            <li><a rel="nofollow"><img class="social-button" src="/Images/twitter-32.png" alt="@Resources.master.altTwitter" title="@Resources.master.altTwitter" /></a></li>
+                            <li><a rel="nofollow"><img class="social-button" src="/Images/youtube-32.png" alt="@Resources.master.altYouTube" title="@Resources.master.altYouTube" /></a></li>
+                        </ul>
+                    </section>
+                </nav>
+            </div>
+        </header>
+        <!-- MENU -->
+        <div class="row">
+            <div class="small-12 medium-12 columns menu">
+                <nav class="top-bar " data-topbar role="navigation">
+                    <ul class="title-area">
+                        <li class="name"><h1><a href="@Url.Action("Country", "Home", new { country = Utility.GetCurrentCountryName() })"><img class="logo" src="/Images/diethelm_travel_logo.png" alt="Diethelm Travel Logo" title="Diethelm Travel Logo" /></a></h1></li>
+                        <li class="toggle-topbar menu-icon"><a href="#"><span>&nbsp;</span></a></li>
+                    </ul>
+
+                    <section class="top-bar-section main-menu">
+                        <!-- Right Nav Section -->
+                        <ul class="right">
+                            <li><a href="@Url.Action("Index", "Home", new { country = Utility.GetCurrentCountryName() })">Journeys of a lifetime</a></li>
+                            <li>
+                                @if (showcountry == "Corporate")
+                                {
+                                    <a href="#" data-reveal-id="SelectCountry">Awesome Deals</a>
+                                }
+                                else
+                                {
+                                    if (!isLogin)
+                                    {
+                                        <a href="#" data-reveal-id="LoginBox" onclick="selectModule('AwesomeDeal')">Awesome Deals</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Index", "AwesomeDeal", new { country = Utility.GetCurrentCountryName() })">Awesome Deals</a>
+                                    }
+                                }
+                            </li>
+                            <li>
+                                @if (showcountry == "Corporate")
+                                {
+                                    <a href="#" data-reveal-id="SelectCountry">Holidays</a>
+                                }
+                                else
+                                {
+                                    if (!isLogin)
+                                    {
+                                        <a href="#" data-reveal-id="LoginBox" onclick="selectModule('Package')">Holidays</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Index", "Package", new { country = Utility.GetCurrentCountryName() })">Holidays</a>
+                                    }
+                                }
+                            </li>
+                            <li>
+                                @if (showcountry == "Corporate")
+                                {
+                                    <a href="#" data-reveal-id="SelectCountry">Excursion</a>
+                                }
+                                else
+                                {
+                                    if (!isLogin)
+                                    {
+                                        <a href="#" data-reveal-id="LoginBox" onclick="selectModule('Excursion')">Excursion</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Index", "Excursion", new { country = Utility.GetCurrentCountryName() })">Excursion</a>
+                                    }
+                                }
+                            </li>
+                            <li>
+                                @if (showcountry == "Corporate")
+                                {
+                                    <a href="#" data-reveal-id="SelectCountry">Transfer</a>
+                                }
+                                else
+                                {
+                                    if (!isLogin)
+                                    {
+                                        <a href="#" data-reveal-id="LoginBox" onclick="selectModule('Transfer')">Transfer</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Index", "Transfer", new { country = Utility.GetCurrentCountryName() })">Transfer</a>
+                                    }   
+                                }
+                            </li>
+                            <li>
+                                @if (showcountry == "Corporate")
+                                {
+                                <a href="#" data-reveal-id="SelectCountry">Hotel</a>
+                                }
+                                else
+                                {
+                                    if (!isLogin)
+                                    {
+                                        <a href="#" data-reveal-id="LoginBox" onclick="selectModule('Hotel')">Hotel</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Index", "Hotel", new { country = Utility.GetCurrentCountryName() })">Hotel</a>
+                                    }   
+                                }
+                            </li>
+                            <li><a href="@Url.Action("Index", "ContactUS", new { country = Utility.GetCurrentCountryName() })">Contact Us</a></li>
+                        </ul>
+                    </section>
+                </nav>
+            </div>
+        </div>
+        <!-- BANNER -->
+        @RenderSection("banner", required: false)
+        <!-- BODY -->
+        @RenderBody()
+        <!-- POPUP -->
+            <!-- General popup -->
+            <div id="MessageBox" class="reveal-modal small" data-reveal>
+                <a class="close-reveal-modal">&#215;</a>
+                <div class="row">
+                    <div class="small-12 large-12 columns">&nbsp; <!-- SUBJECT HERE --> </div>
+                    <div class="small-12 large-12 columns">&nbsp; <!-- MESSAGE HERE --> </div>
+                    <div class="small-12 large-12 columns"> 
+                        <img id="close" class="close-reveal-modal" src="" alt="" title="" onclick="" />
+                        <img id="ok" class="" src="" alt="" title="" onclick="" />
+                        <img id="cancel" class="close-reveal-modal" src="" alt="" title="" onclick="" />
+                    </div>
+                </div>
+            </div>
+            <!-- Login popup -->
+            <div id="LoginBox" class="reveal-modal small" data-reveal>
+                <a class="close-reveal-modal">&#215;</a>
+                <div class="row">
+                    <div class="small-12 large-12 columns margin-bottom-15">Login</div>
+                    <div class="small-12 large-12 columns">
+                        <input type="text" placeholder="Username" id="Username" />
+                    </div>
+                    <div class="small-12 large-12 columns">
+                        <input type="password" placeholder="Password" id="Password" />
+                    </div>
+                    <div class="small-12 large-12 columns text-right">
+                        <input id="notnow" class="button tiny" type="button" value="Not Now" onclick="" />
+                        <input id="cancelLogin" class="button tiny" type="button" value="Close" onclick="" />
+                        <input id="Login" class="button tiny" type="button" value="Login" onclick="" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact popup -->
+            <div id="ContactUsPopup" class="reveal-modal small" data-reveal>
+                <a class="close-reveal-modal">&#215;</a>
+                <div class="row">
+                    <div id="ContactTitle" class="small-12 large-12 columns margin-bottom-15">Title</div>
+                    <div class="small-12 large-12 columns">
+                        <input type="text" placeholder="Message" id="ContactMessage" />
+                    </div>
+                    <div class="small-12 large-12 columns text-right">
+                        <input id="btnContactClose" class="button tiny" type="button" value="Close" />
+                        <input id="btnContactSend" class="button tiny" type="button" value="Subscribe" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subscribe popup -->
+            <div id="SubscribeBox" class="reveal-modal small" data-reveal>
+                <a class="close-reveal-modal">&#215;</a>
+                <div class="row">
+                    <div class="small-12 large-12 columns margin-bottom-15"> Subscribe now to always get the lastest news and promotions from us</div>
+                    <div class="small-12 large-12 columns">
+                        <input type="text" placeholder="Email" id="Email" />
+                    </div>
+                    <div class="small-12 large-12 columns text-right">
+                        <input id="cancelSubscribe" class="button tiny" type="button" value="Close" />
+                        <input id="Subscribe" class="button tiny" type="button" value="Subscribe" />
+                    </div>
+                </div>
+            </div>
+            <!-- Select country popup -->
+            <div id="SelectCountry" class="reveal-modal small" data-reveal >
+                <a class="close-reveal-modal">&#215;</a>
+                    <div class="row">
+                        @if (!isLogin) 
+                        { 
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" data-reveal-id="LoginBox" class="login" onclick="selectCountry('Bhutan')"><img src="/Images/flag_bhutan.png" alt="Bhutan" title="Bhuta n" /> Bhutan</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" data-reveal-id="LoginBox" class="login" onclick="selectCountry('Cambodia')"><img src="/Images/flag_cambodia.png" alt="Cambodia" title="Cambodia" /> Cambodia</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" data-reveal-id="LoginBox" class="login" onclick="selectCountry('China')"><img src="/Images/flag_china.png" alt="China" title="China" /> China</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" data-reveal-id="LoginBox" class="login" onclick="selectCountry('HongKong')"><img src="/Images/flag_hong_kong.png" alt="Hong Kong" title="Hong Kong" /> Hong Kong</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" data-reveal-id="LoginBox" class="login" onclick="selectCountry('Laos')"><img src="/Images/flag_laos.png" alt="Laos" title="Laos" /> Laos</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" data-reveal-id="LoginBox" class="login" onclick="selectCountry('Malaysia')"><img src="/Images/flag_malaysia.png" alt="Malaysia" title="Malaysia" /> Malaysia</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" data-reveal-id="LoginBox" class="login" onclick="selectCountry('Maldives')"><img src="/Images/flag_maldives.png" alt="Maldives" title="Maldives" /> Maldives</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" data-reveal-id="LoginBox" class="login" onclick="selectCountry('Myanmar')"><img src="/Images/flag_myanmar.png" alt="Myanmar" title="Myanmar" /> Myanmar</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" data-reveal-id="LoginBox" class="login" onclick="selectCountry('Singapore')"><img src="/Images/flag_singapore.png" alt="Singapore" title="Singapore" /> Singapore</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" data-reveal-id="LoginBox" class="login" onclick="selectCountry('SriLanka')"><img src="/Images/flag_srilanka.png" alt="Sri Lanka" title="Sri Lanka" /> Sri Lanka</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" data-reveal-id="LoginBox" class="login" onclick="selectCountry('Thailand')"><img src="/Images/flag_thailand.png" alt="Thailand" title="Thailand" /> Thailand</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" data-reveal-id="LoginBox" class="login" onclick="selectCountry('Vietnam')"><img src="/Images/flag_vietnam.png" alt="Vietnam" title="Vietnam" /> Vietnam</a>
+                        </div>
+                        }
+                        else
+                        {
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" onclick="redirectTo('Bhutan')"><img src="/Images/flag_bhutan.png" alt="Bhutan" title="Bhutan" /> Bhutan</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" onclick="redirectTo('Cambodia')"><img src="/Images/flag_cambodia.png" alt="Cambodia" title="Cambodia" /> Cambodia</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" onclick="redirectTo('China')"><img src="/Images/flag_china.png" alt="China" title="China" /> China</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" onclick="redirectTo('Hongkong')"><img src="/Images/flag_hong_kong.png" alt="Hong Kong" title="Hong Kong" /> Hong Kong</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" onclick="redirectTo('Laos')"><img src="/Images/flag_laos.png" alt="Laos" title="Laos" /> Laos</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" onclick="redirectTo('Malaysia')"><img src="/Images/flag_malaysia.png" alt="Malaysia" title="Malaysia" /> Malaysia</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" onclick="redirectTo('Maldives')"><img src="/Images/flag_maldives.png" alt="Maldives" title="Maldives" /> Maldives</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" onclick="redirectTo('Myanmar')"><img src="/Images/flag_myanmar.png" alt="Myanmar" title="Myanmar" /> Myanmar</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" onclick="redirectTo('Singapore')"><img src="/Images/flag_singapore.png" alt="Singapore" title="Singapore" /> Singapore</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" onclick="redirectTo('Srilanka')"><img src="/Images/flag_srilanka.png" alt="Sri Lanka" title="Sri Lanka" /> Sri Lanka</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" onclick="redirectTo('Thailand')"><img src="/Images/flag_thailand.png" alt="Thailand" title="Thailand" /> Thailand</a>
+                        </div>
+                        <div class="small-12 medium-4 columns margin-bottom-15">
+                            <a href="#" onclick="redirectTo('Vietnam')"><img src="/Images/flag_vietnam.png" alt="Vietnam" title="Vietnam" /> Vietnam</a>
+                        </div>
+                        }
+                    </div>
+            </div>
+            <!-- Loading popup -->
+            <div id="Loading" class="reveal-modal small" data-reveal>
+                <img src="/Images/loading.gif"> Loading.....
+            </div>
+            <!-- Popup Message -->
+            <div id="Message" class="reveal-modal small" data-reveal>
+                <a class="close-reveal-modal">&#215;</a>
+                <div id="mg"></div>
+            </div>
+            <!-- Page custom popup -->
+        @RenderSection("popup", required: false)
+        <!-- FOOTER -->
+        <footer>
+            <div class="row">
+                <div class="medium-7 push-5 columns">
+                    <ul class="sitemap">
+                        <li><a href="@Url.Action("Index", "Home", new { country = Utility.GetCurrentCountryName() })">Journeys of a lifetime</a></li>
+                        <li><a href="@Url.Action("Index", "AwesomeDeal", new { country = Utility.GetCurrentCountryName() })">Awesome Deal</a></li>
+                        <li><a href="@Url.Action("Index", "Package", new { country = Utility.GetCurrentCountryName() })">Holidays</a></li>
+                        <li><a href="@Url.Action("Index", "Excursion", new { country = Utility.GetCurrentCountryName() })">Excursion</a></li>
+                        <li><a href="@Url.Action("Index", "Transfer", new { country = Utility.GetCurrentCountryName() })">Transfer</a></li>
+                        <li><a href="@Url.Action("Index", "Hotel", new { country = Utility.GetCurrentCountryName() })">Hotel</a></li>
+                        <li><a href="@Url.Action("Index", "ContactUS", new { country = Utility.GetCurrentCountryName() })">Contact us</a></li>
+                    </ul>
+                </div>
+                <div class="medium-5 pull-7 columns">
+                    copyright  @DateTime.Now.Year Diethelm Travel Thailand. All rights reserved.
+                </div>
+            </div>
+        </footer>
+        <!-- SCRIPT -->
+            <!-- General script -->
+        
+
+    <script type="text/javascript">
+    function selectCountry(selectcountry) {
+        $("#hddCountry").val(selectcountry);
+        //alert( $("#hddCountry").val());
+    }
+    function selectModule(module) {
+        $("#hddModule").val(module);
+       // alert($("#hddModule").val());
+    }
+    function redirectTo(selectcountry) {
+        //alert(selectcountry + "  /  " + $("#hddModule").val());
+        $('#SelectCountry').foundation('reveal', 'close');
+        $('#Loading').foundation('reveal', 'open');
+        if ($("#hddModule").val() != "") {
+            window.location.href = "/" + selectcountry + "/" + $("#hddModule").val();
+        } else {
+            window.location.href = "/" + selectcountry + "/Home/Country";
+        }
+    }
+    function login() {
+        if ($("#Username").val() == "" || $("#Password").val() == "") {
+            alert('Please input username and password');
+            $("#Username").focus();
+            return;
+        }
+        var country = $('#hddCountry').val();
+        //$('#LoginBox').html("<img src='/Images/loading.gif'> Loading.....");
+        // $('#loading').foundation('reveal', 'open');
+        $('#LoginBox').foundation('reveal', 'close');
+        $('#Loading').foundation('reveal', 'open');
+
+        setTimeout(DoLogin, 1000);
+
+    }
+
+    function ChangeCountry(currentCountry, newCountry, isLogon) {
+        alert(currentCountry+" "+newCountry+" "+isLogon);
+    }
+
+    function DoLogin(country) {
+        $.ajax({
+            url: '@Url.Action("Login", "Home")',
+            data: { Username: $("#Username").val(), Password: $("#Password").val(), Country: $("#hddCountry").val() },
+            type: 'Post',
+            async: false,
+            success: function (result) {
+                if (result == "0") {
+                    alert("Login Fail");
+                    $('#Loading').foundation('reveal', 'close');
+                    $('#Message').foundation('reveal', 'open');
+                    $('#mg').html("Login Fail");
+                    return;
+                }
+                if ($("#hddModule").val() != "") {
+                    window.location.href = "/" + $("#hddCountry").val() + "/" + $("#hddModule").val();
+                } else {
+                    window.location.href = "/" + $("#hddCountry").val() + "/Home/Country";
+                }
+            }
+        });
+    }
+
+        $(document).ready(function () {
+            $(document).foundation();
+
+            $("#Login").click(function () {
+                login();
+            });
+            $("#notnow").click(function () {
+                var country = $('#hddCountry').val();
+                window.location.href = "/" + country + "/Home/Country";
+            });
+            $("#cancelLogin").click(function () {
+                $('#LoginBox').foundation('reveal', 'close');
+            });
+            $("#cancelSubscribe").click(function () {
+                $('#SubscribeBox').foundation('reveal', 'close');
+            });
+
+            $("#Subscribe").click(function () {
+                $.ajax({
+                    url: '@Url.Action("Create", "Subscriber")',
+                    data: { Email: $("#Email").val() },
+                    type: 'Post',
+                    async: false,
+                    success: function (result) {
+                        $('#SubscribeBox').foundation('reveal', 'close');
+                        $('#Message').foundation('reveal', 'open');
+                        $('#mg').html("Subscribe successed");
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                        alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+                    }       
+                });
+            });
+
+            $("#Password").keypress(function (event) {
+                if (event.which == 13) {
+                    login();
+                }
+            });
+            //     $('img').one('error', function () { this.src = '/Images/Noimage.jpg'; });
+        });
+        function ClearCookie() {
+            $.cookie("HotelSearchCondition", null, { path: '/' });
+        }
+        </script>
+            <!-- Google Tag Manager -->
+            <!-- Page custom script -->
+        @RenderSection("scripts", required: false)
+    </body>
+</html>

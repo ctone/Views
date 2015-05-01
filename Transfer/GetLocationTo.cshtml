@@ -1,0 +1,10 @@
+﻿@model List<DiethelmTSWebsite2015.Models.TransferLocation>
+
+@{
+    Layout = null;
+}
+
+@foreach(var item in Model)
+{
+    <option value="@item.RegionToID">@item.RegionToName</option>
+}

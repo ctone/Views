@@ -1,0 +1,258 @@
+﻿@model DiethelmTSWebsite2015.Models.Weather
+@using DiethelmTSWebsite2015.Biz;
+@using DiethelmTSWebsite2015.Models;
+
+@{
+    ViewBag.Title = "Edit";
+
+   
+    string country = Request.RequestContext.RouteData.Values["country"].ToString();
+    DiethelmTSWebsite2015.Biz.CountryCollection countryColl = new DiethelmTSWebsite2015.Biz.CountryCollection(); 
+
+    SysCategoryBiz biz = new SysCategoryBiz();
+    var catList = biz.Get(countryColl[country].ID);
+
+    DiethelmTSWebsite2015.Biz.RegionBiz region = new DiethelmTSWebsite2015.Biz.RegionBiz();
+    byte countryID = DiethelmTSWebsite2015.Core.Utility.GetCurrentCountryID();
+    List<Region> regionlist = region.GetCity(countryID, country); 
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm("Edit", "Weather", FormMethod.Post, new { id = "main-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    @Html.HiddenFor(model => model.Status)
+    @Html.HiddenFor(model => model.CreateDate)
+    @Html.HiddenFor(model => model.CreateBy)
+     @Html.HiddenFor(model => model.CountryID)
+    @Html.HiddenFor(model => model.UpdateDate, new { Value = DateTime.Now })
+
+    <fieldset>
+        <legend>Season</legend>
+        <div class="row">
+            @Html.HiddenFor(model => model.ID)
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.CityID)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="CityID" name="CityID">
+                    @foreach (var item in regionlist)
+                    {
+                        if (item.RegionID == Model.CityID)
+                        {
+                            <option value="@item.RegionID" selected>@item.RegionName</option>
+                        }
+                        else
+                        {
+                            <option value="@item.RegionID">@item.RegionName</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.AreaID)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.AreaID)
+                @Html.ValidationMessageFor(model => model.AreaID)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.January)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="January" name="January">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.February)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="February" name="February">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.March)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="March" name="March">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.April)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="April" name="April">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.May)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="May" name="May">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.June)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="June" name="June">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.July)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="July" name="July">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.August)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="August" name="August">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.September)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="September" name="September">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.October)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="October" name="October">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.December)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="December" name="December">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+            <div class="columns small-12 text-right padding-top-20">
+                <input type="button" onclick="Submit();" value="Save" class="button radius tiny" />
+                &nbsp;
+                <input type="button" value="Cancel" class="button radius tiny" onclick="history.back();" />
+            </div>
+        </div>
+    </fieldset>
+
+    <input type="hidden" id="JanuaryHid" name="JanuaryHid" value="@Model.January" />
+    <input type="hidden" id="FebruaryHid" name="FebruaryHid" value="@Model.February" />
+    <input type="hidden" id="MarchHid" name="MarchHid" value="@Model.March" />
+    <input type="hidden" id="AprilHid" name="AprilHid" value="@Model.April" />
+    <input type="hidden" id="MayHid" name="MayHid" value="@Model.May" />
+    <input type="hidden" id="JuneHid" name="JuneHid" value="@Model.June" />
+    <input type="hidden" id="JulyHid" name="JulyHid" value="@Model.July" />
+    <input type="hidden" id="AugustHid" name="AugustHid" value="@Model.August" />
+    <input type="hidden" id="SeptemberHid" name="SeptemberHid" value="@Model.September" />
+    <input type="hidden" id="OctoberHid" name="OctoberHid" value="@Model.October" />
+    <input type="hidden" id="NovemberHid" name="NovemberHid" value="@Model.November" />
+    <input type="hidden" id="DecemberHid" name="DecemberHid" value="@Model.December" />
+
+
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+       
+        $("#January").val($("#JanuaryHid").val());
+        $("#February").val($("#FebruaryHid").val());
+        $("#March").val($("#MarchHid").val());
+        $("#April").val($("#AprilHid").val());
+        $("#May").val($("#MayHid").val());
+        $("#June").val($("#JuneHid").val());
+        $("#July").val($("#JulyHid").val());
+        $("#August").val($("#AugustHid").val());
+        $("#September").val($("#SeptemberHid").val());
+        $("#October").val($("#OctoberHid").val());
+        $("#November").val($("#NovemberHid").val());
+        $("#December").val($("#DecemberHid").val());
+        });
+
+
+       function Submit() {
+           $('#main-form').submit();
+       }  
+
+    </script>
+}

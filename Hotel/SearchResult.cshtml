@@ -1,0 +1,24 @@
+﻿@model List<DiethelmTSWebsite2015.Models.HotelSearchResult>
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("Detail", "Hotel", FormMethod.Post, new { id = "frmDetail" }))
+{
+        <div class="small-12 columns search-result-area">
+            <div class="row">
+                @if((Model != null) && (Model.Count() > 0))
+                {
+                    foreach (var item in Model)
+                    {
+                        @Html.DisplayFor(modelItem => item, "HotelSearchItem")
+                    }
+                }
+                else
+                {
+                //TODO:
+                }
+            </div>
+        </div>
+    }

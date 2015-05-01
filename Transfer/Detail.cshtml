@@ -1,0 +1,430 @@
+﻿@using DiethelmTSWebsite2015.Biz
+@using DiethelmWebServiceClient.TSWS
+@using DiethelmTSWebsite2015.Models
+
+@model DiethelmWebServiceClient.TSWS.DetailsPackage
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+
+    List<string> imageList = ViewBag.ImageList;
+    DateTime DepartureDate = ViewBag.DepartureDate;
+
+    List<PickupDropOffData> pickUpList = ViewBag.PickupList;
+    List<PickupDropOffData> dropOffList = ViewBag.DropOffList;
+    List<string> hints = ViewBag.Hints;
+
+    int PackageID = ViewBag.PackageID;
+    string StartDate = DepartureDate.ToString(TSDifine.DATE_FORMAT);
+    string EndDate = DepartureDate.ToString(TSDifine.DATE_FORMAT);
+    int mainElementID = 0;
+    string mainElementName = "";
+
+    double StartingPrice = ViewBag.StartingPrice;
+    int i = 0;
+
+    bool IsDisplayHint = hints.Count() > 0;
+}
+
+@using (Html.BeginForm("TravellerPackage", "Booking", FormMethod.Post, new { id = "frm" }))
+{
+    <input type="hidden" id="PackageID" name="PackageID" value="@ViewBag.PackageID"/>
+    <input type="hidden" id="PackageName" name="PackageName" value="@ViewBag.PackageName" />
+    <input type="hidden" id="FromDate" name="FromDate" />
+    <input type="hidden" id="ToDate" name="ToDate" />
+    <input type="hidden" id="MainElementID" name="MainElementID" value="MainElementID" />
+    <input type="hidden" id="MainElementName" name="MainElementName" value="MainElementName" />
+    <input type="hidden" id="OccupancyName" name="OccupancyName" value="" />
+    <input type="hidden" id="OccupancyTypeID" name="OccupancyTypeID" value="@ViewBag.OccupancyTypeID" />
+    <input type="hidden" id="Module" name="Module" value="Transfer" />
+    
+    <div class="row step-title">
+        <div class="small-12 medium-4 columns">
+            <h3 class="step-title-label">Holidays search</h3>
+        </div>
+        <div class="small-12 medium-8 columns" style="background-color: #EEEEEE; padding: 9px;">
+            <img src="~/Images/progress_s2.png" />
+        </div>
+    </div>
+    <div class="row hotel-detail">
+        <div class="column medium-10 small-10 detail-title">
+            @ViewBag.PackageName
+        </div>
+        <div class="column medium-2 hide-for-small right">
+            <input type="button" value="< Back" class="button btn-gray right " onclick="history.back();" />
+        </div>
+        <div class="column small-2 show-for-small right">
+            <input type="button" value="< Back" class="button btn-gray right tiny " onclick="history.back();" />
+        </div>
+    </div>
+    
+    
+    <div class="row">
+        <div class="columns small-12 medium-12 owl-theme-area">
+            <div id="slice-content-excursion" class="owl-carousel owl-theme">
+                @if (imageList != null)
+                {
+                    foreach (var image in imageList)
+                    {
+                        <div class="item">
+                            <img src="@image" title="@Model.PACKAGE_NAME" alt="@Model.PACKAGE_NAME" /><br />
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column small-12">
+            <div class="hotel-detail-section"></div>
+        </div>
+        <div class="column small-12 medium-3">
+            <label class="hotel-detail-label">Description</label>
+        </div>
+        <div class="column small-12 medium-9 hotel-detail-text">
+            @Model.PACKAGE_DESCRIPTION
+        </div>
+    </div>
+    <div class="page-title page-title-package">
+        <div class="row">
+            <div class="column small-12">
+                <img src="/Images/yellow-arrow.png" />
+                Please Select
+            </div>
+        </div>
+    </div>
+    <div class="gray-bg">
+        <div class="row">
+            <div class="column small-12">
+                <div class="hotel-detail-section"></div>
+            </div>
+            <div class="column small-12 medium-3">
+                <label class="hotel-detail-label">Number of Travellers</label>
+            </div>
+            <div class="column small-12 medium-9 hotel-detail-text">
+                <div class="row">
+                    <div class="column small-2">Adults :</div>
+                    <div class="column small-2 booking-medium-red-font">@ViewBag.nAdult</div>
+                    <div class="column small-2">Child :</div>
+                    <div class="column small-6 booking-medium-red-font">@ViewBag.nChild</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column small-12">
+                <div class="hotel-detail-section"></div>
+            </div>
+            <div class="column small-12 medium-3">
+                <label class="hotel-detail-label">Departure Date</label>
+            </div>
+            <div class="column small-12 medium-9  ">
+                <div class="row">
+                    <div class="column small-12 small-label">@DepartureDate.ToString("dd-MM-yyyy")</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column small-12">
+                <div class="hotel-detail-section"></div>
+            </div>
+            <div class="column small-12 medium-3">
+                <label class="hotel-detail-label">Speaking Guide</label>
+            </div>
+            <div class="column small-12 medium-9  ">
+                <div class="row">
+                    <div class="column small-12 hotel-detail-text padding-top-25">
+                        @foreach (var item in Model.PACKAGE_MAIN_ELEMENTS)
+                        {
+
+                            string strChk = "";
+
+                            if (item == Model.PACKAGE_MAIN_ELEMENTS.First())
+                            {
+                                strChk = "checked";
+
+                                mainElementID = item.PACKAGE_MAIN_ELEMENT_ID;
+                                mainElementName = item.PACKAGE_MAIN_ELEMENT_NAME;
+                            }
+
+                            <div class="row">
+                                <div class="column small-12">
+                                    <input type="radio" name="SpeakingGuide" value="@item.PACKAGE_MAIN_ELEMENT_ID" @strChk onclick="SetSpeakingGuide('@PackageID    ','@StartDate    ','@EndDate    ','@item.PACKAGE_MAIN_ELEMENT_ID    ','@item.PACKAGE_MAIN_ELEMENT_NAME    ')" /> @item.PACKAGE_MAIN_ELEMENT_NAME
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column small-12">
+                <div class="hotel-detail-section"></div>
+            </div>
+            <div class="column small-12 medium-3">
+                <label class="hotel-detail-label">Transfer Detail</label>
+            </div>
+            <div class="column small-12 medium-9  ">
+                <div class="row">
+                    <div class="column small-12 small-label padding-top-25">
+                        <div class="row pickup-head">
+                            <div class="column small-12 medium-2">
+                                &nbsp;
+                            </div>
+                            <div class="column small-12 medium-2">
+                                &nbsp;
+                            </div>
+                            <div class="column small-12 medium-2 right">
+                                Time
+                            </div>
+                            <div class="column small-12 medium-4 right">
+                                Point
+                            </div>
+                            <div class="column small-12 medium-2 right">
+                                Direction
+                            </div>
+                        </div>
+                        <div class="row pickup-detail padding-top-25">
+                            <div class="column small-12 medium-2">
+                                Flight No.
+                            </div>
+                            <div class="column small-12 medium-2">
+                                <input type="text" id="FlightNo" name="FlightNo" />
+                            </div>
+                            <div class="column small-12 medium-2">
+                                Pickup
+                            </div>
+                            <div class="column small-12 medium-4">
+                                <select id="Pickup" name="Pickup">
+                                    @foreach (var item in pickUpList)
+                                    {
+                                        <option value="@item.Location" data-time="@item.Time">@item.Location</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="column small-12 medium-2">
+                                <input type="text" id="PickupTime" name="PickupTime" />
+                            </div>
+                        </div>
+                        <div class="row pickup-detail">
+                            <div class="column small-12 medium-2">
+                                Flight Time.
+                            </div>
+                            <div class="column small-12 medium-2">
+                                <input type="text" id="FlightTime" name="FlightTime" />
+                            </div>
+                            <div class="column small-12 medium-2">
+                                Drop off
+                            </div>
+                            <div class="column small-12 medium-4">
+                                <select id="Dropoff" name="Dropoff">
+                                    @foreach (var item in dropOffList)
+                                    {
+                                        <option value="@item.Location" data-time="@item.Time">@item.Location</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="column small-12 medium-2">
+                                <input type="text" id="DropoffTime" name="DropoffTime" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content-line right"></div>
+                <div class="row">
+                    <div class="column small-10">
+                        <div class="row">
+                            <div class="column small-12 small-label">Total Price</div><br />
+                            <div class="column small-12 small-label">
+                                <div id="PackagePrice" class="big-red-price font-red"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column small-2">
+                        <div class="float-right"><input type="button" value="Select" class="button right" onclick="ShowHints()" /></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="column small-2 right padding-top-25">
+            <input type="button" value="< Back" class="button btn-gray right " onclick="history.back();" />
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        function ContactToggle(id) {
+            $('#' + id).slideToggle();
+            $('.' + id).toggle();
+        }
+
+        $('select[name=Pickup]').change(function () {
+            PickupLogic();
+        });
+
+        $('select[name=Dropoff]').change(function () {
+            DropoffLogic();
+        });
+
+        $('input[name=FlightTime]').blur(function () {
+
+            var selected = $('#Pickup').find('option:selected');
+            var time = selected.data('time');
+
+            if (time == '') {
+                $('#PickupTime').val($(this).val());
+            }
+
+        });
+
+        function PickupLogic() {
+            var selected = $('#Pickup').find('option:selected');
+            var time = selected.data('time');
+
+            if (time == '') {
+                $('#PickupTime').attr('readonly', false);
+                $('#PickupTime').removeClass('input-disabled');
+                $('#PickupTime').val('');
+            }
+            else {
+                $('#PickupTime').attr('readonly', true);
+                $('#PickupTime').addClass('input-disabled');
+                $('#PickupTime').val(time);
+            }
+        }
+
+        function DropoffLogic() {
+            var selected = $('#Dropoff').find('option:selected');
+            var time = selected.data('time');
+
+            if (time == '') {
+                $('#DropoffTime').attr('readonly', false);
+                $('#DropoffTime').removeClass('input-disabled');
+                $('#DropoffTime').val('');
+            }
+            else {
+                $('#DropoffTime').attr('readonly', true);
+                $('#DropoffTime').addClass('input-disabled');
+                $('#DropoffTime').val(time);
+            }
+        }
+
+        $(document).ready(function () {
+
+            PickupLogic();
+            DropoffLogic();
+
+            SetSpeakingGuide('@PackageID','@StartDate','@EndDate','@mainElementID','@mainElementName');
+            $('#slice-content-excursion').each(function () {
+                if ($(this).find('.item').length > 1) {
+                    $(this).owlCarousel({
+                        dots: true,
+                        autoplaySpeed: 1000,
+                        items: 1,
+                        autoplay: true,
+                        autoplayTimeout: 1000,
+                        loop: true
+                    })
+                } else {
+                    $(this).owlCarousel({
+                        dots: true,
+                        autoplaySpeed: 1000,
+                        items: 1,
+                        autoplay: true,
+                        autoplayTimeout: 1000,
+                        loop: false
+                    })
+                }
+            });
+        });
+
+        function SetSpeakingGuide(packageID, packageStartDate, packageEndDate, elementID, elementName) {
+
+            $("#PackageID").val(packageID);
+            $("#MainElementID").val(elementID);
+            $("#MainElementName").val(elementName);
+            $("#FromDate").val(packageStartDate);
+            $("#ToDate").val(packageEndDate);
+
+            $.ajax({
+                url: '@Url.Action("GetPrice", "Transfer")',
+                type: 'POST',
+                data: {
+                    PackageID: packageID,
+                    ElementID: elementID
+                },
+                success: function (data) {
+                    $('#PackagePrice').html(data.price + " " + data.currency);
+                }
+            });
+
+            
+
+        }
+
+        function ShowHints()
+        {
+            var IsDisplayHint = true;
+
+            @if(IsDisplayHint)
+            {
+                <text>IsDisplayHint = true;</text>
+            }
+            else   
+            {
+                <text>IsDisplayHint = false;</text>
+            }
+
+            if(IsDisplayHint)
+            {
+                $("#HintsPopup").foundation('reveal', 'open');
+            }
+            else{
+                Book();
+            }
+
+            
+        }
+
+        function CloseHints()
+        {
+            $("#HintsPopup").foundation('reveal', 'close');
+        }
+
+        function Book()
+        {
+            $("#frm").submit();
+        }
+    </script>
+}
+
+@section popup
+{
+<div id="HintsPopup" class="reveal-modal medium" data-reveal>
+
+    <div class="row">
+        <div class="column small-12">
+            Hints
+        </div>
+    </div>
+    <div class="row">
+        @foreach (var item in hints)
+        {
+            <div class="column small-12 ">
+                <p style="text-indent: 50px;" class="hotel-detail-text">@item</p>
+            </div>
+        }
+    </div>
+    <div class="row ">
+        <div class="column small-12 text-right">
+            <input type="button" value="OK" class="button tiny" onclick="Book()" />
+            <input type="button" value="Close" class="button tiny" onclick="CloseHints()" />
+        </div>
+    </div>
+</div>
+}

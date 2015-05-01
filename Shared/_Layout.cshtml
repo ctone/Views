@@ -1,0 +1,74 @@
+﻿@using DiethelmTSWebsite2015.Core
+@{
+    Utility.ReloadRouteData();
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - My ASP.NET MVC Application</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width" />
+    @Styles.Render("~/Content/themes/base/css")
+    @Styles.Render("~/Content/foundation/css")
+    @Styles.Render("~/Content/admin/css")
+    @Styles.Render("~/Content/dropzonescss")
+    @RenderSection("Styles", required: false)
+
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/foundation")
+
+    @RenderSection("Header", required: false)
+</head>
+<body>
+    <header id="menu">
+
+        <script type="text/javascript">
+            $.ajax({
+                url: '@Url.Action("AdminMenu", "Dashboard")',
+                type: 'GET',
+                async: false,
+                success: function (result) {
+                    $("#menu").html(result);
+                }
+            });
+        </script>
+
+    </header>
+    <div id="body">
+        <div class="row">
+            <div class="columns small-12 large-12">
+                @RenderSection("featured", required: false)
+                <section class="content-wrapper main-content clear-fix">
+                    @RenderBody()
+                </section>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="row">
+            <div class="columns small-12 large-12">
+                <div class="content-wrapper">
+                    <div class="text-center">
+                        <p>&copy; @DateTime.Now.Year - Agere Co., Ltd.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+ @Scripts.Render("~/bundles/dropzonescripts")
+
+@RenderSection("scripts", required: false)
+
+<script>
+    $(document).foundation();
+</script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+﻿@model DiethelmTSWebsite2015.Models.SysPost_ml
+
+@{
+    ViewBag.Title = "EditLang";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string mode = "add";
+
+    if (Model.ID != 0)
+    {
+        mode = "edit";
+    }
+}
+
+@section Header {
+    @Scripts.Render("~/bundles/ckeditor")
+}
+
+<h2>EditLang</h2>
+
+@using (Html.BeginForm("EditLang", "SysPost", FormMethod.Post, new { id = "main-form" }))
+{
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>SysCategory</legend>
+
+        @Html.HiddenFor(model => model.ID)
+        @Html.HiddenFor(model => model.SysPostID)
+        @Html.HiddenFor(model => model.SysLanguageID)
+        @Html.HiddenFor(model => model.CreateBy)
+        @Html.HiddenFor(model => model.CreateDate)
+        @Html.HiddenFor(model => model.Status)
+
+        <input id="mode" name="mode" type="hidden" value="@mode" />
+
+        <div class="editor-label">
+            Default Lang
+        </div>
+        <div class="editor-field">
+            <input type="text" readonly="readonly" value="@ViewBag.DefaultText" />
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Title)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Title)
+            @Html.ValidationMessageFor(model => model.Title)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.ShortDescription)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.ShortDescription)
+            @Html.ValidationMessageFor(model => model.ShortDescription)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Description)
+        </div>
+        <div class="editor-field">
+            @Html.TextArea("txtDescription", htmlAttributes: new { @class = "ckeditor" })
+            @Html.HiddenFor(model => model.Description)
+        </div>
+
+        <p>
+            <input type="button" onclick="Submit();" value="Submit" class="btn-submit" />
+            <input type="button" value="Delete" onclick="Delete('@Model.ID')" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Edit", new { id = Model.SysPostID })
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        function Submit() {
+            var description = CKEDITOR.instances.txtDescription.getData();
+            $("#Description").val(description);
+
+            $('#main-form').submit();
+        }
+
+        function Delete(id) {
+            if (confirm("Do you want to delete?")) {
+                $.ajax({
+                    url: '@Url.Action("LangDelete", "SysPost")?id=' + id,
+                    type: 'GET',
+                    async: false,
+                    success: function (result) {
+                        window.location = "@Url.Action("Edit", "SysCategory", new { id = Model.SysPostID})";
+                    }
+                });
+                }
+            }
+
+        $(document).ready(function () {
+            $("#txtDescription").val($("#Description").val());
+        });
+    </script>
+}

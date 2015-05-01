@@ -1,0 +1,77 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+
+@model IPagedList<DiethelmTSWebsite2015.Models.JobApplication>
+
+@{
+    ViewBag.Title = "List";
+
+    var catID = Request.QueryString["catID"];
+
+    DiethelmTSWebsite2015.Biz.SysUserBiz biz = new DiethelmTSWebsite2015.Biz.SysUserBiz();
+    var userList = biz.GetUser(DiethelmTSWebsite2015.Core.Types.UserType.All);
+}
+<div class="row">
+    <div class="columns small-6 large-6"><h3>Job Application</h3></div>
+    <div class="columns small-6 large-6 padding-top-10 text-right">
+        <a href="@Url.Action("Create", new { catID = catID })" class="button radius tiny">Create</a>
+    </div>
+</div>
+<div class="table-container">
+    <div class="table-row-head row">
+        <div class="table-column columns small-3">JobTitle</div>
+        <div class="table-column columns small-5">PublicationDate</div>
+        <div class="table-column columns small-3">Last Update</div>
+        <div class="table-column columns small-1">Tools</div>
+    </div>
+    @foreach (var item in Model)
+    {
+        <div class="table-row row">
+            <div class="table-column columns small-3">
+                @Html.DisplayFor(modelItem => item.JobTitle)
+            </div>
+            <div class="table-column columns small-5">
+                @Html.DisplayFor(modelItem => item.PublicationDate)
+            </div>
+            <div class="table-column columns small-3 text-center">
+                @item.UpdateDate.ToString("dd-MMM-yyyy") (@DiethelmTSWebsite2015.Biz.SysUserBiz.GetUserName(userList, item.UpdateBy))
+            </div>
+            <div class="table-column columns small-1 text-center">
+                <a href="@Url.Action("Edit", new { id = item.ID })"><img src="/Images/icon_edit.png"> </a>
+                <a href="#" onclick="Delete('@item.ID')"><img src="/Images/icon_delete.png"></a>
+            </div>
+        </div>
+    }
+
+</div>
+
+
+<div class="float-left">
+    @Html.PagedListPager((IPagedList)Model, page => Url.Action("List", new { page = page }), (PagedListRenderOptions)ViewBag.PagedListRender)
+</div>
+
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+        function Delete(id) {
+            if (confirm("Do you want to delete?")) {
+                $.ajax({
+                    url: '@Url.Action("Delete", "JobApplication")?id=' + id,
+                    type: 'GET',
+                    async: false,
+                    success: function (result) {
+                        location.reload();
+                    }
+                });
+            }
+        }
+
+    </script>
+}
+
+
+
+
+

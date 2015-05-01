@@ -1,0 +1,108 @@
+﻿@using DiethelmTSWebsite2015.Core;
+@using DiethelmTSWebsite2015.Biz;
+
+@model DiethelmTSWebsite2015.Models.SysRoleView
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var features = ViewBag.Features as List<SelectListItem>;
+
+    string countryTab = DiethelmTSWebsite2015.Core.HtmlHelper.GenerateTabCountry("");
+    CountryCollection list = new CountryCollection();
+    var countryList = list.ToList();
+    var j = 0;
+    var k = 0;
+    string active = "";
+}
+<fieldset>
+    <legend>Edit Role</legend>
+
+@using (Html.BeginForm("Edit", "SysRole", FormMethod.Post, new { id = "main-form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <div class="columns small-2 editor-label">
+            @Html.LabelFor(model => model.RoleName, "Role Name ")
+        </div>
+        <div class="columns small-10 editor-field">
+            @Html.EditorFor(model => model.RoleName)
+
+        </div>
+        @Html.Raw(countryTab)
+        <div class="tabs-content">
+        @foreach (var item in countryList)
+        {
+            if (k == 0)
+            {
+                active = "active";
+                k++;
+            }
+            else
+            {
+                active = "";
+                k++;
+            }
+            <div class="content @active" id="panel-@item.ID">
+             @if (Model != null)
+             {
+                  @Html.HiddenFor(model => model.RoleId)
+                  @Html.HiddenFor(model => model.RoleName)
+                <div class="columns small-2 editor-label">
+                    Permission 
+                </div>
+                <div class="columns small-10 editor-field">
+                     @{
+                 var featuresByCountry = Model.Features.Where(f => f.CountryID == item.ID).ToList();
+                     }
+                        @for (int i = 0; i < featuresByCountry.Count(); i++)
+                        {
+                        <div class="row">
+                            <div class="column large-2">
+                                @Html.Hidden(string.Format("Features[{0}].ID", j), featuresByCountry[i].ID)
+                                @Html.Hidden(string.Format("Features[{0}].FeatureId", j), featuresByCountry[i].FeatureId)
+                                @Html.Hidden(string.Format("Features[{0}].CountryID", j), featuresByCountry[i].CountryID)
+                                @*@featuresByCountry[i].ID
+                                @item.ID
+                                @j
+                                @i*@
+                                @featuresByCountry[i].FeatureName
+                            </div>
+                            <div class="column large-2">
+                                @Html.CheckBox(string.Format("Features[{0}].Viewable", j), featuresByCountry[i].Viewable) View                        
+                            </div>
+                            <div class="column large-2">
+                                @Html.CheckBox(string.Format("Features[{0}].Addable", j), featuresByCountry[i].Addable) Add                        
+                            </div>
+                            <div class="column large-2">
+                                @Html.CheckBox(string.Format("Features[{0}].Editable", j), featuresByCountry[i].Editable) Edit                        
+                            </div>
+                            <div class="column large-4">
+                                @Html.CheckBox(string.Format("Features[{0}].Deletable", j), featuresByCountry[i].Deletable) Delete                        
+                            </div>
+                        </div>
+                            j++;
+                        }
+                 </div>
+             }
+            </div>
+        }
+        </div>
+        @Html.ValidationSummary(false)
+ 
+        <div class="columns small-12 text-right">
+            <a onclick=" Submit(); " class="button radius tiny" >Save</a>
+            &nbsp;
+            <a onclick=" history.back(); " class="button radius tiny">Cancel</a>
+        </div>
+    </div>
+}
+</fieldset>
+@section scripts{
+    <script>
+        function Submit() {
+            $('#main-form').submit();
+        }
+    </script>
+}

@@ -1,0 +1,118 @@
+﻿@using DiethelmTSWebsite2015.Core
+@using DiethelmTSWebsite2015.Models
+
+@{
+    ViewBag.Title = "Country";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+    DiethelmTSWebsite2015.Biz.DataManager dataManager = DiethelmTSWebsite2015.Biz.DataManager.Instance;
+    var isLogin = dataManager.IsAgencyLogin();
+}
+
+@*<div class="page-title">
+    <div class="row">
+        <div class="large-12 columns">
+            <h1 class="page-title-label">@Utility.GetCurrentCountryName()</h1>
+        </div>
+    </div>
+</div>*@
+@if (isLogin)
+{  
+<div id="QuickSearch" class="page-title">
+
+</div>
+}
+<div class="row">
+    <div class="small-12 medium-8 columns">
+        @{  Html.RenderAction("AwesomeDeal", "PostExtension", new { country = Utility.GetCurrentCountryName() });  }
+        @{  Html.RenderAction("Recommended", "Package", new { country = Utility.GetCurrentCountryName() });  }
+        @if (isLogin) 
+        { 
+        <div class="row">
+            <div class="small-12 medium-12 columns">
+                <div id="SmallPackageQuickSearch" class="small-package-quicksearch">
+
+                </div>
+            </div>
+        </div>
+        }
+        @{  Html.RenderAction("News", "PostExtension", new { country = Utility.GetCurrentCountryName() });  }    
+    </div>
+    <div class="small-12 medium-4 columns">
+        @{  Html.RenderAction("NewsFeatures", "CategoryExtension", new { country = Utility.GetCurrentCountryName() });  }
+        @{  Html.RenderAction("Preferred", "Hotel", new { country = Utility.GetCurrentCountryName() });  }
+        @if (isLogin) 
+        { 
+        <div id="SmallQuickSearch" class="small-hotel-quicksearch">
+
+        </div>
+        }
+        @{  Html.RenderAction("NewProduct", "PostExtension", new { country = Utility.GetCurrentCountryName() });  }
+        <div class="row">
+            <div class="small-12 columns">
+                <a class="button radius expand our-team" href="@Url.Action("Index","Ourteam")">Our teams</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section banner{
+    @{  Html.RenderAction("ShowBanner", "SysBanner", new { country = Utility.GetCurrentCountryName() });  }
+}
+
+@section popup{
+
+}
+
+@section scripts{
+    <script src="@Url.Content("~/Scripts/TS/Hotel.js")"></script>
+    <script type="text/javascript">
+          $(document).ready(function () {
+                $("#slice-content").owlCarousel({
+
+                    navigation: true, // Show next and prev buttons
+                    navigationText: [
+                                  "<i class='icon-chevron-left icon-white'><</i>",
+                                  "<i class='icon-chevron-right icon-white'>></i>"
+                                                ],
+                    slideSpeed: 300,
+                    pagination: false,
+                    paginationSpeed: 400,
+                    items: 1,
+                    autoPlay: true,
+                    singleItem: true
+
+                });
+                $.ajax({
+                    url: '@Url.Action("QuickSearch", "Package")',
+                    type: 'GET',
+                    success: function (data) {
+                        $('#QuickSearch').html(data);
+                    }
+                });
+                $.ajax({
+                    url: '@Url.Action("SmallQuickSearch", "Hotel")',
+                    type: 'GET',
+                    success: function (data) {
+                        $('#SmallQuickSearch').html(data);
+                    }
+                });
+                $.ajax({
+                  url: '@Url.Action("SmallQuickSearch", "Package")',
+                    type: 'GET',
+                    success: function (data) {
+                        $('#SmallPackageQuickSearch').html(data);
+                    }
+                });
+          });
+        function GotoDetail(serviceID) {
+            $("#ServiceID").val(serviceID);
+            $("#frmDetail").submit();
+        }
+
+        function GotoPaclageDetail(serviceID) {
+            $("#PackageID").val(serviceID);
+            $("#frmPackageDetail").submit();
+        }
+
+    </script>
+}

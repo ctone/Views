@@ -1,0 +1,69 @@
+﻿@model DiethelmTSWebsite2015.Models.PriceRangeInfo
+@using DiethelmTSWebsite2015.Models;
+@using DiethelmTSWebsite2015.Core;
+@{
+    ViewBag.Title = "Create";
+
+    DTTDBContext db = new DTTDBContext();
+    byte countryID = Utility.GetCurrentCountryID();
+    List<Currency> currency = db.Currency.Where(c => c.CountryID == countryID).ToList();
+}
+
+<h2>Create</h2>
+
+@using (Html.BeginForm("Create", "PriceRangeInfo", FormMethod.Post, new { id = "main-form" }))
+{
+      @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+     <input type="hidden" id="CountryID" name="CountryID" value="@countryID" />
+    <fieldset>
+        <legend>PriceRangeInfo</legend>
+
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.CurrencyCode)
+        </div>
+        <div class="editor-field">
+      
+            <select id="CurrencyCode" name="CurrencyCode">
+                @foreach (var item in currency)
+                {
+                        <option value="@item.ID">@item.CurrencyName</option>
+                }
+            </select>
+
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.PriceFrom)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.PriceFrom)
+            @Html.ValidationMessageFor(model => model.PriceFrom)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.PriceTo)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.PriceTo)
+            @Html.ValidationMessageFor(model => model.PriceTo)
+
+            <div class="columns small-12 text-right">
+                <input type="button" onclick="Submit();" value="Save" class="button radius tiny" /> &nbsp;
+                <input type="button" value="Cancel" class="button radius tiny" onclick="history.back();" />
+            </div>
+    </fieldset>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+<script type="text/javascript">
+    function Submit() {
+        $('#main-form').submit();
+    }
+</script>
+
+
+}

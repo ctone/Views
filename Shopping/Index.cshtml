@@ -1,0 +1,175 @@
+﻿@using DiethelmTSWebsite2015.Core
+@using DiethelmTSWebsite2015.Biz
+@using DiethelmTSWebsite2015.Models;
+@model IEnumerable<DiethelmTSWebsite2015.Models.Shopping>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+
+    DiethelmTSWebsite2015.Core.Utility.ReloadRouteData();
+    DTTDBContext db = new DTTDBContext();
+    object obj = Request.RequestContext.RouteData.Values["country"];
+    string country = obj == null ? string.Empty : obj.ToString();
+    string countryTab = DiethelmTSWebsite2015.Core.HtmlHelper.GenerateTabCountryFrontend(country);
+    CountryCollection list = new CountryCollection();
+    var countryList = list.ToList();
+    byte countryID = Utility.GetCurrentCountryID();
+    string countryName = Utility.GetCurrentCountryName();
+    if (string.IsNullOrEmpty(country))
+    {
+        //DISPLAY COUNTRY POPUP ... REDIRECT
+    };
+    string active = "";
+    string cityName = "";
+    //if (AppSession.Instance.IsLogin()) {}
+}
+<div class="row ">
+    <div class="small-12 columns post-breadcumb">
+        <a onclick="history.back();" class="right">< Back</a>
+    </div>
+</div>
+
+<div class="row step-title">
+    <div class="small-12 medium-4 columns">
+        <h3 class="step-title-label">Shopping Guide  &bull; <font id="country-header">@countryName</font></h3> 
+    </div>
+    <div class="medium-8 columns list-heading-right hide-for-small">
+
+
+    </div>
+</div>
+
+<div class="row herizontal-tabs margin-top30">
+    @Html.Raw(countryTab)
+</div>
+<div class="row ">
+    <div class="small-12 columns country-header-cover"> </div>
+    <div class="small-12 columns country-image-cover"> <img src="/Images/@countryName-Headercover.png" id="img-cover" width="100%"> </div>
+</div>
+
+
+
+<div class="list-cover">
+
+    @foreach (var item in countryList)
+    {
+        var cityList = db.Regions.Where(c => c.CountryID == item.ID).ToList();
+        if (item.ID == countryID)
+        {
+            active = "active";
+        }
+        else
+        {
+            active = "";
+        }
+        <div class="content @active" id="panel-@item.ID">
+            <div class="row margin-bottom-15 margin-top15">
+                <div class="small-12 medium-4 right">
+                    <select id="city-@item.ID" onchange="ChangeCity(@item.ID)">
+                        <option value="0">  Select City </option>
+                        @foreach (var city in cityList)
+                        {
+                            <option value="@city.RegionID">
+                                @city.RegionName
+                            </option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class=" row front-list-title">
+                <div class="small-3 columns">
+                    Shop Name
+                </div>
+                <div class="small-3 columns">
+                    Place
+                </div>
+                <div class="small-3 columns">
+                    Pricelevel
+                </div>
+                <div class="small-3 columns">
+                    City
+                </div>
+            </div>
+            @{
+        var shoppingByCountry = Model.Where(f => f.CountryID == item.ID).ToList();
+            }
+            @for (int i = 0; i < shoppingByCountry.Count(); i++)
+            {
+                int CityID = shoppingByCountry[i].CityID.Value;
+                var city = db.Regions.Where(c => c.RegionID == CityID).ToList();
+
+                if (city != null)
+                {
+                    cityName = city.First().RegionName;
+                    city = null;
+                }
+                else
+                {
+                    cityName = "-";
+                }
+
+                <div class="row front-list @shoppingByCountry[i].CityID" data-reveal-id="item-@shoppingByCountry[i].ID">
+                    <div class="small-3 columns font-red">@shoppingByCountry[i].ShopName </div>
+                    <div class="small-3 columns">@shoppingByCountry[i].PlaceName.PlaceName </div>
+                    <div class="small-3 columns">@shoppingByCountry[i].PriceLevelName.PriceLevelName </div>
+                    <div class="small-3 columns">@cityName</div>
+                </div>
+
+                <div id="item-@shoppingByCountry[i].ID" class="reveal-modal small reveal-modal-list" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+                    <div class="row header-popup">
+                        <div class="small-12 ">
+                            @shoppingByCountry[i].ShopName
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="small-12 columns font-red margin-bottom-30"><img src="/assets/thumbnail/@shoppingByCountry[i].Thumbnail" width="100%"></div>
+                        <div class="small-12 columns margin-bottom-30">@shoppingByCountry[i].Description </div>
+                        <div class="small-3 columns font-red font-bold">Place</div>       <div class="small-9 columns">@shoppingByCountry[i].PlaceName.PlaceName</div>
+                        <div class="small-3 columns font-red font-bold">Price Level</div> <div class="small-9 columns">@shoppingByCountry[i].PriceLevelName.PriceLevelName</div>
+                        <div class="small-3 columns font-red font-bold">City</div>        <div class="small-9 columns">@cityName</div>
+                        <div class="small-3 columns font-red font-bold">Address</div>       <div class="small-9 columns">@shoppingByCountry[i].Address </div>
+                        <div class="small-3 columns font-red font-bold">Telephone</div> <div class="small-9 columns">@shoppingByCountry[i].Telephone</div>
+                        <div class="small-3 columns font-red font-bold">Web Site </div>        <div class="small-9 columns">@shoppingByCountry[i].Website</div>
+
+                        <div class="small-12 columns margin-top30">
+                            <div class="small-12 columns map-title-bar">
+                                @shoppingByCountry[i].ShopName
+                            </div>
+                        </div>
+                        <div class="small-12 columns"><iframe src="@shoppingByCountry[i].Map" width="100%" height="300px" frameborder="0" style="border:0"></iframe></div>
+                    </div>
+                    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+                </div>
+            }
+        </div>
+
+    }
+
+
+
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        function ChooseCountryTab(Country) {
+            $('#country-header').html(Country);
+            $('#img-cover').attr("src", "/Images/"+ Country + "-Headercover.jpg");
+        }
+
+        function ChangeCity(CountryID) {
+            var selectCity = $('#city-' + CountryID).val();
+            if (selectCity == '0') {
+                $(".front-list").css("display", "block");
+            }
+            else {
+                $(".front-list").css("display", "none");
+                $("." + selectCity).css("display", "block");
+            }
+
+        }
+
+    </script>
+}

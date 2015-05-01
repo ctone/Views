@@ -1,0 +1,223 @@
+﻿@using DiethelmTSWebsite2015.Core
+@using DiethelmTSWebsite2015.Biz;
+
+@model DiethelmTSWebsite2015.Models.SysRoleView
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    string countryTab = DiethelmTSWebsite2015.Core.HtmlHelper.GenerateTabCountry("");
+    CountryCollection list = new CountryCollection();
+    var countryList = list.ToList();
+    var j = 0;
+    var k = 0;
+    string active = "";
+}
+<fieldset>
+    <legend>Create Role</legend>
+@using (Html.BeginForm("Create", "SysRole", FormMethod.Post, new { id = "main-form" }))
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="row">
+        <div class="columns small-2 editor-label">
+            @Html.LabelFor(model => model.RoleName)
+        </div>
+        <div class="columns small-10 editor-field">
+            @Html.EditorFor(model => model.RoleName)
+        </div>
+        @Html.Raw(countryTab)
+        <div class="tabs-content">
+        @foreach (var item in countryList)
+        {
+            if(k==0){
+                active = "active";
+                k++;
+            }else{
+                active = "";
+                k++;
+            }
+            <div class="content @active" id="panel-@item.ID">
+            @if (Model.Features != null)
+            {
+                <div class="columns small-2 editor-label">
+                    Permission 
+                </div>
+                <div class="columns small-10 editor-field">
+                    @{
+                        var featuresByCountry = Model.Features.Where(f => f.CountryID == item.ID).ToList();
+                     }
+                    @for (int i = 0; i < featuresByCountry.Count(); i++)
+                    {
+                        <div class="row">
+                            <div class="column large-2">
+                                @Html.Hidden(string.Format("Features[{0}].ID", j), featuresByCountry[i].ID)
+                                @Html.Hidden(string.Format("Features[{0}].FeatureId", j), featuresByCountry[i].FeatureId)
+                                @Html.Hidden(string.Format("Features[{0}].CountryID", j), featuresByCountry[i].CountryID)
+                                @*@featuresByCountry[i].ID
+                                @item.ID
+                                @j
+                                @i*@
+                                @featuresByCountry[i].FeatureName
+                            </div>
+                            <div class="column large-2">
+                                <label> @Html.CheckBox(string.Format("Features[{0}].Viewable", j)) View  </label>                      
+                            </div>
+                            <div class="column large-2">
+                                <label> @Html.CheckBox(string.Format("Features[{0}].Addable", j)) Add   </label>                     
+                            </div>
+                            <div class="column large-2">
+                                <label> @Html.CheckBox(string.Format("Features[{0}].Editable", j)) Edit </label>                       
+                            </div>
+                            <div class="column large-4">
+                                <label> @Html.CheckBox(string.Format("Features[{0}].Deletable", j)) Delete  </label>                      
+                            </div>
+                        </div>
+                        j++;
+                   }
+                </div>
+            }
+            </div>
+           
+        }
+        </div>
+        @Html.ValidationSummary(false)
+
+        <div class="columns small-12 text-right">
+            <a onclick=" Submit(); " class="button radius tiny">Save</a>
+            &nbsp;
+            <a onclick=" history.back(); " class="button radius tiny">Cancel</a>
+        </div>
+    </div>    
+}
+</fieldset>
+@section scripts{
+    <script>
+        function Submit() {
+            $('#main-form').submit();
+        }
+    </script>
+    @* <script>
+        var editFeatureUrl = '@Url.Action("DeleteFeature", "SysRole")';
+        function createFeature(feature) {
+            var container = $('#featureContainer');
+            var length = container.find('tr').length;
+            var name = 'Features[' + (length - 1) + '].FeatureId';
+            //
+            var row = $('<tr/>').attr({
+                'data-id' : feature.ID
+            });
+
+            var colName = $('<td/>');
+            var colView = $('<td/>');
+            var colEdit = $('<td/>');
+            var colAdd = $('<td/>');
+            var colDelete = $('<td/>');
+            var colDeleteFeature = $('<td/>');
+
+            colName.html(feature.ControllerName);
+
+            var checkView = $('<input/>').attr({
+                'class': 'check-box',
+                'disabled': 'disabled',
+                'type': 'checkbox',
+                'checked': feature.Viewable == true
+            });
+            var checkEdit = $('<input/>').attr({
+                'class': 'check-box',
+                'disabled': 'disabled',
+                'type': 'checkbox',
+                'checked': feature.Editable == true 
+            });
+            var checkAdd = $('<input/>').attr({
+                'class': 'check-box',
+                'disabled': 'disabled',
+                'type': 'checkbox',
+                'checked': feature.Addable == true
+            });
+            var checkDelete = $('<input/>').attr({
+                'class': 'check-box',
+                'disabled': 'disabled',
+                'type': 'checkbox',
+                'checked': feature.Deletable == true
+            });
+
+            var linkDelete = $('<a/>').attr({
+                'class' : 'removeRow',
+                'href': editFeatureUrl + '/' + feature.ID
+            });
+
+            var hiddenFeature = $('<input/>').attr({
+                'type': 'hidden',
+                'name': name,
+                'value': feature.ID
+            });
+
+            linkDelete.html('remove');
+
+            colView.append(checkView);
+            colAdd.append(checkAdd);
+            colDelete.append(checkDelete);
+            colEdit.append(checkEdit);
+            colDeleteFeature.append(linkDelete);
+
+            row.append(hiddenFeature);
+            row.append(colName);
+            row.append(colView);
+            row.append(colAdd);
+            row.append(colEdit);
+            row.append(colDelete);
+            row.append(colDeleteFeature);
+
+            container.append(row);
+        }
+
+        function reorderRowNumber() {
+            var tr = $('#featureContainer').find('tr');
+            
+            $.each(tr, function (index, value) {
+                var hiddenInput = $(value).find('input[name^="Feature"]');
+                var name = 'Features[' + (index - 1) + '].FeatureId';
+
+                hiddenInput.attr('name', name);
+            });
+        }
+
+        function checkRowExists(feature) {
+            var exits = false;
+            $.each($('#featureContainer').find('tr'), function (index, value) {
+                var id = $(value).attr('data-id');
+                if (id == feature.ID) {
+                    exits = true;
+                }
+            });
+
+            return exits;
+        }
+
+        $(document).ready(function() {
+
+            $('#addFeature').click(function () {
+                var id = $('select[name=FeatureSelect] option:selected').val();
+                $.ajax({
+                    url: '@Url.Action("GetFeature", "SysRole")/' + id,
+                    type: 'GET',
+                    async: false,
+                    success: function (result) {
+                        if (result.data) {
+                            if(!checkRowExists(result.data))
+                                createFeature(result.data);
+                        }
+                    }
+                });
+            });
+
+            $(document).on('click', 'a.removeRow', function(e) {
+                e.preventDefault();
+                $(this).closest('tr').remove();
+                reorderRowNumber();
+            });
+        });
+    </script>*@
+}

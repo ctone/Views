@@ -1,0 +1,67 @@
+﻿@using DiethelmTSWebsite2015.Core
+
+@model DiethelmTSWebsite2015.Models.SysPost
+@{
+    ViewBag.Title = "Diethelm Travel";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+}
+
+<div class="page-title">
+    @{ Html.RenderAction("PageLabel", new { country = Utility.GetCurrentCountryName(), categoryId = Model.SysCategoryID, postId = Model.ID }); }
+</div>
+<div class="row">
+    <div class="large-4 columns">
+        @{ Html.RenderAction("SideMenu", "CategoryExtension", new { country = Utility.GetCurrentCountryName(), categoryId = Model.SysCategoryID, postId = Model.ID }); }
+    </div>
+    <div class="large-8 columns">
+        <div class="post-breadcumb" id="breadcumb">
+            @{ Html.RenderAction("Breadcrumb", "CategoryExtension", new { country = Utility.GetCurrentCountryName(), categoryId = Model.SysCategoryID, postId = Model.ID }); }
+        </div>
+        <div id="contentbody" class="contentbody">
+            @Html.Raw(Model.Description)
+        </div>
+    </div>
+</div>
+
+@section banner
+{
+    @{  Html.RenderAction("ShowBanner", "SysBanner",  new { country = Utility.GetCurrentCountryName() });  }
+}
+
+@section popup
+{
+
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+        function ChangeContent(CateId, Lv3Title) {
+            var Lv1Title = '@ViewBag.ParentTitle';
+            var Lv1Id = '@Model.CategoryData.ParentID'
+            var Lv2Title = '@Model.Title';
+            var Lv2Id = '@Model.ID'
+
+            $("#page-title").html(Lv3Title);
+
+            //Breadcumb = "<a href=''>" + Lv1Title + " </a> > " + "<a href='CategoryExtension?CatID=" + Lv2Id + "'>" + Lv2Title + " </a> > " + Lv3Title;
+          //  $("#breadcumb").html(Breadcumb);
+
+            $(".side-menu").children().children().removeClass("active");
+            $("#" + CateId).addClass("active");
+            $.ajax({
+                url: 'CategoryExtension/GetPost',
+                data: { CateId: CateId },
+                type: 'Get',
+                cache: false,
+                async: false,
+                success: function (result) {
+                    $("#contentbody").html(result);
+                },
+                error: function (err) {
+                    $("#contentbody").html("<div style='height:350px;padding-top:100px;text-align:center;font-size:28px;font-weight:bold;color:#808080'>coming soon...</div>");
+                }
+            });
+        }
+    </script>
+}

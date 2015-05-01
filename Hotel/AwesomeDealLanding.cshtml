@@ -1,0 +1,36 @@
+﻿@model IList<DiethelmTSWebsite2015.Models.HotelSearchResult>
+@{
+    Layout = null;
+    string strDisplay = "display:none;";
+    if (Model != null && Model.Count > 0)
+    {
+        strDisplay = "";
+    }
+    int i = 0;
+
+}
+@using (Html.BeginForm("Detail", "Hotel", FormMethod.Post, new { id = "frmDetail" }))
+{
+    
+    <input type="hidden" id="ServiceID" name="ServiceID" />
+    <input type="hidden" id="IsLandingPage" name="IsLandingPage" value="true" />
+    
+    <div id="AwesomeDealLanding" style="@strDisplay" >
+        <div class="small-12 medium-12 columns">
+            <h3 class="content-subject">Awesome Deals</h3>
+        </div>
+
+        @if(Model != null)
+        {
+            foreach (var item in Model)
+            {
+                @Html.DisplayFor(modelItem => item, "HotelItemSmall");
+                i++;
+                if (i == 5)
+                {
+                    break;
+                }
+            }
+        }
+    </div>
+}

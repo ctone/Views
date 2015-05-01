@@ -1,0 +1,148 @@
+﻿@model DiethelmTSWebsite2015.Models.Weather
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Weather</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.CountryID)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.CountryID)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.CityID)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.CityID)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.AreaID)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.AreaID)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.January)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.January)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.February)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.February)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.March)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.March)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.April)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.April)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.May)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.May)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.June)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.June)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.July)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.July)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.August)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.August)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.September)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.September)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.October)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.October)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.December)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.December)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Status)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Status)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.CreateDate)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.CreateDate)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.CreateBy)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.CreateBy)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.UpdateDate)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.UpdateDate)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.UpdateBy)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.UpdateBy)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

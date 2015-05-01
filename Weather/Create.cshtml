@@ -1,0 +1,228 @@
+﻿@model DiethelmTSWebsite2015.Models.Weather
+@using DiethelmTSWebsite2015.Models;
+@{
+    ViewBag.Title = "Create";
+
+    string country = Request.RequestContext.RouteData.Values["country"].ToString();
+    DiethelmTSWebsite2015.Biz.CountryCollection countryColl = new DiethelmTSWebsite2015.Biz.CountryCollection();
+
+    DiethelmTSWebsite2015.Biz.SysCategoryBiz biz = new DiethelmTSWebsite2015.Biz.SysCategoryBiz();
+    var catList = biz.Get(countryColl[country].ID);
+    DiethelmTSWebsite2015.Biz.RegionBiz region = new DiethelmTSWebsite2015.Biz.RegionBiz();
+    byte countryID = DiethelmTSWebsite2015.Core.Utility.GetCurrentCountryID();
+    List<Region> regionlist = region.GetCity(countryID, country); 
+}
+
+<h2>Create</h2>
+
+@using (Html.BeginForm("Create", "Weather", FormMethod.Post, new { id = "main-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    @Html.HiddenFor(model => model.Status, new { Value = 1 })
+    @Html.HiddenFor(model => model.CreateDate, new { Value = DateTime.Now })
+    @Html.HiddenFor(model => model.UpdateDate, new { Value = DateTime.Now })
+
+    <fieldset>
+        <legend>Season</legend>
+        <div class="row">
+            <input type="hidden" id="CountryID" name="CountryID" value="@countryColl[country].ID" />
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.CityID)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="CityID" name="CityID">
+                    @foreach (var item in regionlist)
+                    {
+                        <option value="@item.RegionID">@item.RegionName</option>
+                    }
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.AreaID)
+            </div>
+            <div class="columns small-10 editor-field">
+                @Html.EditorFor(model => model.AreaID)
+                @Html.ValidationMessageFor(model => model.AreaID)
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.January)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="January" name="January">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.February)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="February" name="February">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.March)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="March" name="March">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.April)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="April" name="April">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.May)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="May" name="May">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.June)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="June" name="June">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.July)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="July" name="July">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.August)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="August" name="August">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.September)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="September" name="September">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.October)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="October" name="October">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.November)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="November" name="November">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-2 editor-label">
+                @Html.LabelFor(model => model.December)
+            </div>
+            <div class="columns small-10 editor-field">
+                <select id="December" name="December">
+                    <option value="1">Ideal</option>
+                    <option value="2">Good</option>
+                    <option value="3">Wet</option>
+                    <option value="4">Cool</option>
+                    <option value="5">Not Recommended</option>
+                </select>
+            </div>
+
+            <div class="columns small-12 text-right padding-top-20">
+                <input type="button" onclick="Submit();" value="Save" class="button radius tiny" />
+                &nbsp;
+                <input type="button" value="Cancel" class="button radius tiny" onclick="history.back();" />
+            </div>
+        </div>
+    </fieldset>
+}
+
+
+
+@section Scripts {
+
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        function Submit() {
+            $('#main-form').submit();
+        }
+        </script>
+}

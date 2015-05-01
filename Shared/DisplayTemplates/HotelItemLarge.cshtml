@@ -1,0 +1,33 @@
+﻿@using DiethelmTSWebsite2015.Core;
+@model DiethelmTSWebsite2015.Models.HotelSearchResult
+<div class="small-12 medium-12 columns content-detail">
+    <div class="row">
+        <div class="small-12 medium-12 columns hotel-landing-img" onclick="GotoDetail('@Model.ServiceID')">
+            <img src="@Model.Image" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" title="@Model.HotelName" alt="@Model.HotelName" />
+        </div>
+        <div class="small-12 push-3 medium-9 columns">
+            <div class="row content-detail-title">
+                <div class="small-12 medium-9 columns">
+                    <h5 onclick="GotoDetail('@Model.ServiceID')">@Model.HotelName</h5>
+                </div>
+                <div class="small-12 medium-3 columns">
+                    <img src="/Images/@Model.Rating-star.png" title="@Model.Rating stars" alt="@Model.Rating stars" />
+                </div>
+                <div class="small-12 medium-12 columns">
+                    <span class="content-detail-desc">@Utility.GetShortTextNoHTML(HttpUtility.HtmlDecode(Model.HotelDescription))</span>
+                </div>
+                <div class="small-12 medium-12 columns">
+                    <span class="link-readmore" onclick="GotoDetail('@Model.ServiceID')">read more</span>
+                </div>
+            </div>
+        </div>
+        <div class="small-12 pull-9 medium-3 columns">
+            <div class="price-tag-circle">
+                <span>from</span><br />
+                <span class="price">@Math.Ceiling(Model.Price).ToString("#,##0") </span>
+                <br />
+                <span>THB</span>
+            </div>
+        </div>
+    </div>
+</div>

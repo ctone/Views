@@ -1,0 +1,51 @@
+﻿@model IList<DiethelmTSWebsite2015.Models.SysBanner>
+
+@{
+    ViewBag.Title = "ShowBanner";
+    
+    
+}
+
+<div class="row">
+    <div class="medium-12 large-12 columns">
+    <!-- MOCKUP BANNER -->
+        <div id="slice-content" class="owl-carousel owl-theme">
+            @foreach(var item in Model){
+                <div class="item">
+                    <img src="/assets/banner/@item.Image" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" />
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#slice-content').each(function () {
+            if ($(this).find('.item').length > 1) {
+                $(this).owlCarousel({
+                    nav: true,
+                    navText: ['<img src="/Images/prev.png" />', '<img src="/Images/next.png" />'],
+                    dots: false,
+                    autoplaySpeed: 1000,
+                    items: 1,
+                    autoplay: true,
+                    autoplayTimeout: 1000,
+                    loop: true,
+                    margin: 1
+                })
+            } else {
+                $(this).owlCarousel({
+                    nav: true,
+                    navText: ['<img src="/Images/prev.png" />', '<img src="/Images/next.png" />'],
+                    dots: false,
+                    autoplaySpeed: 1000,
+                    items: 1,
+                    autoplay: true,
+                    autoplayTimeout: 1000,
+                    loop: false,
+                    margin: 1
+                })
+            }
+        });
+    });
+</script>

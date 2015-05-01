@@ -1,0 +1,87 @@
+﻿@using DiethelmTSWebsite2015.Core
+
+@model DiethelmTSWebsite2015.Models.HotelSearchResult
+
+<div class="small-12 medium-4 columns content-detail left" style="height:420px;" onclick="GotoDetail('@Model.ServiceID')">
+    <div class="row">
+        <div class="small-12 medium-12 columns  search-result-pic">
+            <img src="@Model.Image" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" title="@Model.HotelName" alt="@Model.HotelName" />
+        </div>
+        <div class="small-12 columns">
+            <div class="row content-detail-title-small">
+                <div class="small-12 medium-12 columns">
+                    <h6>@Model.HotelName</h6>
+                </div>
+                <div class="column small-6 star">
+                    <img src="~/Images/@Model.Rating-star.png" title="@Model.Rating stars" alt="@Model.Rating stars" />
+                </div>
+                <div class="column small-6 hotel-status">
+                    @if (Model.Status.ToLower() == "on request")
+                    {
+                        <img src="~/Images/OnRequest.png" title="@Model.Status.ToLower()" alt="@Model.Status.ToLower()" class=" right" />
+                    }
+                    else if (Model.Status.ToLower() == "available")
+                    {
+                        <img src="~/Images/status.png" title="@Model.Status.ToLower()" alt="@Model.Status.ToLower()" class="right" />
+                    }
+                </div>
+                <div class="column small-12 hotel-rating">
+                    @if (Model.Themes != null && Model.Themes.Count() > 0)
+                    {
+                        foreach (var theme in Model.Themes)
+                        {
+                            @*@theme.ServiceTypeRatingName*@
+                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "boutique")
+                            {
+                                <img src="/Images/boutique.png" />
+                            }
+                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "beachfront")
+                            {
+                                <img src="/Images/beachfront.png" />
+                            }
+                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "environmentally friendly")
+                            {
+                                <img src="/Images/environmentally.png" />
+                            }
+                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "family friendly")
+                            {
+                                <img src="/Images/family.png" />
+                            }
+                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "diethelm preferred")
+                            {
+                                <img src="/Images/preferred.png" />
+                            }
+                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "beach access/ close to the beach")
+                            {
+                                <img src="/Images/beachaccess.png" />
+                            }
+                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "honeymoon")
+                            {
+                                <img src="/Images/honeymoon.png" />
+                            }
+                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "villas")
+                            {
+                                <img src="/Images/villas.png" />
+                            }
+                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "awesome deal")
+                            {
+                                <img src="/Images/awesomedeal.png" />
+                            }
+                        }
+                    }
+                </div>
+                <div class="column small-12 price">
+                    <div>
+                        THB  @Math.Ceiling(Model.Price).ToString("#,###")
+                    </div>
+                </div>
+                <div class="small-12 medium-12 columns" style="padding-top:10px;">
+                    <span class="content-detail-desc">@HttpUtility.HtmlDecode(Utility.GetShortText(Model.HotelDescription, "...", 100))</span>
+                </div>
+                <div class="small-12 medium-12 columns link-readmore">
+                    read more
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

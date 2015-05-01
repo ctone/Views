@@ -1,0 +1,70 @@
+﻿@using DiethelmTSWebsite2015.Core
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+    DiethelmTSWebsite2015.Biz.DataManager dataManager = DiethelmTSWebsite2015.Biz.DataManager.Instance;
+    var isLogin = dataManager.IsAgencyLogin();
+    DiethelmTSWebsite2015.Core.Utility.ReloadRouteData();
+
+    object obj = Request.RequestContext.RouteData.Values["country"];
+    string country = obj == null ? string.Empty : obj.ToString();
+    //bool ForceLogin = ViewBag.ForceLogin;
+
+    if (string.IsNullOrEmpty(country))
+    {
+        //DISPLAY COUNTRY POPUP ... REDIRECT
+    };
+
+}
+@if (isLogin)
+{
+    <div id="QuickSearch" class="page-title page-title-quick-search">
+
+    </div>
+}
+
+<div class="row">
+
+    <!-- SPECIAL PROMOTION -->
+    <div class="small-12 medium-8 columns" id="SpecialPromotion">
+        <div class="row">
+             @{  Html.RenderAction("PreferredLanding", "Hotel", new { country = Utility.GetCurrentCountryName() });  }     
+        </div>
+    </div>
+
+    <!-- RECOMMENDED -->
+    <div class="small-12 medium-4 columns" id="Recommended">
+        <div class="row">
+             @{  Html.RenderAction("AwesomeDealLanding", "Hotel", new { country = Utility.GetCurrentCountryName() });  }     
+
+        </div>
+    </div>
+</div>
+
+@section banner
+{
+    @{  Html.RenderAction("ShowBanner", "SysBanner", new { country = Utility.GetCurrentCountryName() });  }
+}
+
+@section scripts
+{
+    <script src="@Url.Content("~/Scripts/TS/Hotel.js")"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //$('#Loading').foundation('reveal', 'open');
+            $.ajax({
+                url: '@Url.Action("QuickSearch", "Hotel")',
+                type: 'GET',
+                success: function (data) {
+                    $('#QuickSearch').html(data);
+                }
+            });
+        });
+
+        function GotoDetail(serviceID) {
+            $("#ServiceID").val(serviceID);
+            $("#frmDetail").submit();
+        }
+    </script>
+
+}

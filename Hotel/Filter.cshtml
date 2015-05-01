@@ -1,0 +1,232 @@
+﻿@model DiethelmTSWebsite2015.Models.HotelFilter
+@using DiethelmTSWebsite2015.Biz
+@using DiethelmTSWebsite2015.Models;
+
+@{
+    Layout = null;
+    DTTDBContext db = new DTTDBContext();
+    List<DiethelmTSWebsite2015.Models.ServiceTypeRatingDetails> hotelTheme = ViewBag.HotelTheme;
+    List<DiethelmTSWebsite2015.Models.ServiceTypeRatingDetails> hotelStarRating = ViewBag.HotelStarRating;
+    List<DiethelmTSWebsite2015.Models.PriceRangeInfo> priceRange = ViewBag.PriceRange;
+
+    string[] ThemeMaster = new string[] { "Boutique", "Beachfront", "Environmentally Friendly", "Family Friendly", "Beach Access/ Close to the Beach", "Honeymoon", "Villas" };
+    string themes = "";
+    string stars = "";
+
+    if (Model.HotelTheme != null && Model.HotelTheme.Length > 0)
+    {
+        themes = Model.HotelTheme.Substring(0, Model.HotelTheme.Length - 1);
+    }
+
+    if (Model.HotelStarRating != null && Model.HotelStarRating.Length > 0)
+    {
+        stars = Model.HotelStarRating.Substring(0, Model.HotelStarRating.Length - 1);
+    }
+
+    int j;
+    string currencyName = "";
+
+}
+<input type="hidden" id="PriceFromFilter" name="PriceFromFilter" value="0" onblur="Filter(true)" />
+<input type="hidden" id="PriceToFilter" name="PriceToFilter" value="0" onblur="Filter(true)" />
+
+<div class="row">
+    <div class="columns small-12 editor-label search-label">
+        <label for="HotelStarRatingFillter">Star</label>
+    </div>
+    <div class="columns small-12 editor-field  search-field search-checkbox ">
+        <ul class="option-radio-list">
+            @if (string.IsNullOrEmpty(stars))
+            {
+                j = 0;
+                foreach (var item in hotelStarRating)
+                {
+                    <li>
+                        <input type="checkbox" name="HotelStarRatingFilter[]" onclick="Filter(true)" id="hotelStarRatingFillter-@j" value="@item.ServiceTypeRatingID" />
+                        <label for="hotelStarRatingFillter-@j">@item.ServiceTypeRatingName.Trim()</label>
+                    </li>
+                    j++;
+                }
+            }
+            else
+            {
+                j = 0;
+                foreach (var item in hotelStarRating)
+                {
+                    string[] arrStar = stars.Split(',');
+                    <li>
+                        @if (arrStar.Where(t => t == item.ServiceTypeRatingID.ToString()).Count() > 0)
+                        {
+                        <input type="checkbox" name="HotelStarRatingFilter[]" onclick="Filter(true)" id="hotelStarRatingFillter-@j" value="@item.ServiceTypeRatingID" />
+                        <label for="hotelStarRatingFillter-@j">@item.ServiceTypeRatingName.Trim()</label>
+                        }
+
+                    </li>
+                    j++;
+                }
+            }
+        </ul>
+    </div>
+
+    <div class="columns small-12 editor-label search-label">
+        <label for="price">Price</label>
+    </div>
+    <div class="columns small-12 editor-field  search-field search-checkbox  ">
+        <ul class="option-radio-list">
+            @foreach (var item in priceRange)
+            {
+                var currency = db.Currency.Where(c => c.CurrencyID == item.CurrencyCode);
+                currencyName = currency.First().CurrencyISOCode;
+                <li>
+                    <input type="checkbox" name="PriceRangeFilter[]" onchange="SetPriceRage(@item.PriceFrom, @item.PriceTo)" id="PriceRangeFilter-@j" value="@item.ID" />
+                    <label for="PriceRangeFilter-@j">
+                        @item.PriceFrom.ToString("#,##0.00") -
+                        @if (item.PriceTo.HasValue)
+                        {
+                            @item.PriceTo.Value.ToString("#,##0.00")
+                        }
+                        else
+                        {
+                            @item.PriceFrom.ToString("#,##0.00") <text>++</text>
+                        }
+                        @currencyName
+                    </label>
+                </li>
+                j++;
+            }
+        </ul>
+        @Html.HiddenFor(model => model.PriceFrom)
+        @Html.HiddenFor(model => model.PriceTo)
+    </div>
+
+    <div class="columns small-12 editor-label search-label">
+        <label for="hotel-theme">Facilities  </label>
+    </div>
+    <div class="columns small-12 editor-field  search-field search-checkbox ">
+        @{j = 0;}
+        <ul class="option-radio-list">
+            @foreach (var item in Model.Facility)
+            {
+                <li>
+                    <div class="row">
+                        <div class="columns small-9 no-padding-right">
+                            <input type="checkbox" name="FacilityFilter[]" onclick="Filter(true)" id="FacilityFilter-@j" value="@item.ID" />
+                            <label for="FacilityFilter-@j">@item.Title</label>
+                        </div>
+                        <div class="columns small-3 no-padding-left">
+                            <font class="right hotel-amount">   @item.Count hotels </font>
+                        </div>
+                    </div>
+                </li>
+                j++;
+            }
+        </ul>
+    </div>
+
+    <div class="columns small-12 editor-label search-label">
+        <label for="hotel-theme">Hotel Theme</label>
+    </div>
+    <div class="columns small-12 editor-field  search-field search-checkbox ">
+        <ul class="option-radio-list">
+            @if (string.IsNullOrEmpty(themes))
+            {
+                j = 0;
+                foreach (var item in hotelTheme)
+                {
+                    if (Array.FindAll(ThemeMaster, s => s.Equals(item.ServiceTypeRatingName.Trim())) != null)
+                    {
+                        <li>
+                            <input type="checkbox" name="HotelThemeFilter[]" onclick="Filter(true)" id="HotelThemeFilter-@j" value="@item.ServiceTypeRatingID" />
+                            <label for="HotelThemeFilter-@j">@item.ServiceTypeRatingName.Trim()</label>
+                        </li>
+                        j++;
+                    }
+                }
+            }
+            else
+            {
+                foreach (var item in hotelTheme)
+                {
+                    string[] arrTheme = themes.Split(',');
+                    if (arrTheme.Where(t => t == item.ServiceTypeRatingID.ToString()).Count() > 0)
+                    {
+                        if (Array.FindAll(ThemeMaster, s => s.Equals(item.ServiceTypeRatingName.Trim())) != null)
+                        {
+                            <li>
+                                <input type="checkbox" name="HotelThemeFilter[]" onclick="Filter(true)" id="HotelThemeFilter-@j" value="@item.ServiceTypeRatingID" />
+                                <label for="HotelThemeFilter-@j">@item.ServiceTypeRatingName.Trim()</label>
+                                j++;
+                            </li>
+                        }
+                    }
+                }
+            }
+        </ul>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        //initialize search data from cookie
+        var obj = $.cookie("@DataManager.Hotel.FILTER_COOKIE_NAME");
+        var filterObj = null;
+        if (obj) {
+
+            filterObj = queryStringToJSON(obj);
+            fillFacilityForm(filterObj);
+            fillStarRatingForm(filterObj);
+            fillThemeForm(filterObj);
+            Filter(false);
+        }
+
+
+    });
+
+    function Filter(isResetPaging) {
+
+        var chkFacilityVal = "";
+        $('input[name="FacilityFilter[]"]:checked').each(function () {
+            chkFacilityVal += $(this).val() + ",";
+        });
+
+        var chkStarVal = "";
+        $('input[name="HotelStarRatingFilter[]"]:checked').each(function () {
+            chkStarVal += $(this).val() + ",";
+        });
+
+        var chkThemeVal = "";
+        $('input[name="HotelThemeFilter[]"]:checked').each(function () {
+            chkThemeVal += $(this).val() + ",";
+        });
+
+        $('#HotelSearchResult').html("Loading....");
+
+        $.ajax({
+            url: '@Url.Action("Filter", "Hotel")',
+            type: 'POST',
+            data: {
+                FacilitySelected: chkFacilityVal,
+                StarSelected: chkStarVal,
+                ThemeSelected: chkThemeVal,
+                PriceFrom: $("#PriceFromFilter").val(),
+                PriceTo: $("#PriceToFilter").val(),
+                IsResetPaging: isResetPaging
+            },
+            success: function (data) {
+                $('#HotelSearchResult').html(data);
+                ShowLoadMoreButton();
+                LoadSummaryResult();
+            }
+        });
+
+    }
+
+    function SetPriceRage(from, to) {
+        $('#PriceFromFilter').val(from);
+        $('#PriceToFilter').val(to);
+        Filter(true);
+    }
+
+</script>

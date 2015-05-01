@@ -1,0 +1,13 @@
+﻿@using DiethelmTSWebsite2015.Core;
+@model DiethelmTSWebsite2015.Models.SysPost
+<div class="row content-small">
+    <div class="small-12 medium-5 columns">
+        <a href="@Url.Action("ContentDetail", "Home", new { postId = Model.ID })"><img src="~/assets/thumbnail/@Model.Image" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" /></a>
+    </div>
+    <div class="small-12 medium-7 columns">
+        <a href="@Url.Action("ContentDetail", "Home", new { postId = Model.ID })">
+            <h5 class="">@Model.Title</h5></a>
+        <span class="content-data">@Utility.GetShortTextNoHTML(Model.Description)</span>
+        <a class="link-readmore" href="@Url.Action("ContentDetail", "Home", new { postId = Model.ID })">Read more</a>
+    </div>
+</div>

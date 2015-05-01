@@ -1,0 +1,42 @@
+﻿@model List<DiethelmTSWebsite2015.Models.TransferSearchResult>
+
+@{
+    Layout = null;
+    int count = 0;        
+}
+<ul class="small-block-grid-2">
+    @foreach (var item in Model)
+    {
+        if (count < 4)
+        {
+            @Html.DisplayFor(modelItem => item, "TransferItemLarge");
+        }
+        else
+        {
+            break;
+        }
+        count++;
+    }
+</ul>
+@{
+    count = 0;
+}
+<ul class="small-block-grid-3">
+    @foreach (var item in Model)
+    {
+        if (count < 4)
+        {
+            count++;
+            continue;           
+        }
+        else
+        {
+            @Html.DisplayFor(modelItem => item, "TransferItemSmall");
+        }
+        count++;
+        if (count > 9) 
+        {
+            break; 
+        }
+    }
+</ul>

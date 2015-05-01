@@ -1,0 +1,75 @@
+﻿@model List<DiethelmWebServiceClient.TSWS.ServiceExtrasAndPricesResponse>
+
+@{
+    Layout = null;
+    int index = Convert.ToInt32(ViewBag.Index);
+    int exCount = 0;
+
+    //var extras = Model.ResponseList.OrderBy(t => t.ExtraMandatory).ToList();
+    //string patternName = ViewBag.ServiceID + "_" + ViewBag.OccupancyID;
+}
+
+@foreach(var item in Model)
+{
+    var extras = item.ResponseList.OrderBy(t => t.ExtraMandatory).ToList();
+
+<div id="ex_@item.ServiceId">
+
+    @foreach (var extra in extras)
+    {
+        if (!extra.ExtraMandatory)
+        {
+        <div class="please-select ExGroup">
+            <div class="row">
+                <div class="column small-1  text-right">
+                    <input type="checkbox" name="ServiceExtraID" value="@extra.ServiceExtraId&@extra.TOTALPRICE&@item.ServiceId" onclick="GrandTotal()" />
+                </div>
+                <div class="column small-9">
+                    @extra.ServiceTypeExtraName
+                </div>
+                <div class="column small-2 text-right" style="padding-right: 15px;">
+                    @extra.TOTALPRICE.ToString("#,##0.#0") THB
+                </div>
+                <div style="clear: both"></div>
+            </div>
+            @if (!extra.Equals(extras.Last()))
+            {
+                <div style="padding-left: 10px; padding-right: 10px;">
+                    <div class="dashed-line"></div>
+                </div>
+
+            }
+        </div>
+
+        }
+        else
+        {
+        <div class="please-select">
+            <div class="row">
+                <div class="column small-1  text-right">
+                    <input type="checkbox" checked disabled value="@extra.ServiceExtraId&@extra.TOTALPRICE&@item.ServiceId"  />
+                </div>
+                <div class="column small-9">
+                    @extra.ServiceTypeExtraName
+                </div>
+                <div class="column small-2 text-right" style="padding-right: 15px;">
+                    @extra.TOTALPRICE.ToString("#,##0.#0") THB
+                </div>
+                <div style="clear: both"></div>
+            </div>
+            @if (!extra.Equals(extras.Last()))
+            {
+                <div style="padding-left: 10px; padding-right: 10px;">
+                    <div class="dashed-line"></div>
+                </div>
+
+            }
+        </div>
+        <input type="hidden" name="ServiceExtraID" class="ServiceExtraHDD" value="@extra.ServiceExtraId&@extra.TOTALPRICE&@item.ServiceId" />
+        }
+
+        exCount++;
+
+    }
+</div>
+}
