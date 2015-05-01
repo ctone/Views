@@ -99,18 +99,18 @@
                             <li class="has-dropdown">
                                 <a href="#">@Html.Raw(img)@countryname</a>
                                 <ul class="dropdown">
-                                    <li><a href="@Url.Action("Country", "Home", new { country = "Bhutan" })"><img src="/Images/flag_bhutan.png" alt="Bhutan" title="Bhutan" />Bhutan</a></li>
-                                    <li><a href="@Url.Action("Country", "Home", new { country = "Cambodia" })"><img src="/Images/flag_cambodia.png" alt="Cambodia" title="Cambodia" />Cambodia</a></li>
-                                    <li><a href="@Url.Action("Country", "Home", new { country = "China" })"><img src="/Images/flag_china.png" alt="China" title="China" />China</a></li>
-                                    <li><a href="@Url.Action("Country", "Home", new { country = "Hongkong" })"><img src="/Images/flag_hong_kong.png" alt="Hong Kong" title="Hong Kong" />Hong Kong</a></li>
-                                    <li><a href="@Url.Action("Country", "Home", new { country = "Laos" })"><img src="/Images/flag_laos.png" alt="Laos" title="Laos" />Laos</a></li>
-                                    <li><a href="@Url.Action("Country", "Home", new { country = "Malaysia" })"><img src="/Images/flag_malaysia.png" alt="Malaysia" title="Malaysia" />Malaysia</a></li>
-                                    <li><a href="@Url.Action("Country", "Home", new { country = "Maldives" })"><img src="/Images/flag_maldives.png" alt="Maldives" title="Maldives" />Maldives</a></li>
-                                    <li><a href="@Url.Action("Country", "Home", new { country = "Myanmar" })"><img src="/Images/flag_myanmar.png" alt="Myanmar" title="Myanmar" />Myanmar</a></li>
-                                    <li><a href="@Url.Action("Country", "Home", new { country = "Singapore" })"><img src="/Images/flag_singapore.png" alt="Singapore" title="Singapore" />Singapore</a></li>
-                                    <li><a href="@Url.Action("Country", "Home", new { country = "Srilanka" })"><img src="/Images/flag_srilanka.png" alt="Sri Lanka" title="Sri Lanka" />Sri Lanka</a></li>
-                                    <li><a href="@Url.Action("Country", "Home", new { country = "Thailand" })"><img src="/Images/flag_thailand.png" alt="Thailand" title="Thailand" />Thailand</a></li>
-                                    <li><a href="@Url.Action("Country", "Home", new { country = "Vietnam" })"><img src="/Images/flag_vietnam.png" alt="Vietnam" title="Vietnam" />Vietnam</a></li>
+                                    <li><a onclick="ChangeCountry('@countryname','Bhutan', new Boolean(@isLogin))"><img src="/Images/flag_bhutan.png" alt="Bhutan" title="Bhutan" />Bhutan</a></li>
+                                    <li><a onclick="ChangeCountry('@countryname','Cambodia', new Boolean(@isLogin))" ><img src="/Images/flag_cambodia.png" alt="Cambodia" title="Cambodia" />Cambodia</a></li>
+                                    <li><a onclick="ChangeCountry('@countryname','China', new Boolean(@isLogin))" ><img src="/Images/flag_china.png" alt="China" title="China" />China</a></li>
+                                    <li><a onclick="ChangeCountry('@countryname','Hongkong', new Boolean(@isLogin))" ><img src="/Images/flag_hong_kong.png" alt="Hong Kong" title="Hong Kong" />Hong Kong</a></li>
+                                    <li><a onclick="ChangeCountry('@countryname','Laos', new Boolean(@isLogin))" ><img src="/Images/flag_laos.png" alt="Laos" title="Laos" />Laos</a></li>
+                                    <li><a onclick="ChangeCountry('@countryname','Malaysia', new Boolean(@isLogin))" ><img src="/Images/flag_malaysia.png" alt="Malaysia" title="Malaysia" />Malaysia</a></li>
+                                    <li><a onclick="ChangeCountry('@countryname','Maldives', new Boolean(@isLogin))" ><img src="/Images/flag_maldives.png" alt="Maldives" title="Maldives" />Maldives</a></li>
+                                    <li><a onclick="ChangeCountry('@countryname','Myanmar', new Boolean(@isLogin))" ><img src="/Images/flag_myanmar.png" alt="Myanmar" title="Myanmar" />Myanmar</a></li>
+                                    <li><a onclick="ChangeCountry('@countryname','Singapore', new Boolean(@isLogin))" ><img src="/Images/flag_singapore.png" alt="Singapore" title="Singapore" />Singapore</a></li>
+                                    <li><a onclick="ChangeCountry('@countryname','Srilanka', new Boolean(@isLogin))" ><img src="/Images/flag_srilanka.png" alt="Sri Lanka" title="Sri Lanka" />Sri Lanka</a></li>
+                                    <li><a onclick="ChangeCountry('@countryname','Thailand', new Boolean(@isLogin))" ><img src="/Images/flag_thailand.png" alt="Thailand" title="Thailand" />Thailand</a></li>
+                                    <li><a onclick="ChangeCountry('@countryname','Vietnam', new Boolean(@isLogin))" ><img src="/Images/flag_vietnam.png" alt="Vietnam" title="Vietnam" />Vietnam</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -391,6 +391,17 @@
                 <a class="close-reveal-modal">&#215;</a>
                 <div id="mg"></div>
             </div>
+            <!-- Change Country popup -->
+            <div id="ChangeCountry" class="reveal-modal small" data-reveal>
+                <a class="close-reveal-modal">&#215;</a>
+                <div class="row">
+                    <div class="small-12 large-12 columns margin-bottom-15 hotel-detail-text">This will log you out. Do you want to proceed?</div>
+                    <div class="small-12 large-12 columns text-right">
+                        <input id="cancelChange" class="button tiny" type="button" value="No" onclick="" />
+                        <input id="LogOut" class="button tiny" type="button" value="Yes" onclick="" />
+                    </div>
+                </div>
+            </div>
             <!-- Page custom popup -->
         @RenderSection("popup", required: false)
         <!-- FOOTER -->
@@ -451,8 +462,15 @@
 
     }
 
-    function ChangeCountry(currentCountry, newCountry, isLogon) {
-        alert(currentCountry+" "+newCountry+" "+isLogon);
+    function ChangeCountry(currentCountry, newCountry, logval) {
+        if(currentCountry!==newCountry){
+            if(logval==false){
+                window.location.href = "/" + newCountry + "/Home/Country";
+            }else{
+                selectCountry(newCountry);
+                $('#ChangeCountry').foundation('reveal', 'open');
+            }
+        }
     }
 
     function DoLogin(country) {
@@ -484,6 +502,25 @@
             $("#Login").click(function () {
                 login();
             });
+            $("#LogOut").click(function () {
+                $.ajax({
+                    url: '@Url.Action("ChangeCountryLogout", "Home")',
+                    data: { Country: $("#hddCountry").val() },
+                    type: 'Post',
+                    async: false,
+                    success: function (result) {
+                        window.location.href = "/" + $("#hddCountry").val() + "/Home/Country";
+                    },
+                    //error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                    //    alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+                    //}       
+                });
+
+            });
+            $("#cancelChange").click(function () {
+                $('#ChangeCountry').foundation('reveal', 'close');
+            });
+
             $("#notnow").click(function () {
                 var country = $('#hddCountry').val();
                 window.location.href = "/" + country + "/Home/Country";
