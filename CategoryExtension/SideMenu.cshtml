@@ -27,7 +27,7 @@
         }
         <div class="medium-12 large-12 column @active">
             @*            <a onclick="ChangeContent(@item.ID,'@item.Title')" id="@item.ID">&#8226; @item.Title </a>*@
-            <a href="@Url.Action("Index", "PostExtension", new { category = item.Code, postId = postID })" id="@item.ID">&#8226; @item.Title </a>
+            <a href="@Url.Action("Index", "PostExtension", new { category = item.Code, postId = postID, fromSide=1 })" id="@item.ID">&#8226; @item.Title </a>
         </div>
     }
 </div>

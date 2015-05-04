@@ -52,6 +52,10 @@
                 countryname = DiethelmTSWebsite2015.Core.Utility.GetCountryDisplayName(showcountry);
                 img = string.Format("<img src='{0}' />", DiethelmTSWebsite2015.Core.Utility.GetCountryImageUrl(showcountry));
             }
+            if (isLogin && country == "Corporate")
+            {
+                Response.Redirect("/Home/Logout");
+            }
         }
 
         @RenderSection("head", required: false)
@@ -60,6 +64,7 @@
         <!-- HEADER -->
         <header>
             <input type="hidden" id="hddCountry" value="@Utility.GetCurrentCountryName()" />
+            <input type="hidden" id="hddSelectCountry" value="" />
             <input type="hidden" id="hddModule" value="" />
             <div class="contain-to-grid sticky sticky-bg">
                 <nav class="top-bar red-top-bar " data-topbar role="navigation">
@@ -491,14 +496,13 @@
                     window.location.href = "/" + $("#hddCountry").val() + "/" + $("#hddModule").val();
                 } else {
                     window.location.href = "/" + $("#hddCountry").val() + "/Home/Country";
-                }
+                } 
             }
         });
     }
 
         $(document).ready(function () {
             $(document).foundation();
-
             $("#Login").click(function () {
                 login();
             });

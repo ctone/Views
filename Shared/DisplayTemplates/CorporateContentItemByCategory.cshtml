@@ -2,11 +2,19 @@
 
 @model DiethelmTSWebsite2015.Models.SysCategory
 @{
-    string newlink = "/" + Utility.GetCurrentCountryName() + "/" + Model.DefaultLink;
+    string newlink = "";
+    if (Model.Link == null || Model.Link == "")
+    {
+        newlink = "/" + Utility.GetCurrentCountryName() + "/" + Model.DefaultLink;
+    }
+    else
+    {
+        newlink = Model.DefaultLink;
+    }
 }
 
 <div class="small-12 medium-4 large-4 columns center content-3-box">
-    <img src="~/assets/thumbnail/@Model.Image" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" onclick="window.open('@Model.DefaultLink', '_self');" />
+    <img src="~/assets/thumbnail/@Model.Image" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" onclick="window.open('@newlink', '_self');" />
     <h5 class="content-3-box-subject" onclick="window.open('@newlink', '_self');">@Model.Title</h5>
     <span class="content-data">@Utility.GetShortTextNoHTML(Model.Description)</span>
     @if (Model.Link == null || Model.Link == "")
@@ -15,6 +23,6 @@
     }
     else
     {
-        <button class="readmore-button" onclick="window.open('@newlink', '_blank');">Read more</button>
+        <button class="readmore-button" onclick="window.open('@Model.DefaultLink', '_blank');">Read more</button>
     }
 </div>

@@ -107,6 +107,10 @@
                             @foreach (var item in TitleList)
                             {
                                 selected = "";
+                                if (item.ContactTitleTypeName == "Child")
+                                {
+                                    continue;
+                                }
 
                                 if (item.ContactTitleTypeDefault)
                                 {
@@ -299,7 +303,7 @@
         <div class="column small-12">
 @*            <input type="submit" value="Book" onclick="return ValidateInput()" />*@
             <div class="float-right margin-left-10"><input type="button" value="< Back" class="button main-btn btn-gray tiny" onclick="history.back();" /></div>
-            <div class="float-right"><input type="submit" value="Confirm" class="button main-btn right tiny" onclick="return ValidateInput()" /></div>
+            <div class="float-right"><input type="submit" value="Confirm" class="button main-btn right tiny" onclick="return ValidateInput('@travellerCount')" /></div>
         </div>
     </div>
 }
@@ -439,7 +443,7 @@
             $("#ExistingTravellerPopup").foundation('reveal', 'open');
         }
 
-        function ValidateInput()
+        function ValidateInput(travellerCount)
         {
             var count = travellerCount;
 
@@ -447,14 +451,14 @@
             {
                 if($("input[name='[" + i +"].FirstName']").val() == "")
                 {
-                    alert("Name");
+                    alert("Please input traveler name");
                     $("input[name='[" + i +"].FirstName']").focus();
                     return false;
                 }
 
                 if($("input[name='[" + i +"].LastName']").val() == "")
                 {
-                    alert("LastName");
+                    alert("Please input traveler lastname");
                     $("input[name='[" + i +"].LastName']").focus();
                     return false;
                 }

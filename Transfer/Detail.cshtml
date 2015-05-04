@@ -233,7 +233,7 @@
                 </div>
                 <div class="tab-content-line right"></div>
                 <div class="row">
-                    <div class="column small-10">
+                    <div class="column small-8">
                         <div class="row">
                             <div class="column small-12 small-label">Total Price</div><br />
                             <div class="column small-12 small-label">
@@ -244,16 +244,14 @@
                     <div class="column small-2">
                         <div class="float-right"><input type="button" value="Select" class="button right" onclick="ShowHints()" /></div>
                     </div>
+                    <div class="column small-2 right padding-top-25">
+                        <input type="button" value="< Back" class="button btn-gray right " onclick="history.back();" />
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <div class="row">
-        <div class="column small-2 right padding-top-25">
-            <input type="button" value="< Back" class="button btn-gray right " onclick="history.back();" />
-        </div>
-    </div>
 }
 
 @section Scripts {
@@ -369,6 +367,28 @@
 
         function ShowHints()
         {
+            if ($("#FlightNo").val()=="")
+            {
+                alert("Plase insert flight No.");
+                $("#FlightNo").focus();
+                return false;
+            }
+            
+            if ($("#Pickup").val() == null) {
+                alert("Plase select pick up");
+                $("#Pickup").focus();
+                return false;
+            }
+            if ($("#Dropoff").val() == null) {
+                alert("Plase select drop off");
+                $("#Dropoff").focus();
+                return false;
+            }
+            if ($("#FlightTime").val() == "") {
+                alert("Plase insert flight time");
+                $("#FlightTime").focus();
+                return false;
+            } 
             var IsDisplayHint = true;
 
             @if(IsDisplayHint)

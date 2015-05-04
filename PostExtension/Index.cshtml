@@ -25,7 +25,7 @@
 
 @section banner
 {
-    @{  Html.RenderAction("ShowBanner", "SysBanner",  new { country = Utility.GetCurrentCountryName() });  }
+    @{  Html.RenderAction("ShowBanner", "SysBanner", new { country = Utility.GetCurrentCountryName() });  }
 }
 
 @section popup
@@ -45,7 +45,7 @@
             $("#page-title").html(Lv3Title);
 
             //Breadcumb = "<a href=''>" + Lv1Title + " </a> > " + "<a href='CategoryExtension?CatID=" + Lv2Id + "'>" + Lv2Title + " </a> > " + Lv3Title;
-          //  $("#breadcumb").html(Breadcumb);
+            //  $("#breadcumb").html(Breadcumb);
 
             $(".side-menu").children().children().removeClass("active");
             $("#" + CateId).addClass("active");
@@ -63,5 +63,20 @@
                 }
             });
         }
+
+        @if (@ViewBag.FromSide == 1)
+        {
+            <text>
+                $(document).ready(function () {
+                    $('html, body').animate({
+                        scrollTop: $("#contentbody").offset().top
+                    }, 500);
+                });
+            </text>
+        }
+
+
+
+
     </script>
 }
