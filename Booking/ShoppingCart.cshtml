@@ -72,19 +72,20 @@
         }
 
         <div class="row">
-            <div class="small-6 columns booking-head-bg-red">
+            <div class="medium-6 columns hide-for-small booking-head-bg-red">
                 Holidays
             </div>
-            <div class="small-2 columns booking-head-bg-red text-center">
+            <div class="small-5 medium-2 columns booking-head-bg-red text-center">
                 Total Price
             </div>
-            <div class="small-2 columns booking-head-bg-yellow text-center">
+            <div class="small-4 medium-2 columns booking-head-bg-yellow text-center">
                 @sumpackagePrice.ToString("#,##0.00")
                 @{
-                    grandtotal = grandtotal + sumpackagePrice;
+        grandtotal = grandtotal + sumpackagePrice;
                 }
             </div>
-            <div class="small-2 columns booking-head-bg-red text-center">
+
+            <div class="small-3 medium-2 columns booking-head-bg-red text-center">
                 @item.CurrencyISOcode
             </div>
         </div>
@@ -130,18 +131,19 @@
                 <span>BookedOptionSellingAmount: @package.BookedOptionSellingAmount.ToString("#,##0") THB</span><br/>
                 <span>Traveller: @package.AssignedPassenger.Count()</span><br/>*@
             <div class="row">
-                <div class="small-6 columns">
+                <div class="small-12 medium-6 columns">
                     <div class="row">
-                        <div class="small-3 columns booking-small-red-font">
+                        <div class="small-4 medium-3 columns booking-small-red-font">
                             Start date:
                         </div>
-                        <div class="small-3 columns booking-small-gray-font">
+                        <div class="small-8 medium-3 columns booking-small-gray-font">
+
                             @package.BookedOptionInDate.ToString("dd-MM-yyyy")
                         </div>
-                        <div class="small-3 columns booking-small-red-font">
+                        <div class="small-4 medium-3 columns booking-small-red-font">
                             End date:
                         </div>
-                        <div class="small-3 columns booking-small-gray-font">
+                        <div class="small-8 medium-3 columns booking-small-gray-font">
                             @package.BookedOptionOutDate.ToString("dd-MM-yyyy")
                         </div>
                     </div>
@@ -152,17 +154,17 @@
             {
                 var p = item.PassengerDetails.Where(t => t.PassengerID == passenger.Value).First();
                 <div class="row">
-                    <div class="small-8 columns">
+                    <div class="small-12 medium-8 columns">
                         <div class="row">
-                            <div class="small-3 columns booking-small-red-font">
+                            <div class="small-4 medium-3 columns booking-small-red-font">
                                 @p.PassengerType:
                             </div>
-                            <div class="small-4 columns booking-small-gray-font">
+                            <div class="small-8 medium-4 columns booking-small-gray-font">
                                 @passengerNo . @p.Title @p.FirstName @p.LastName
                             </div>
-                            <div class="small-3 columns booking-small-red-font">
+                            <div class="small-4 medium-3 columns booking-small-red-font">
                             </div>
-                            <div class="small-2 columns booking-small-gray-font">
+                            <div class="small-8 medium-2 columns booking-small-gray-font">
                             </div>
                         </div>
                     </div>
