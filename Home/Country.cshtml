@@ -25,27 +25,11 @@
     <div class="small-12 medium-8 columns">
         @{  Html.RenderAction("AwesomeDeal", "PostExtension", new { country = Utility.GetCurrentCountryName() });  }
         @{  Html.RenderAction("Recommended", "Package", new { country = Utility.GetCurrentCountryName() });  }
-        @if (isLogin) 
-        { 
-        <div class="row">
-            <div class="small-12 medium-12 columns">
-                <div id="SmallPackageQuickSearch" class="small-package-quicksearch">
-
-                </div>
-            </div>
-        </div>
-        }
         @{  Html.RenderAction("News", "PostExtension", new { country = Utility.GetCurrentCountryName() });  }    
     </div>
     <div class="small-12 medium-4 columns">
         @{  Html.RenderAction("NewsFeatures", "CategoryExtension", new { country = Utility.GetCurrentCountryName() });  }
         @{  Html.RenderAction("Preferred", "Hotel", new { country = Utility.GetCurrentCountryName() });  }
-        @if (isLogin) 
-        { 
-        <div id="SmallQuickSearch" class="small-hotel-quicksearch">
-
-        </div>
-        }
         @{  Html.RenderAction("NewProduct", "PostExtension", new { country = Utility.GetCurrentCountryName() });  }
         <div class="row">
             <div class="small-12 columns">
@@ -89,20 +73,24 @@
                         $('#QuickSearch').html(data);
                     }
                 });
+              $(document).ready(function () {
+                  $.ajax({
+                      url: '@Url.Action("SmallQuickSearch", "Hotel")',
+                      type: 'GET',
+                      success: function (data) {
+                          $('#SmallQuickSearch').html(data);
+                      }
+                  });
+              });
+
                 $.ajax({
-                    url: '@Url.Action("SmallQuickSearch", "Hotel")',
-                    type: 'GET',
-                    success: function (data) {
-                        $('#SmallQuickSearch').html(data);
-                    }
-                });
-                $.ajax({
-                  url: '@Url.Action("SmallQuickSearch", "Package")',
+                    url: '@Url.Action("SmallQuickSearch", "Package")',
                     type: 'GET',
                     success: function (data) {
                         $('#SmallPackageQuickSearch').html(data);
                     }
                 });
+
           });
         function GotoDetail(serviceID) {
             $("#ServiceID").val(serviceID);

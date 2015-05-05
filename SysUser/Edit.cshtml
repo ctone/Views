@@ -2,9 +2,12 @@
 
 @{
     ViewBag.Title = "Edit";
+    Model.Password = "";
+    Model.ConfirmPassword = "";
 }
 @using (Html.BeginForm()) {
     @Html.ValidationSummary(true)
+    
 
     <fieldset>
         <legend>Edit User</legend>

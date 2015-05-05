@@ -7,7 +7,8 @@
         strDisplay = "";
     }
     int i = 0;
-
+    DiethelmTSWebsite2015.Biz.DataManager dataManager = DiethelmTSWebsite2015.Biz.DataManager.Instance;
+    var isLogin = dataManager.IsAgencyLogin();
 }
 @using (Html.BeginForm("Detail", "Hotel", FormMethod.Post, new { id = "frmDetail" }))
 {
@@ -32,4 +33,12 @@
         </div>
     </div>
 </div>
+}
+@{
+    if (i > 0 && isLogin)
+    { 
+        <div id="SmallQuickSearch" class="small-hotel-quicksearch">
+
+        </div>
+    }    
 }

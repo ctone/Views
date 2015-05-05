@@ -47,7 +47,7 @@
         }
 </div>
     <div class="float-left">
-        @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page = page }), (PagedListRenderOptions)ViewBag.PagedListRender)
+        @Html.PagedListPager((IPagedList)Model, page => Url.Action("List", new { page = page }), (PagedListRenderOptions)ViewBag.PagedListRender)
     </div>
 
 @section Scripts {

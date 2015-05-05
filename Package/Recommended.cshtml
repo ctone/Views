@@ -7,6 +7,9 @@
         strDisplay = "";
     }
     int i = 0;
+    DiethelmTSWebsite2015.Biz.DataManager dataManager = DiethelmTSWebsite2015.Biz.DataManager.Instance;
+    var isLogin = dataManager.IsAgencyLogin();
+
 }
 
 @using (Html.BeginForm("Detail", "Package", FormMethod.Post, new { id = "frmPackageDetail"}))
@@ -35,4 +38,14 @@
     </div>
 </div>
     
+}
+@if (i > 0 && isLogin)
+{
+    <div class="row">
+        <div class="small-12 medium-12 columns">
+            <div id="SmallPackageQuickSearch" class="small-package-quicksearch">
+
+            </div>
+        </div>
+    </div>
 }
