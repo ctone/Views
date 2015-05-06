@@ -139,7 +139,7 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script type="text/javascript">
+    <script type="text/javascript" defer>
         function ChooseCountryTab(Country) {
             $('#country-header').html(Country);
             $('#img-cover').attr("src", "/Images/" + Country + "-Headercover.jpg");

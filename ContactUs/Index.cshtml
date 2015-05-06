@@ -99,9 +99,6 @@
                     <input type="button" onclick="SubmitContact()" class="button tiny right" value="Send" />
                 </div>
             </div>
-
-
-
         </div>
     }
     <div class="small-12 medium-12 large-6 columns">
@@ -122,7 +119,7 @@
 
 @section scripts
 {
-    <script type="text/javascript">
+    <script type="text/javascript" defer>
         function ContactToggle(id) {
             $('#' + id).slideToggle();
             $('.' + id).toggle();

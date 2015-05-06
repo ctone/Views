@@ -45,7 +45,7 @@
 
     bool IsDisplayHint = hints.Count() > 0;
 }
-<script type="text/javascript">
+<script type="text/javascript" defer>
     function DisplayCalendar(month, year, showresult, roomtypeID, serviceID) {
         $.ajax({
             url: '@Url.Action("Calendar", "Hotel")',
@@ -390,12 +390,12 @@
                             <div class="calendar-title"><    Available only display for 1 month after entered checkin date    ></div>
                             <div style="display: block;">
                                 <div style="float:left;width:300px;margin-right:10px;" id="@cal1">
-                                    <script type="text/javascript">
+                                    <script type="text/javascript" defer>
                                         DisplayCalendar('@checkInDate.Month', '@checkInDate.Year', '#@cal1', '@roomType.ID', '@roomType.ServiceID');
                                     </script>
                                 </div>
                                 <div style="float:left;width:300px;" id="@cal2">
-                                    <script type="text/javascript">
+                                    <script type="text/javascript" defer>
                                         DisplayCalendar('@next.Month', '@next.Year', '#@cal2', '@roomType.ID', '@roomType.ServiceID');
                                     </script>
                                 </div>
