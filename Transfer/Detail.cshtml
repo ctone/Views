@@ -47,19 +47,24 @@
             <img src="~/Images/progress_s2.png" />
         </div>
     </div>
+
+    <div class="row ">
+        <div class="small-12 columns post-breadcumb">
+            <a onclick="history.back();" class="right">< Back</a>
+        </div>
+    </div>
+
     <div class="row hotel-detail">
         <div class="column medium-10 small-10 detail-title">
             @ViewBag.PackageName
         </div>
-        <div class="column medium-2 hide-for-small right">
-            <input type="button" value="< Back" class="button btn-gray right " onclick="history.back();" />
-        </div>
-        <div class="column small-2 show-for-small right">
-            <input type="button" value="< Back" class="button btn-gray right tiny " onclick="history.back();" />
-        </div>
+       
     </div>
     
-    
+
+
+
+
     <div class="row">
         <div class="columns small-12 medium-12 owl-theme-area">
             <div id="slice-content-excursion" class="owl-carousel owl-theme">
