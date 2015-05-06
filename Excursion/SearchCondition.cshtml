@@ -83,10 +83,10 @@
 
 
         <div id="MoreOption" style="display:none;">
-            <div class="columns small-12 large-12 search-label">
+            <div class="columns small-12 search-label">
                 Tour type
             </div>
-            <div class="columns small-12 large-12 search-field search-checkbox">
+            <div class="columns small-12 search-field search-checkbox">
                 @foreach (var item in tourTypeList)
                 {
                     <input type="radio" name="TourType" id="TourType-@j" value="@item.ServiceTypeRatingID" /><label for="TourType-@j"> @item.ServiceTypeRatingName.Trim()</label>
@@ -95,10 +95,10 @@
                 }
                 <input type="radio" class="css-checkbox" name="TourType" id="TourType-@j" value="" /> <label for="TourType-@j" class="css-label">All</label>
             </div>
-            <div class="columns small-12 large-12 search-label">
+            <div class="columns small-12 search-label">
                 Excursion category
             </div>
-            <div class="columns small-12 large-12 search-checkbox">
+            <div class="columns small-12 search-checkbox">
                 @{ j = 0;
                 }
                 @foreach (var item in excursionCatList)
@@ -108,10 +108,10 @@
                     j++;
                 }
             </div>
-            <div class="columns small-12 large-12 search-label ">
+            <div class="columns small-12 search-label ">
                 Excursion option
             </div>
-            <div class="columns small-12 large-12 search-checkbox">
+            <div class="columns small-12 search-checkbox">
                 @{ j = 0;
                 }
                 @foreach (var item in languageList)
@@ -121,10 +121,10 @@
                     j++;
                 }
             </div>
-            <div class="columns small-12 large-12 search-label ">
+            <div class="columns small-12 search-label ">
                 Tour Timing
             </div>
-            <div class="columns small-12 large-12 search-checkbox">
+            <div class="columns small-12 search-checkbox">
                 @{ j = 0;
                 }
                 @foreach (var item in timingList)

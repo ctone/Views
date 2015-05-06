@@ -69,10 +69,10 @@
 
 
         <div id="MoreOption" style="display:none;">
-            <div class="columns small-12 large-12 search-label">
+            <div class="columns small-12 search-label">
                 Transfer type
             </div>
-            <div class="columns small-12 large-12 search-field search-checkbox">
+            <div class="columns small-12 search-field search-checkbox">
                 @foreach (var item in transferTypeList)
                 {
                     <input type="radio" name="TransferType" id="TourType-@j" value="@item.ServiceTypeRatingID" /><label for="TourType-@j"> @item.ServiceTypeRatingName.Trim()</label>
@@ -82,10 +82,10 @@
                 <input type="radio" class="css-checkbox" name="TransferType" id="TourType-@j" value="" /> <label for="TourType-@j" class="css-label">All</label>
 
             </div>
-            <div class="columns small-12 large-12 search-label ">
+            <div class="columns small-12 search-label ">
                 Speaking guide
             </div>
-            <div class="columns small-12 large-12 search-checkbox">
+            <div class="columns small-12 search-checkbox">
                 @{ j = 0;
                 }
                 @foreach (var item in languageList)
@@ -183,6 +183,19 @@
 
 <script type="text/javascript">
 
+    $('select[name=FromLocation]').change(function () {
+
+        $.ajax({
+            url: '@Url.Action("GetLocationTo", "Transfer")',
+                type: 'GET',
+                data: { LocationFromID: $(this).val() },
+                success: function (data) {
+                    $("#ToLocation").html(data);
+                }
+            });
+
+    });
+
     $(document).ready(function () {
         $("#searchfrm").submit(function (e) {
             CheckActiveLogin("@Url.Action("CheckActiveLogin","Home")", function (result) {
@@ -272,6 +285,15 @@
 
         $('#PackageSearchResult').html("Loading.........................");
 
+        $.ajax({
+            url: '@Url.Action("GetLocationTo", "Transfer")',
+            type: 'GET',
+            data: { LocationFromID: $("#FromLocation").val() },
+            success: function (data) {
+                $("#ToLocation").html(data);
+            }
+        });
+
         var searchData = ConvertFormToJson($('#searchfrm'));
         $('#Loading').foundation('reveal', 'open');
         $.ajax({
@@ -358,6 +380,7 @@
         $('#MoreOptionShow').toggle();
         $('#MoreOptionHide').toggle();
     }
+
 
 
     function ConvertFormToJson(form) {

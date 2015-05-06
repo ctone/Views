@@ -95,7 +95,7 @@
                 Detail
             </div>
             <div class="small-2 columns booking-head-bg-gray text-center">
-                Status
+                &nbsp;
             </div>
             <div class="small-2 columns booking-head-bg-gray text-center">
                 Price
@@ -178,6 +178,7 @@
     }
     if (excursion.Count() > 0)
     {
+        passengerNo = 1;
         double sumExcursionPrice = 0;
         foreach (var package in excursion)
         {
@@ -207,7 +208,7 @@
                 Detail
             </div>
             <div class="small-2 columns booking-head-bg-gray text-center">
-                Status
+                &nbsp;
             </div>
             <div class="small-2 columns booking-head-bg-gray text-center">
                 Price
@@ -288,6 +289,7 @@
     }
     if (transfer.Count() > 0)
     {
+        passengerNo = 1;
         double sumTransferPrice = 0;
         foreach (var package in transfer)
         {
@@ -317,7 +319,7 @@
                 Detail
             </div>
             <div class="small-2 columns booking-head-bg-gray text-center">
-                Status
+                &nbsp;
             </div>
             <div class="small-2 columns booking-head-bg-gray text-center">
                 Price
@@ -400,6 +402,7 @@
 
     if (hotels.Count() > 0)
     {
+        passengerNo = 1;
         double sumHotelPrice = 0;
         foreach (var service in hotels)
         {
@@ -454,6 +457,7 @@
                     Service Extra:
                 </div>
                 <div class="small-8 columns">
+                    &nbsp;
                     <div class="row">
                         @foreach (var option in service.BookedOptions.Where(t => t.IsExtra).ToList())
                         {

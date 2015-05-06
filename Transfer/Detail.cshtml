@@ -379,16 +379,36 @@
                 $("#Pickup").focus();
                 return false;
             }
+
+            if ($("#FlightTime").val() == "") {
+                alert("Plase insert flight time");
+                $("#FlightTime").focus();
+                return false;
+            } else {
+                var str = $("#FlightTime").val();
+                var ftime = str.replace(".", ":");
+                if (ftime.length < 4 || ftime.length > 5) {
+                    alert("Incorrect flight time");
+                    return false;
+                } else {
+                    if (ftime.length == 4) {
+                        ftime = "0".concat(ftime);
+                    }
+                    var newreg = /^(([0-1][0-9])|(2[0-3])):[0-5][0-9]$/;
+                    if (newreg.exec(ftime)==null) {
+                        alert("Invalid time format\n The valid format is hh:mm\n");
+                        return false;
+                    } else {
+                        $("#FlightTime").val(ftime);
+                        return true;
+                    }
+                }
+            }
             if ($("#Dropoff").val() == null) {
                 alert("Plase select drop off");
                 $("#Dropoff").focus();
                 return false;
             }
-            if ($("#FlightTime").val() == "") {
-                alert("Plase insert flight time");
-                $("#FlightTime").focus();
-                return false;
-            } 
             var IsDisplayHint = true;
 
             @if(IsDisplayHint)

@@ -313,11 +313,12 @@
             searchObj = queryStringToJSON(obj);
             fillSearchForm(searchObj);
             fillStarRatingForm(searchObj);
+            fillPriceRangeForm(searchObj);
             fillThemeForm(searchObj);
 
             var selected = $('#City').find('option:selected');
             var val = selected.data('val');
-            LoadArea(val);
+            LoadArea(val, searchObj.CityArea);
 
             SearchHotel(false);//TODOTARN: ตอน auto search ให้ disable ปุ่ม search ด้วย
         }
@@ -363,15 +364,18 @@
             var selected = $(this).find('option:selected');
             var val = selected.data('val');
 
-            LoadArea(val);
+            LoadArea(val, "");
         });
 
-        function LoadArea(cityID) {
+        function LoadArea(cityID, selectedVal) {
 
             $.ajax({
                 url: '@Url.Action("GetArea", "Region")',
                 type: 'GET',
-                data: { CityID: cityID },
+                data: {
+                    CityID: cityID,
+                    Val: selectedVal
+                },
                 success: function (data) {
                     $('#CityArea').html(data);
                 }
@@ -528,6 +532,15 @@
         });
 
         result.HotelStarRating = chkVal;
+
+        var chkValPriceRange = "";
+       
+        $('input[name="PriceRange[]"]:checked').each(function () {
+            
+            chkValPriceRange += $(this).val() + ",";
+        });
+        alert(chkValPriceRange);
+        result.PriceRange = chkValPriceRange;
 
         var chkThemeVal = "";
         $('input[name="HotelTheme[]"]:checked').each(function () {

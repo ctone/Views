@@ -1,10 +1,19 @@
 ﻿@model List<DiethelmTSWebsite2015.Models.Region>
 @{
     Layout = null;
+    string Val = ViewBag.Val;
 }
+
 
     <option value="Any">Any</option>
     @foreach (var item in Model)
     {
-        <option value="@item.RegionName">@item.RegionName</option>
+        string sel = "";
+
+        if (Val == item.RegionName.Trim())
+        {
+            sel = "selected";
+        }
+        
+        <option @sel value="@item.RegionName.Trim()">@item.RegionName.Trim()</option>
     }

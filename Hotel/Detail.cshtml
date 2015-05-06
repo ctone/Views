@@ -96,48 +96,48 @@
                         <img src="~/Images/@ViewBag.StarRating-star.png">
                     }
                     |
-                    @*@if (ViewBag.Themes.Count() > 0)
+                    @if (themes.Count > 0)
                     {
-                        foreach (var theme in ViewBag.Themes)
+                        foreach (var theme in themes)
                         {
                             if (theme.ServiceTypeRatingName.Trim().ToLower() == "boutique")
                             {
-                                <img src="/Images/boutique.png" />
+                                <img src="/Images/boutique.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
                             }
                             if (theme.ServiceTypeRatingName.Trim().ToLower() == "beachfront")
                             {
-                                <img src="/Images/beachfront.png" />
+                                <img src="/Images/beachfront.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
                             }
                             if (theme.ServiceTypeRatingName.Trim().ToLower() == "environmentally friendly")
                             {
-                                <img src="/Images/environmentally.png" />
+                                <img src="/Images/environmentally.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
                             }
                             if (theme.ServiceTypeRatingName.Trim().ToLower() == "family friendly")
                             {
-                                <img src="/Images/family.png" />
+                                <img src="/Images/family.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
                             }
                             if (theme.ServiceTypeRatingName.Trim().ToLower() == "diethelm preferred")
                             {
-                                <img src="/Images/preferred.png" />
+                                <img src="/Images/preferred.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
                             }
                             if (theme.ServiceTypeRatingName.Trim().ToLower() == "beach access/ close to the beach")
                             {
-                                <img src="/Images/beachaccess.png" />
+                                <img src="/Images/beachaccess.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
                             }
                             if (theme.ServiceTypeRatingName.Trim().ToLower() == "honeymoon")
                             {
-                                <img src="/Images/honeymoon.png" />
+                                <img src="/Images/honeymoon.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
                             }
                             if (theme.ServiceTypeRatingName.Trim().ToLower() == "villas")
                             {
-                                <img src="/Images/villas.png" />
+                                <img src="/Images/villas.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
                             }
                             if (theme.ServiceTypeRatingName.Trim().ToLower() == "awesome deal")
                             {
-                                <img src="/Images/awesomedeal.png" />
+                                <img src="/Images/awesomedeal.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
                             }
                         }
-                    }*@
+                    }
 
                 </div>
                 <div class="column small-2 right">
@@ -150,7 +150,7 @@
 
 
     <div class="row">
-        <div class="column small-12 medium-8 owl-theme-area">
+        <div class="column small-12 medium-9 owl-theme-area">
             <div id="slice-content-hotel" class=" owl-carousel owl-theme">
                 @if (imageList != null)
                 {
@@ -163,10 +163,10 @@
                 }
             </div>
         </div>
-        <div class="column small-12 medium-4 map-area  ">
+        <div class="column small-12 medium-3 map-area  ">
             <div class="row">
                 <div class="column small-12  no-padding-right">
-                    <div id="googleMap" style="width: 100%; min-height: 270px;"></div>
+                    <div id="googleMap" style="width: 100%; min-height: 225px;"></div>
                 </div>
                 <div class="column small-12">
                     <div class="hotel-address" style="margin-right: -8px;">
@@ -512,7 +512,7 @@
                 <option value="10">10</option>
                 <option value="11">11</option>
                 <option value="12">12</option>
-                <option value="13">12</option>
+                <option value="13">13</option>
                 <option value="14">14</option>
                 <option value="15">15</option>
                 <option value="16">16</option>
@@ -614,7 +614,7 @@
             }
 
             var childRow = $('#cloneTemplate .child-row').first().clone();
-            childRow.addChildAge(parseInt(numberOfChildren));
+            childRow.addChildAge(parseInt(numberOfChildren), $(this).attr("data-ServiceID"), $(this).attr("data-GroupID"), $(this).attr("data-RoomTypeID"), $(this).attr("data-OccupancyID"), $(this).attr("data-PriceID"));
             room.find('.room-selection').append(childRow);
             room.find('*').removeClass('hide');
 
@@ -647,15 +647,52 @@
         });
 
         $(document).on('change', 'select.child-amount', function () {
-            GenerateExtraService($(this).attr("att-ServiceID"));
+            
+
+            var searchData = ConvertFormToJsonForGetPrice($('#frm'), $(this).attr("data-GroupID"), $(this).attr("data-ServiceID"), $(this).attr("data-RoomTypeID"), $(this).attr("data-OccupancyID"));
+            var priceID = $(this).attr("data-PriceID");
+            var hddPriceID = "hddPrice_" + $(this).attr("data-RoomTypeID") + "_" + $(this).attr("data-ServiceID");// hdd price ID
+
+            $("#" + priceID).html("Loading..");
+
+            $.ajax({
+                url: '@Url.Action("GetPrice", "Hotel")',
+                type: 'POST',
+                data: searchData,
+                contentType: "application/json",
+                success: function (data) {
+                    $("#" + priceID).html(data.PriceText + " " + data.Currency);
+                    $("#" + hddPriceID).val(data.Price);
+                    //GrandTotal();
+                    GenerateExtraService($(this).attr("data-ServiceID"));
+                }
+            });
+
         });
 
         $(document).on('change', 'select.adult-amount', function () {
-            GenerateExtraService($(this).attr("att-ServiceID"));
+            GenerateExtraService($(this).attr("data-ServiceID"));
         });
 
         $(document).on('change', 'select.childAge-amount', function () {
-            GenerateExtraService($(this).attr("att-ServiceID"));
+            var searchData = ConvertFormToJsonForGetPrice($('#frm'), $(this).attr("data-GroupID"), $(this).attr("data-ServiceID"), $(this).attr("data-RoomTypeID"), $(this).attr("data-OccupancyID"));
+            var priceID = $(this).attr("data-PriceID");
+            var hddPriceID = "hddPrice_" + $(this).attr("data-RoomTypeID") + "_" + $(this).attr("data-ServiceID");// hdd price ID
+
+            $("#" + priceID).html("Loading..");
+
+            $.ajax({
+                url: '@Url.Action("GetPrice", "Hotel")',
+                type: 'POST',
+                data: searchData,
+                contentType: "application/json",
+                success: function (data) {
+                    $("#" + priceID).html(data.PriceText + " " + data.Currency);
+                    $("#" + hddPriceID).val(data.Price);
+                    //GrandTotal();
+                    GenerateExtraService($(this).attr("data-ServiceID"));
+                }
+            });
         });
 
 
@@ -719,7 +756,7 @@
             }
 
             //$("#nGuest").val(numberOfRoom);
-            container.addNewRoom2(numberOfRoom, serviceID, maxAdult, maxChild);
+            container.addNewRoom2(numberOfRoom, serviceID, maxAdult, maxChild, gID, RoomTypeID, occupancyID, priceID);
 
             var searchData = ConvertFormToJsonForGetPrice($('#frm'), gID, serviceID, RoomTypeID, occupancyID);
 
