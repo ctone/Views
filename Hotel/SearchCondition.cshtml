@@ -93,10 +93,7 @@
                 </div>
 
 
-
-
-
-                <div id="MoreOption" style="display:none;">
+                <div class="MoreOption hide-for-small" style="display:none;">
                     <div class="columns small-12 editor-label search-label">
                         <label for="HotelStarRating">Star</label>
                     </div>
@@ -104,10 +101,10 @@
                         <ul class="option-radio-list">
                             @foreach (var item in hotelStarRating)
                             {
-                                <li>
-                                    <input type="checkbox" name="HotelStarRating[]" id="HotelStarRating-@j" value="@item.ServiceTypeRatingID" />
-                                    <label for="HotelStarRating-@j">@item.ServiceTypeRatingName.Trim()</label>
-                                </li>
+                            <li>
+                                <input type="checkbox" name="HotelStarRating[]" id="HotelStarRating-@j" value="@item.ServiceTypeRatingID" />
+                                <label for="HotelStarRating-@j">@item.ServiceTypeRatingName.Trim()</label>
+                            </li>
                                 j++;
                             }
                         </ul>
@@ -122,21 +119,21 @@
 
                                 var currency = db.Currency.Where(c => c.CurrencyID == item.CurrencyCode);
                                 currencyName = currency.First().CurrencyISOCode;
-                                <li>
-                                    <input type="checkbox" name="PriceRange[]" id="PriceRange-@j" value="@item.ID" />
-                                    <label for="PriceRange-@j">
-                                        @item.PriceFrom.ToString("#,##0.00") -
-                                        @if (item.PriceTo.HasValue)
+                            <li>
+                                <input type="checkbox" name="PriceRange[]" id="PriceRange-@j" value="@item.ID" />
+                                <label for="PriceRange-@j">
+                                    @item.PriceFrom.ToString("#,##0.00") -
+                                    @if (item.PriceTo.HasValue)
                                         {
-                                            @item.PriceTo.Value.ToString("#,##0.00")
+                                        @item.PriceTo.Value.ToString("#,##0.00")
                                         }
                                         else
                                         {
-                                            @item.PriceFrom.ToString("#,##0.00") <text>++</text>
+                                        @item.PriceFrom.ToString("#,##0.00") <text>++</text>
                                         }
-                                        @currencyName
-                                    </label>
-                                </li>
+                                    @currencyName
+                                </label>
+                            </li>
                                         j++;
 
                             }
@@ -145,7 +142,55 @@
                         @Html.HiddenFor(model => model.PriceTo)
                     </div>
                 </div>
+                <div class="MoreOption show-for-small" style="display:none;">
+                    <dl class="accordion" data-accordion>
+                        <dd class="accordion-navigation">
+                            <a href="#panel1b">Star</a>
+                            <div id="panel1b" class="content active editor-field search-field search-checkbox">
+                                <ul class="option-radio-list">
+                                    @foreach (var item in hotelStarRating)
+                                    {
+                                        <li>
+                                            <input type="checkbox" name="HotelStarRating[]" id="HotelStarRating-@j" value="@item.ServiceTypeRatingID" />
+                                            <label for="HotelStarRating-@j">@item.ServiceTypeRatingName.Trim()</label>
+                                        </li>
+                                        j++;
+                                    }
+                                </ul>
+                            </div>
+                        </dd>
+                        <dd class="accordion-navigation">
+                            <a href="#panel2b">Price</a>
+                            <div id="panel2b" class="content editor-field   search-field search-checkbox ">
+                                <ul class="option-radio-list">
+                                    @foreach (var item in priceRange)
+                                    {
 
+                                        var currency = db.Currency.Where(c => c.CurrencyID == item.CurrencyCode);
+                                        currencyName = currency.First().CurrencyISOCode;
+                                        <li>
+                                            <input type="checkbox" name="PriceRange[]" id="PriceRange-@j" value="@item.ID" />
+                                            <label for="PriceRange-@j">
+                                                @item.PriceFrom.ToString("#,##0.00") -
+                                                @if (item.PriceTo.HasValue)
+                                                {
+                                                    @item.PriceTo.Value.ToString("#,##0.00")
+                                                }
+                                                else
+                                                {
+                                                    @item.PriceFrom.ToString("#,##0.00") <text>++</text>
+                                                }
+                                                @currencyName
+                                            </label>
+                                        </li>
+                                                j++;
+
+                                    }
+                                </ul>
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
                 <div class="columns small-12 editor-label search-label text-center">
                     <a onclick="MoreOptionClick()" id="MoreOptionShow">+ More search options</a>
                     <a onclick="MoreOptionClick()" id="MoreOptionHide" style="display:none;">- Less search options</a>
@@ -476,7 +521,7 @@
 
 
     function MoreOptionClick() {
-        $('#MoreOption').toggle('slow');
+        $('.MoreOption').toggle('slow');
         $('#MoreOptionShow').toggle();
         $('#MoreOptionHide').toggle();
     }
@@ -534,9 +579,9 @@
         result.HotelStarRating = chkVal;
 
         var chkValPriceRange = "";
-       
+
         $('input[name="PriceRange[]"]:checked').each(function () {
-            
+
             chkValPriceRange += $(this).val() + ",";
         });
         alert(chkValPriceRange);

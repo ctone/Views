@@ -94,17 +94,19 @@
                     @Html.LabelFor(model => model.Comment)
                     @Html.TextAreaFor(model => model.Comment)
                 </div>
+                
 
                 <div class="small-12 columns">
                     <input type="button" onclick="SubmitContact()" class="button tiny right" value="Send" />
                 </div>
+
+         
             </div>
         </div>
     }
     <div class="small-12 medium-12 large-6 columns">
         <div class="contact-info">
-
-            @{ Html.RenderAction("ContactList"); }
+                   @{ Html.RenderAction("ContactList"); }
 
         </div>
         
@@ -186,39 +188,7 @@
                 alert("Please fill Comment");
                 return;
             }
-            //var Title = $('#Title').val();
-            //var FirstName = $('#FirstName').val();
-            //var LastName = $('#LastName').val();
-            //var Address = $('#Address').val();
-            //var City = $('#City').val();
-            //var Telephone = $('#Telephone').val();
-            //var Email = $('#Email').val();
-            //var Subject = $('#Subject').val();
-            //var Comment = $('#Comment').val();
-            @*$.post('@Url.Action("Create", "ContactUs")',
-            {
-                Title: Title,
-                FirstName: FirstName,
-                LastName: LastName,
-                Address: Address,
-                City: City,
-                Telephone: Telephone,
-                Email: Email,
-                Subject: Subject,
-                Comment: Comment,
-                Fax: Fax,
-                CompanyName: CompanyName,
-                CompanySize: CompanySize,
-                CountryInfoID: CountryInfoID,
-                CountryID: CountryID
-            },
-            function (data) {
-                if (data) {
-                    alert("Send complete");
-                    return true;
-                }
-
-            });*@
+       
             alert("Send complete");
             $('#main-form').submit();
 
