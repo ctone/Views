@@ -14,7 +14,7 @@
     List<string> hints = ViewBag.Hints;
     
 
-    //double StartingPrice = ViewBag.StartingPrice;
+    
     int i = 0;
 
     bool IsDisplayHint = hints.Count() > 0;
@@ -145,7 +145,7 @@
                                             type: 'GET',
                                             data: { Param: '@item.PACKAGE_ID,@item.PACKAGE_START_DATE,@item.PACKAGE_END_DATE' },
                                             success: function (data) {
-                                                //alert(data.data);
+                                             
                                                 $("#PackageServiceBox").html(data.data);
                                                 $('#Loading').foundation('reveal', 'close');
                                             }
@@ -225,15 +225,7 @@
                         </div>
                     }
                     i++;
-                @* <div class="top-toggle-tineray display-block" onclick="ContactToggle('@item.DAY')">
-                    <div class="itineray-day">Day @item.DAY </div> <div class="itineray-title">@item.ITINERARY_DAY_DESC
-                    <div class="@item.DAY right" style="display:none;"><img src="/Images/red-arrow1.png" /></div><div class="@item.DAY right"><img src="/Images/red-arrow2.png" /></div> </div>
-                </div>
-                <div class="bottom-toggle-tineray" id="@item.DAY">
-                        <div>@Html.Raw(HttpUtility.HtmlDecode(item.ITINERARY_TEXT))</div>
-                </div>
-                <div>Day @item.DAY @item.ITINERARY_DAY_DESC</div>
-                <div>@HttpUtility.HtmlDecode(item.ITINERARY_TEXT)</div>*@
+       
                 }
             }
         </div>
