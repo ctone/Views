@@ -4,6 +4,7 @@
     Layout = null;
     int index = Convert.ToInt32(ViewBag.Index);
     int exCount = 0;
+    string currencyCode = ViewBag.Currency;
 
     //var extras = Model.ResponseList.OrderBy(t => t.ExtraMandatory).ToList();
     //string patternName = ViewBag.ServiceID + "_" + ViewBag.OccupancyID;
@@ -28,7 +29,7 @@
                     @extra.ServiceTypeExtraName
                 </div>
                 <div class="column small-2 text-right" style="padding-right: 15px;">
-                    @extra.TOTALPRICE.ToString("#,##0.#0") THB
+                    @extra.TOTALPRICE.ToString("#,##0.#0") @currencyCode
                 </div>
                 <div style="clear: both"></div>
             </div>
@@ -53,7 +54,7 @@
                     @extra.ServiceTypeExtraName
                 </div>
                 <div class="column small-2 text-right" style="padding-right: 15px;">
-                    @extra.TOTALPRICE.ToString("#,##0.#0") THB
+                    @extra.TOTALPRICE.ToString("#,##0.#0") @currencyCode
                 </div>
                 <div style="clear: both"></div>
             </div>

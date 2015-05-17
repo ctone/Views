@@ -22,21 +22,52 @@
 @using (Html.BeginForm("Detail", "Package", FormMethod.Post, new { id = "frmDetail"}))
 {
     <input type="hidden" id="PackageID" name="PackageID" value=""/>
+    <input type="hidden" id="hddPackageName" name="hddPackageName" value="" />
     <input type="hidden" id="IsLandingPage" name="IsLandingPage" value="true"/>
     
 <div class="row">
 
     <!-- SPECIAL PROMOTION -->
     <div class="small-12 medium-8 columns" id="SpecialPromotion">
-        <div class="row">
-             @{  Html.RenderAction("Preferred", "Package", new { country = Utility.GetCurrentCountryName() });  }     
+        <div class="row" id="SpecialPromotionContainer">
+            <div class="small-12 columns center">
+                <img src="@Url.Content("~/Images/loading.gif")" />
+            </div>
+            <script type="text/javascript">
+                $.ajax({
+                    url: '@Url.Action("Preferred", "Package")',
+                    type: 'GET',
+                    data: {
+                        country: '@Utility.GetCurrentCountryName()'
+                    },
+                    success: function (data) {
+                        $('#SpecialPromotionContainer').html(data);
+                    }
+                });
+            </script>
+            @*@{  Html.RenderAction("Preferred", "Package", new { country = Utility.GetCurrentCountryName() });  }     *@
         </div>
     </div>
 
     <!-- RECOMMENDED -->
     <div class="small-12 medium-4 columns" id="Recommended">
-        <div class="row">
-             @{  Html.RenderAction("BestSeller", "Package", new { country = Utility.GetCurrentCountryName() });  }     
+        <div class="row" id="RecommendedContainer">
+            <div class="small-12 columns center">
+                <img src="@Url.Content("~/Images/loading.gif")" />
+            </div>
+            <script type="text/javascript">
+                $.ajax({
+                    url: '@Url.Action("BestSeller", "Package")',
+                    type: 'GET',
+                    data: {
+                        country: '@Utility.GetCurrentCountryName()'
+                    },
+                    success: function (data) {
+                        $('#RecommendedContainer').html(data);
+                    }
+                });
+            </script>
+            @*@{  Html.RenderAction("BestSeller", "Package", new { country = Utility.GetCurrentCountryName() });  }     *@
 
         </div>
     </div>
@@ -51,7 +82,7 @@
 @section Scripts {
 
     <script src="@Url.Content("~/Scripts/TS/Package.js")"></script>
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
         $(document).ready(function () {
 
             $.ajax({
@@ -64,8 +95,9 @@
 
         });
 
-        function GotoDetail(serviceID) {
+        function GotoDetail(serviceID, packageName) {
             $("#PackageID").val(serviceID);
+            $("#PackageName").val(packageName);
             $("#frmDetail").submit();
         }
     </script>

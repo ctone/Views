@@ -3,7 +3,7 @@
 <div class="small-12 columns content-detail">
     <div class="row">
         <div class="small-12 columns package-pic">
-            <img src="@Model.Image" onclick="GotoDetail('@Model.PackageID')" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" title="@Model.PackageName" alt="@Model.PackageName" />
+            <img src="@Model.Image" onclick="GotoDetail('@Model.PackageID','@Model.PackageName')" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" title="@Model.PackageName" alt="@Model.PackageName" />
         </div>
         <div class="small-12 columns display-block">
             @if (Model.Available=="Yes") {
@@ -23,13 +23,13 @@
         <div class="small-12 push-3 medium-9 columns">
             <div class="row content-detail-title">
                 <div class="small-12 medium-12 columns">
-                    <h5 onclick="GotoDetail('@Model.PackageID')">@Model.PackageName</h5>
+                    <h5 onclick="GotoDetail('@Model.PackageID','@Model.PackageName')">@Model.PackageName</h5>
                 </div>
                 <div class="small-12 medium-12 columns">
                     <span class="content-detail-desc">@Model.PackageDescription</span>
                 </div>
                 <div class="small-12 medium-12 columns">
-                    <span class="link-readmore" onclick="GotoDetail('@Model.PackageID')">read more</span>
+                    <span class="link-readmore" onclick="GotoDetail('@Model.PackageID','@Model.PackageName')">read more</span>
                 </div>
             </div>
         </div>
@@ -37,7 +37,7 @@
             <div class="price-tag-circle">
                 <span>from</span><br />
                 <span class="price">@Math.Ceiling(Model.Price).ToString("#,##0") </span><br>
-                <span>THB</span>
+                <span>@Model.Currency</span>
             </div>
         </div>
     </div>

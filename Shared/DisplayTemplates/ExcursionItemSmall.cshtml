@@ -25,7 +25,7 @@
             <h6 onclick="GotoDetail('@Model.ExcursionID')">@Model.ExcursionName</h6>
         </div>
         <div class="small-12 columns">
-        <div class="price-red">from <b> THB @Math.Ceiling(Model.Price).ToString("#,##0") </b></div>
+        <div class="price-red">from <b> @Model.Currency @Math.Ceiling(Model.Price).ToString("#,##0") </b></div>
         </div>
         <div class="small-12 columns">
             <span class="content-detail-desc">@Model.ExcursionDescription</span>

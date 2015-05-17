@@ -5,7 +5,7 @@
 @model IPagedList<DiethelmTSWebsite2015.Models.Dining>
 @{
     ViewBag.Title = "List";
-    DTTDBContext db = new DTTDBContext();
+    DTTDBContext db = DataManager.DB;
     string country = Request.RequestContext.RouteData.Values["country"].ToString();
     DiethelmTSWebsite2015.Biz.CountryCollection countryColl = new DiethelmTSWebsite2015.Biz.CountryCollection();
 
@@ -59,7 +59,7 @@
 </div>
 
 @section Scripts {
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
 
         function Delete(id) {
             if (confirm("Do you want to delete?")) {

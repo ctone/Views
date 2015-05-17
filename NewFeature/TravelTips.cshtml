@@ -8,7 +8,7 @@
     Layout = "~/Views/Shared/_LayoutWeb.cshtml";
 
     DiethelmTSWebsite2015.Core.Utility.ReloadRouteData();
-    DTTDBContext db = new DTTDBContext();
+    DTTDBContext db = DataManager.DB;
     object obj = Request.RequestContext.RouteData.Values["country"];
     string country = obj == null ? string.Empty : obj.ToString();
     CountryCollection list = new CountryCollection();
@@ -33,7 +33,7 @@
 
 <div class="row ">
     <div class="small-12 columns country-header-cover"> </div>
-    <div class="small-12 columns country-image-cover"> <img src="/Images/@countryname-Headercover.png" id="img-cover" width="100%"> </div>
+    <div class="small-12 columns country-image-cover"> <img src="/Images/@countryname-Headercover.jpg" id="img-cover" width="100%"> </div>
 </div>
 
     <div class="row margin-top15">

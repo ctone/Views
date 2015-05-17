@@ -4,7 +4,7 @@
 @{
     ViewBag.Title = "Edit";
    
-    DTTDBContext db = new DTTDBContext(); 
+    DTTDBContext db = DataManager.DB; 
     byte countryID = Utility.GetCurrentCountryID();
     List<Currency> currency = db.Currency.Where(c => c.CountryID == countryID).ToList();
 }
@@ -73,7 +73,7 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
         function Submit() {
             $('#main-form').submit();
         }

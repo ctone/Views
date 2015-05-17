@@ -19,7 +19,7 @@
     <div class="small-12 medium-4 columns">
         <h3 class="step-title-label">Excursion search</h3>
     </div>
-    <div class="small-12 medium-8 columns" style="background-color:#EEEEEE;padding:6.5px;">
+    <div class="small-12 medium-8 columns progress-bar" >
         <img src="~/Images/progress_s1.png" />
     </div>
 </div>
@@ -71,8 +71,9 @@
     @Scripts.Render("~/bundles/jqueryval")
     <script src="@Url.Content("~/Scripts/jquery.cookie.js")"></script>
     <script src="@Url.Content("~/Scripts/TS/Excursion.js")"></script>
+    <script src="@Url.Content("~/Scripts/TS/Utility.js")"></script>
 
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
         $(document).ready(function () {
             LoadExcursionSortBox();
 
@@ -106,6 +107,7 @@
             $.ajax({
                 url: '@Url.Action("LoadMoreResult", "Excursion")',
                 type: 'Get',
+                data: { token: guid() },
                 success: function (data) {
 
                     $('#ExcursionSearchResult').append(data);

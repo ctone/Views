@@ -44,7 +44,7 @@
         <div class="small-12 medium-4 columns">
             <h3 class="step-title-label">Excursion search</h3>
         </div>
-        <div class="small-12 medium-8 columns" style="background-color: #EEEEEE; padding: 6.5px;">
+        <div class="small-12 medium-8 columns progress-bar">
             <img src="~/Images/progress_s2.png" />
         </div>
     </div>
@@ -61,7 +61,7 @@
     
     
    <div class="row">
-       <div class="columns small-12">
+       <div class="columns small-12 detail-slide-img-cover">
            <div id="slice-content-excursion" class="owl-carousel owl-theme">
                @if (imageList != null)
                {
@@ -94,7 +94,7 @@
         <div class="column small-12 medium-3">
             <label class="hotel-detail-label">Description</label>
         </div>
-        <div class="column small-12 medium-9">
+        <div class="column small-12 medium-9 hotel-detail-text">
             @Html.Raw(HttpUtility.HtmlDecode(Model.ITINERARY_DETAILS[0].ITINERARY_TEXT))
         </div>
     </div>
@@ -214,7 +214,7 @@
             <div class="column small-12 medium-3">
                 <label class="hotel-detail-label">Excursion Detail</label>
             </div>
-            <div class="column small-12 medium-9 hotel-detail-text padding-top-10 hide-for-small" >
+            <div class="column small-12 medium-9 hotel-detail-text padding-top-10" >
                 <div class="row pickup-head">
                     <div class="column small-12 medium-2">
                         Direction
@@ -245,7 +245,7 @@
                     <div class="column small-12 medium-3">
                         <input type="text" id="AlternativePoint" name="AlternativePoint" />
                     </div>
-                    <div class="column small-12 medium-2">
+                    <div class="column small-12 medium-2" id="PickupTimeBox">
                         <input type="text" id="PickupTime" name="PickupTime" />
                     </div>
                 </div>
@@ -254,7 +254,7 @@
                 <div class="tab-content-line right padding-top-25"></div>
 
                 <div class="row">
-                    <div class="column small-10">
+                    <div class="column small-12 medium-10">
                         <div class="row">
                             <div class="column small-12 small-label">Total Price</div><br />
                             <div class="column small-12 small-label">
@@ -262,22 +262,22 @@
                             </div>
                         </div>
                     </div>
-                    <div class="column small-2">
-                        <div class="float-right"><input type="button" value="Select" class="button right" onclick="ShowHints()" /></div>
+                    <div class="column small-12 medium-2" >
+                        <div class="float-right"><input type="button" value="Select" class="button right expand-mobile-small-pc" onclick="ShowHints()" /></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="row margin-top15">
-        <div class="column small-2 right padding-top-25">
-            <input type="button" value="< Back" class="button btn-gray right " onclick="history.back();" />
+        <div class="column small-12 medium-2 right padding-top-25">
+            <input type="button" value="< Back" class="button btn-gray right expand-mobile-small-pc" onclick="history.back();" />
         </div>
     </div>
 }
 
 @section Scripts {
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
         function ContactToggle(id) {
             $('#' + id).slideToggle();
             $('.' + id).toggle();
@@ -303,7 +303,19 @@
             var selected = $('#Pickup').find('option:selected');
             var time = selected.data('time');
 
-            if (time == '') {
+            $.ajax({
+                url: '@Url.Action("GetSelectTimeCtrl", "Excursion")',
+                type: 'POST',
+                data: {
+                    Time: time,
+                    CtrlName: 'PickupTime'
+                },
+                success: function (data) {
+                    $('#PickupTimeBox').html(data);
+                }
+            });
+
+            /*if (time == '') {
                 $('#PickupTime').attr('readonly', false);
                 $('#PickupTime').removeClass('input-disabled');
                 $('#PickupTime').val('');
@@ -312,7 +324,7 @@
                 $('#PickupTime').attr('readonly', true);
                 $('#PickupTime').addClass('input-disabled');
                 $('#PickupTime').val(time);
-            }
+            }*/
         }
 
         $(document).ready(function () {
@@ -393,6 +405,7 @@
 
         function Book()
         {
+            $('#Loading').foundation('reveal', 'open');
             $("#frm").submit();
         }
     </script>

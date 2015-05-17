@@ -15,7 +15,7 @@
                 </div>
                 <div class="small-12 columns hotel-price">
                     from
-                    <text> THB @Math.Ceiling(Model.Price).ToString("#,##0") </text>
+                    <text> @Model.Currency @Math.Ceiling(Model.Price).ToString("#,##0") </text>
                 </div>
                 <div class="small-12  columns">
                     <span class="content-detail-desc">@Utility.GetShortTextNoHTML(HttpUtility.HtmlDecode(Model.HotelDescription))</span>

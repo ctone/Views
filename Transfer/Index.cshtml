@@ -18,9 +18,25 @@
 <div class="row">
 
     <div class="small-12 columns margin-top30" id="SpecialPromotion">
-        <div class="row ">
-            @{  Html.RenderAction("LandingData", "Transfer", new { country = Utility.GetCurrentCountryName() });  }
+        <div class="row " id="LandingContainer">
+            <div class="small-12 columns center">
+                <img src="@Url.Content("~/Images/loading.gif")" />
+            </div>
+            <script type="text/javascript">
+                $.ajax({
+                    url: '@Url.Action("LandingData", "Transfer")',
+                    type: 'GET',
+                    data: {
+                        country: '@Utility.GetCurrentCountryName()'
+                    },
+                    success: function (data) {
+                        $('#LandingContainer').html(data);
+                    }
+                });
+            </script>
+            @*@{  Html.RenderAction("LandingData", "Transfer", new { country = Utility.GetCurrentCountryName() });  }*@
         </div>
+
     </div>
 </div>
 }
@@ -33,7 +49,7 @@
 @section Scripts {
 
     <script src="@Url.Content("~/Scripts/TS/Package.js")"></script>
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
         $(document).ready(function () {
             
             $.ajax({

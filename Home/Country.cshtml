@@ -24,12 +24,42 @@
 <div class="row">
     <div class="small-12 medium-8 columns">
         @{  Html.RenderAction("AwesomeDeal", "PostExtension", new { country = Utility.GetCurrentCountryName() });  }
-        @{  Html.RenderAction("Recommended", "Package", new { country = Utility.GetCurrentCountryName() });  }
+        <div id="recommendedList">
+            <img src="@Url.Content("~/Images/loading.gif")" />
+            <script type="text/javascript">
+                $.ajax({
+                    url: '@Url.Action("Recommended", "Package")',
+                    type: 'GET',
+                    data: {
+                        country: '@Utility.GetCurrentCountryName()'
+                    },
+                    success: function (data) {
+                        $('#recommendedList').html(data);
+                    }
+                });
+            </script>
+        </div>
+        @*@{  Html.RenderAction("Recommended", "Package", new { country = Utility.GetCurrentCountryName() });  }*@
         @{  Html.RenderAction("News", "PostExtension", new { country = Utility.GetCurrentCountryName() });  }    
     </div>
     <div class="small-12 medium-4 columns">
         @{  Html.RenderAction("NewsFeatures", "CategoryExtension", new { country = Utility.GetCurrentCountryName() });  }
-        @{  Html.RenderAction("Preferred", "Hotel", new { country = Utility.GetCurrentCountryName() });  }
+        <div id="preferredList">
+            <img src="@Url.Content("~/Images/loading.gif")" />
+            <script type="text/javascript">
+                $.ajax({
+                    url: '@Url.Action("Preferred", "Hotel")',
+                    type: 'GET',
+                    data: {
+                        country: '@Utility.GetCurrentCountryName()'
+                    },
+                    success: function (data) {
+                        $('#preferredList').html(data);
+                    }
+                });
+            </script>
+        </div>
+        @*@{  Html.RenderAction("Preferred", "Hotel", new { country = Utility.GetCurrentCountryName() });  }*@
         @{  Html.RenderAction("NewProduct", "PostExtension", new { country = Utility.GetCurrentCountryName() });  }
         <div class="row">
             <div class="small-12 columns">
@@ -49,7 +79,7 @@
 
 @section scripts{
     <script src="@Url.Content("~/Scripts/TS/Hotel.js")"></script>
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
           $(document).ready(function () {
                 $("#slice-content").owlCarousel({
 

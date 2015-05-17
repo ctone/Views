@@ -4,7 +4,7 @@
 
 @{
     Layout = null;
-    DTTDBContext db = new DTTDBContext();
+    DTTDBContext db = DataManager.DB;
     List<DiethelmTSWebsite2015.Models.ServiceTypeRatingDetails> hotelTheme = ViewBag.HotelTheme;
     List<DiethelmTSWebsite2015.Models.ServiceTypeRatingDetails> hotelStarRating = ViewBag.HotelStarRating;
     List<DiethelmTSWebsite2015.Models.PriceRangeInfo> priceRange = ViewBag.PriceRange;
@@ -165,7 +165,7 @@
     </div>
 </div>
 
-<script type="text/javascript" defer>
+<script type="text/javascript" >
 
     $(document).ready(function () {
 

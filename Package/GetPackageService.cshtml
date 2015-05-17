@@ -1,4 +1,5 @@
 ﻿@model DiethelmWebServiceClient.TSWS.DetailsPackage
+@using DiethelmTSWebsite2015.Biz
 
 @{
     Layout = null;
@@ -7,24 +8,39 @@
     string EndDate = ViewBag.EndDate;
     int mainElementID = 0;
     string mainElementName = "";
+    DiethelmTSWebsite2015.Models.PackageGetServiceInfo info = ViewBag.PackageGetServiceInfo;
+    DataManager dataManager = DataManager.Instance;
+    int occupancyID = ViewBag.OccupancyID;
+
+    var pk = dataManager.PackageData.TSPackageSearchResult.PACKAGES.Where(t => t.PACKAGE_ID == PackageID).FirstOrDefault();
+    var elements = pk.MAIN_ELEMENTS.Where(t => t.OCCUPANCYID == occupancyID).ToList();
+   
+    
 }
 
-@foreach (var item in Model.PACKAGE_MAIN_ELEMENTS)
+@foreach (var item in elements)
 {
     string str = "";
+    
 
-    if (item == Model.PACKAGE_MAIN_ELEMENTS.First())
+    if (item == elements.First())
     {
         str = "checked";
-        mainElementID = item.PACKAGE_MAIN_ELEMENT_ID;
-        mainElementName = item.PACKAGE_MAIN_ELEMENT_NAME;
+        mainElementID = item.PACKAGEELEMENT_ID;
+        mainElementName = item.ELEMENT_NAME;
     }
+
+
+
+    var price = TSCoreBiz.GetPackagePrice(dataManager.PackageData.TSPackageSearchResult, PackageID, item.PACKAGEELEMENT_ID, info.Rooms[0]);
+
+    string val = occupancyID + "#" + item.PACKAGEELEMENT_ID + "#" + price.Price + "#" + item.ELEMENT_NAME;
     
-    <div>
-        <input type="radio" name="[{0}].RoomTypeIDAndServiceID" @str onclick="GetAltHotelOption('@PackageID','@StartDate','@EndDate','@item.PACKAGE_MAIN_ELEMENT_ID','@item.PACKAGE_MAIN_ELEMENT_NAME')" /> @item.PACKAGE_MAIN_ELEMENT_NAME
+    <div class="get-service ">
+        <input type="radio" name="ServiceOption_@occupancyID" @str onclick="CalPrice()" value="@val" @*onclick="GetAltHotelOption('@PackageID','@StartDate','@EndDate','@item.PACKAGEELEMENT_ID','@item.ELEMENT_NAME')"*@ /> @item.ELEMENT_NAME <div class="service-price float-right">@price.Currency @price.Price.ToString("#,##0.00") </div> 
     </div>
 }
 
 <script>
-    GetAltHotelOption('@PackageID','@StartDate','@EndDate','@mainElementID','@mainElementName');
+    //GetAltHotelOption('@PackageID','@StartDate','@EndDate','@mainElementID','@mainElementName');
 </script>

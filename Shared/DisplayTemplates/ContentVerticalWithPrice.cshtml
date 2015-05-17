@@ -2,9 +2,9 @@
 @model DiethelmTSWebsite2015.Models.PackageSearchResult
 
 <div class="small-12 medium-4 columns content-vertical left">
-    <img onclick="GotoPaclageDetail('@Model.PackageID')" src="@Model.Image" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" style="min-height:120px;" />
+    <img onclick="GotoPaclageDetail('@Model.PackageID')" src="@Model.Image" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" style="min-height:100px;" />
     <h5 onclick="GotoPaclageDetail('@Model.PackageID')" class="content-title">@Model.PackageName</h5>
-    <div class="price-red">from <b>THB @Math.Ceiling(Model.Price).ToString("#,##0")</b></div>
+    <div class="price-red">from <b>@Model.Currency @Math.Ceiling(Model.Price).ToString("#,##0")</b></div>
     <div class="description-detail">
          <span class="content-data">@Utility.GetShortTextNoHTML(Model.PackageDescription)</span>
     </div>

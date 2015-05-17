@@ -1,7 +1,8 @@
-﻿@using DiethelmTSWebsite2015.Core
+﻿
+@using DiethelmTSWebsite2015.Core
 @using DiethelmTSWebsite2015.Biz
 @using DiethelmTSWebsite2015.Models;
-@model IEnumerable<DiethelmTSWebsite2015.Models.SysPost>
+@model DiethelmTSWebsite2015.Models.SysPost
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_LayoutWeb.cshtml";
@@ -23,10 +24,10 @@
 </div>
 
 <div class="row step-title">
-    <div class="small-12 medium-4 columns">
-        <h4 class="step-title-label">Major Tourist Destination  &bull; <font id="country-header">@countryname</font></h4>
+    <div class="small-12 medium-5 columns">
+        <h3 class="step-title-label">Driving Distance  &bull;  <font id="country-header">@countryname</font></h3>
     </div>
-    <div class="medium-8 columns list-heading-right hide-for-small">
+    <div class="medium-7 columns list-heading-right hide-for-small">
     </div>
 </div>
 
@@ -35,13 +36,15 @@
     <div class="small-12 columns country-image-cover"> <img src="/Images/@countryname-Headercover.jpg" id="img-cover" width="100%"> </div>
 </div>
 
-<div class="row margin-top15">
-    <div class="small-12 medium-12 columns content-detail">
-        @foreach (var item in Model)
-        {
-            @Html.DisplayFor(modelItem => item, "ContentTitleAndDetail");
-        }
+    <div class="row margin-top15">
+        <div class="small-12 medium-12 columns content-detail">
+			<div class="row content-just-text">
+				<div class="small-12 columns">
+					<h5 >@Model.Title</h5>
+				</div>
+				<div class="small-12  columns">
+					<span class="content-data">@Html.Raw(Model.Description) </span>
+				</div>
+			</div>
+        </div>
     </div>
-</div>
-
-

@@ -36,7 +36,7 @@
             @Html.HiddenFor(model => model.ID)
 
             <div class="columns small-2 editor-label">
-                @Html.LabelFor(model => model.CityID)
+                <label for="CityID"> City</label>
             </div>
             <div class="columns small-10 editor-field">
                 <select id="CityID" name="CityID">
@@ -55,7 +55,7 @@
             </div>
 
             <div class="columns small-2 editor-label">
-                @Html.LabelFor(model => model.AreaID)
+                <label for="AreaID"> Area</label>
             </div>
             <div class="columns small-10 editor-field">
                 @Html.EditorFor(model => model.AreaID)
@@ -232,7 +232,7 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
         $(document).ready(function () {
        
         $("#January").val($("#JanuaryHid").val());

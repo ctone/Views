@@ -16,26 +16,24 @@
 
     <div class="row  quick-search-cover">
         <div class="small-12 medium-2 columns">
-            <h5 class="page-title-label quick-search-margin-top">Quick search</h5>
+            <h6 class="page-title-label quick-search-margin-top">Hotel search</h6>
         </div>
         <div class="small-12 medium-3 columns">
-            <h5 class="page-title-label main-title">
-                <label>Where do you want to go?</label>
+            <label>Where do you want to go?</label>
  
-                    <select id="City" name="City">
-                        @foreach (var item in CityList)
-                        {
-                        if (item.RegionName.Trim() == capitalName.Trim())
-                        {
-                            <option value="@item.RegionName.Trim()" selected>@item.RegionName.Trim()</option>
-                        }
-                        else
-                        {
-                            <option value="@item.RegionName.Trim()">@item.RegionName.Trim()</option>
-                        }
-                    }
-                    </select>
-            </h5>
+            <select id="City" name="City">
+                @foreach (var item in CityList)
+                {
+                if (item.RegionName.Trim() == capitalName.Trim())
+                {
+                    <option value="@item.RegionName.Trim()" selected>@item.RegionName.Trim()</option>
+                }
+                else
+                {
+                    <option value="@item.RegionName.Trim()">@item.RegionName.Trim()</option>
+                }
+            }
+            </select>
         </div>
         <div class="small-12 medium-3 columns">
             <div class="row">
@@ -74,7 +72,7 @@
         </div>
     </div>
 
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
         $(function () {
 
             $("#frm").submit(function (e) {

@@ -29,7 +29,7 @@
                     <h6>@Model.PackageName</h6>
                 </div>
                 <div class="small-12 columns">
-                <div class="price-red"><b> THB @Math.Ceiling(Model.Price).ToString("#,###") </b></div>
+                <div class="price-red"><b> @Model.Currency @Math.Ceiling(Model.Price).ToString("#,###") </b></div>
                 </div>
                 <div class="small-12 medium-12 columns" style="padding-top:10px;">
                     <span class="content-detail-desc">@Utility.GetShortText(Model.PackageDescription, "...")</span>

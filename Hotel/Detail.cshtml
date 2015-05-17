@@ -1,51 +1,52 @@
 ﻿@using System.Configuration
 @using System.Web.UI.WebControls
 @using DiethelmTSWebsite2015.Models
+@using DiethelmTSWebsite2015.Core
 @using DiethelmWebServiceClient.TSWS;
 
 @{
-    ViewBag.Title = "Detail";
-    Layout = "~/Views/Shared/_LayoutWeb.cshtml";
-    var search = ViewBag.Search as HotelSearchCondition;
-    int id = Convert.ToInt32(ViewBag.ServiceID);
+	ViewBag.Title = "Detail";
+	Layout = "~/Views/Shared/_LayoutWeb.cshtml";
+	var search = ViewBag.Search as HotelSearchCondition;
+	int id = Convert.ToInt32(ViewBag.ServiceID);
 
-    ServiceInformationResponse hotelInfo = new ServiceInformationResponse();
-    PriceAndAvailabilityService tsHotel = new PriceAndAvailabilityService();
-    List<string> imageList = new List<string>();
-    List<RoomTypeOption> roomTypeOptionList = new List<RoomTypeOption>();
-    List<ServiceTypeRatingDetails> themes = new List<ServiceTypeRatingDetails>();
-    List<ServiceTypeRatingDetails> languages = new List<ServiceTypeRatingDetails>();
-    List<GetServiceAllocationDetailsResponse> serviceAllocation = new List<GetServiceAllocationDetailsResponse>();
-    ServiceRuleData serviceRule = new ServiceRuleData();
-    List<RoomTypes> occInfo = new List<RoomTypes>();
-    List<string> hints = new List<string>();
-    Hotel hotel = new Hotel();
-    string cancellation;
+	ServiceInformationResponse hotelInfo = new ServiceInformationResponse();
+	PriceAndAvailabilityService tsHotel = new PriceAndAvailabilityService();
+	List<string> imageList = new List<string>();
+	List<RoomTypeOption> roomTypeOptionList = new List<RoomTypeOption>();
+	List<ServiceTypeRatingDetails> themes = new List<ServiceTypeRatingDetails>();
+	List<ServiceTypeRatingDetails> languages = new List<ServiceTypeRatingDetails>();
+	List<GetServiceAllocationDetailsResponse> serviceAllocation = new List<GetServiceAllocationDetailsResponse>();
+	ServiceRuleData serviceRule = new ServiceRuleData();
+	List<RoomTypes> occInfo = new List<RoomTypes>();
+	List<string> hints = new List<string>();
+	Hotel hotel = new Hotel();
+	string cancellation;
 
-    roomTypeOptionList = ViewBag.RoomTypeOptionList;
-    hotelInfo = ViewBag.HotelInfo;
-    tsHotel = ViewBag.TSHotel;
-    imageList = ViewBag.ImageList;
-    themes = ViewBag.Themes;
-    languages = ViewBag.Languages;
-    serviceAllocation = ViewBag.ServiceAllocation;
-    serviceRule = ViewBag.ServiceRule;
-    cancellation = ViewBag.Cancellation;
-    hotel = ViewBag.HotelDB;
-    occInfo = ViewBag.RoomTypeList;
-    DateTime checkInDate = ViewBag.Search.CheckInDate;
-    DateTime checkOutDate = ViewBag.Search.CheckOutDate;
-    DateTime next = checkInDate.AddMonths(1);
-    TimeSpan? night = checkOutDate - checkInDate;
-    roomTypeOptionList = roomTypeOptionList.OrderBy(t => t.NetAmount).ToList();
-    hints = ViewBag.Hints;
+	roomTypeOptionList = ViewBag.RoomTypeOptionList;
+	hotelInfo = ViewBag.HotelInfo;
+	tsHotel = ViewBag.TSHotel;
+	imageList = ViewBag.ImageList;
+	themes = ViewBag.Themes;
+	languages = ViewBag.Languages;
+	serviceAllocation = ViewBag.ServiceAllocation;
+	serviceRule = ViewBag.ServiceRule;
+	cancellation = ViewBag.Cancellation;
+	hotel = ViewBag.HotelDB;
+	occInfo = ViewBag.RoomTypeList;
+	DateTime checkInDate = ViewBag.Search.CheckInDate;
+	DateTime checkOutDate = ViewBag.Search.CheckOutDate;
+	DateTime next = checkInDate.AddMonths(1);
+	TimeSpan? night = checkOutDate - checkInDate;
+	roomTypeOptionList = roomTypeOptionList.OrderBy(t => t.NetAmount).ToList();
+	hints = ViewBag.Hints;
+	string currencyCode = ViewBag.Currency;
 
+	//var roomTypeGroup = roomTypeOptionList.GroupBy(t => t.Occupancy).ToList();
 
-    var roomTypeGroup = roomTypeOptionList.GroupBy(t => t.Occupancy).ToList();
-
-    bool IsDisplayHint = hints.Count() > 0;
+	bool IsDisplayHint = hints.Count() > 0;
 }
-<script type="text/javascript" defer>
+<script type="text/javascript" >
     function DisplayCalendar(month, year, showresult, roomtypeID, serviceID) {
         $.ajax({
             url: '@Url.Action("Calendar", "Hotel")',
@@ -67,7 +68,7 @@
     <div class="small-12 medium-4 columns">
         <h3 class="step-title-label">Search Hotel</h3>
     </div>
-    <div class="small-12 medium-8 columns" style="background-color: #EEEEEE; padding: 10px;">
+    <div class="small-12 medium-8 columns progress-bar">
         <img src="~/Images/progress_s2.png" />
     </div>
 </div>
@@ -88,60 +89,62 @@
                     @hotelInfo.ServiceName
                     <br>
                     @if (ViewBag.StarRating >= 5)
-                    {
+					{
                         <img src="~/Images/5-star.png">
-                    }
-                    else
-                    { 
+					}
+					else
+					{ 
                         <img src="~/Images/@ViewBag.StarRating-star.png">
-                    }
+					}
                     |
                     @if (themes.Count > 0)
-                    {
-                        foreach (var theme in themes)
-                        {
-                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "boutique")
-                            {
+					{
+						foreach (var theme in themes)
+						{
+							if (theme.ServiceTypeRatingName.Trim().ToLower() == "boutique")
+							{
                                 <img src="/Images/boutique.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
-                            }
-                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "beachfront")
-                            {
+							}
+							if (theme.ServiceTypeRatingName.Trim().ToLower() == "beachfront")
+							{
                                 <img src="/Images/beachfront.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
-                            }
-                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "environmentally friendly")
-                            {
+							}
+							if (theme.ServiceTypeRatingName.Trim().ToLower() == "environmentally friendly")
+							{
                                 <img src="/Images/environmentally.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
-                            }
-                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "family friendly")
-                            {
+							}
+							if (theme.ServiceTypeRatingName.Trim().ToLower() == "family friendly")
+							{
                                 <img src="/Images/family.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
-                            }
-                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "diethelm preferred")
-                            {
+							}
+							if (theme.ServiceTypeRatingName.Trim().ToLower() == "diethelm preferred")
+							{
                                 <img src="/Images/preferred.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
-                            }
-                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "beach access/ close to the beach")
-                            {
+							}
+							if (theme.ServiceTypeRatingName.Trim().ToLower() == "beach access/ close to the beach")
+							{
                                 <img src="/Images/beachaccess.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
-                            }
-                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "honeymoon")
-                            {
+							}
+							if (theme.ServiceTypeRatingName.Trim().ToLower() == "honeymoon")
+							{
                                 <img src="/Images/honeymoon.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
-                            }
-                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "villas")
-                            {
+							}
+							if (theme.ServiceTypeRatingName.Trim().ToLower() == "villas")
+							{
                                 <img src="/Images/villas.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
-                            }
-                            if (theme.ServiceTypeRatingName.Trim().ToLower() == "awesome deal")
-                            {
+							}
+							if (theme.ServiceTypeRatingName.Trim().ToLower() == "awesome deal")
+							{
                                 <img src="/Images/awesomedeal.png" alt="@theme.ServiceTypeRatingName.Trim()" title="@theme.ServiceTypeRatingName.Trim()" />
-                            }
-                        }
-                    }
+							}
+						}
+					}
 
                 </div>
-                <div class="column small-2 right">
-                    <input type="button" value="< Back" class="button btn-gray  right " onclick="history.back();" />
+                <div class="row ">
+                    <div class="small-12 columns post-breadcumb">
+                        <a onclick="history.back();" class="right">< Back</a>
+                    </div>
                 </div>
             </div>
 
@@ -150,17 +153,17 @@
 
 
     <div class="row">
-        <div class="column small-12 medium-9 owl-theme-area">
+        <div class="column small-12 medium-9 owl-theme-area detail-slide-img-cover">
             <div id="slice-content-hotel" class=" owl-carousel owl-theme">
                 @if (imageList != null)
-                {
-                    foreach (var image in imageList)
-                    {
-                    <div class="item">
-                        <img src="@image" title="@hotelInfo.ServiceName" alt="@hotelInfo.ServiceName" /><br />
-                    </div>
-                    }
-                }
+				{
+					foreach (var image in imageList)
+					{
+                        <div class="item">
+                            <img src="@image" title="@hotelInfo.ServiceName" alt="@hotelInfo.ServiceName" /><br />
+                        </div>
+					}
+				}
             </div>
         </div>
         <div class="column small-12 medium-3 map-area  ">
@@ -198,95 +201,567 @@
             </div>
             <div class="column small-12 medium-9" style="padding-top: 15px; padding-left: 10px;">
                 @if (roomTypeOptionList != null && roomTypeOptionList.Count() > 0)
+				{
+					int count = 0;
+					int firstServiceID = 0;//เอาไปใช้ load service extra ในครั้งแรก
+
+					///MY SAMPLE
+					var sampleData = from t in roomTypeOptionList
+									 join o in occInfo
+										on t.Occupancy equals o.RoomTypeID
+									 select new { t.Occupancy, t.ID, t.ServiceID, t.Name, t.Status, t.NetAmount, t.MealPlan, t.Rules, t.Description, t.Image, o.MaxAdultCapacity, o.MaxChildCapacity };
+
+					int tempKey = -1;
+					int tempServiceId = -1;
+					<div class="row roomtypelabel-box">
+						<div class="columns small-12 roomtypelabel">
+							<a onclick="MoreOptionClick('single')" id="MoreOptionShow_single">+ Show single room</a>
+							<a onclick="MoreOptionClick('single')" id="MoreOptionHide_single" style="display:none;">- Hide single room</a>
+						</div>
+					</div>
+					<div class="MoreOption_single" style="display:none;">
+					@foreach (var data in sampleData.Where(s => s.Occupancy == 1))
+	 {
+		 if (tempKey != data.Occupancy)
+		 {
+			 tempKey = data.Occupancy;
+                            <input type="hidden" name="@string.Format("[{0}].OccupancyTypeID", count)" value="@tempKey" />
+		 }
+
+		 string namePattern = data.ID + "_" + data.ServiceID;
+
+                        <div id="g_@namePattern" class="please-select CtnGroup">
+                            <input type="hidden" name="RoomOccupancy" value="@data.Occupancy" />
+                            <input type="hidden" name="RoomTypeID" value="@data.ID" />
+                            <input type="hidden" name="ServiceID" value="@data.ServiceID" />
+                            <div class="row">
+                                <div class="column small-12 large-5 hotel-serviceName">
+                                    &bull; @data.Name
+                                </div>
+
+                                <div class="column small-12 large-3 display-block">
+                                    @if (data.Status == "ON REQUEST")
+									{
+                                    <img src="/Images/OnRequest.png" class="float-right hotel-serviceStatus" />
+									}
+									else
+									{
+                                    <img src="/Images/status.png" class="float-right hotel-serviceStatus" />
+									}
+                                    <div id="cap_@namePattern" class="float-right">
+
+                                    </div>
+                                </div>
+                                <div class="show-for-small" style="clear: both"></div>
+                                <div class="column small-6 large-2 text-right">
+                                    <div>Price per night</div>
+                                </div>
+                                <div class="column small-6 large-2 text-right">
+                                    <div class="right hotel-servicePrice">@currencyCode @data.NetAmount.ToString("#,###.#0")</div>
+                                </div>
+                                <div style="clear: both"></div>
+                            </div>
+                            <div class="row">
+                                <div class="column small-12">
+                                    <div class="dashed-line"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="column medium-1 hide-for-small">
+                                    &nbsp;
+                                </div>
+                                <div class="column small-12 large-11">
+                                    <text class="hotel-servicePrice">Meal:</text>  @Html.Raw(Utility.StripEndBrTag(data.MealPlan)) <br />
+                                    <text class="hotel-servicePrice">Cancellation:</text> @Html.Raw(Utility.StripEndBrTag(cancellation)) <br />
+                                    <text class="MoreOption_@namePattern" style="display:none;">
+                                        <text class="hotel-servicePrice">Rules:</text> @Html.Raw(Utility.StripEndBrTag(data.Rules)) <br />
+                                        <text class="hotel-servicePrice">Room Description:</text> @Html.Raw(Utility.StripEndBrTag(data.Description)) <br />
+                                        <div class="right-content">
+                                            @if (data.Image != "")
+											{
+                                                <img src="@data.Image" width="300" height="200" />
+											}
+                                            <div class="dashed-line"></div>
+                                            <div class="hotel-servicePrice">Room Avaliable</div>
+                                            <div class="calendar-title"><    Available only display for 1 month after entered checkin date    ></div>
+                                            <div style="display: block;">
+                                                <div style="float:left;width:300px;margin-right:10px;" id="cal1_@namePattern">
+                                                    <script type="text/javascript">
+                                                        DisplayCalendar('@checkInDate.Month', '@checkInDate.Year', '#cal1_@namePattern', '@data.ID', '@data.ServiceID');
+                                                    </script>
+                                                </div>
+                                                <div class="show-for-small" style="clear: both"></div>
+                                                <div style="float:left;width:300px;" id="cal2_@namePattern">
+                                                    <script type="text/javascript">
+                                                        DisplayCalendar('@next.Month', '@next.Year', '#cal2_@namePattern', '@data.ID', '@data.ServiceID');
+                                                    </script>
+                                                </div>
+                                                <div class="show-for-small" style="clear: both"></div>
+                                                <div style="float: left;">
+                                                    <img src="/Images/calendar-label.png" width="100" />
+                                                </div>
+                                            </div>
+                                            <div style="clear: both"></div>
+                                            <div style="display: block;">
+                                                <div class="calendar-footer">Check in : <span class="font-red">@checkInDate.ToString("dd-MMM-yyyy")</span></div>
+                                                <div class="calendar-footer">Check out : <span class="font-red">@checkOutDate.ToString("dd-MMM-yyyy")</span></div>
+                                                <div class="calendar-footer">Night : <span class="font-red">@night.Value.Days</span></div>
+                                            </div>
+                                            <div class="dashed-line"></div>
+                                        </div>
+                                    </text>
+                                    <div class="columns small-12">
+                                        <a onclick="MoreOptionClick('@namePattern')" class="showmore" id="MoreOptionShow_@namePattern">+ Show more</a>
+                                        <a onclick="MoreOptionClick('@namePattern')" class="showless" id="MoreOptionHide_@namePattern" style="display:none;">- Show less</a>
+                                    </div>
+                                    <div class="column small-12">
+                                        <div class="dashed-line"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="column hide-for-small medium-1">&nbsp;</div>
+                                <div class="column small-12 medium-3">
+                                    <label class="search-label">Room(s)</label>
+                                    <select id="ddr_@namePattern" data-parentid="g_@namePattern" name="RoomAmount" class="RoomAmount" data-serviceid="@data.ServiceID" data-optionid="@data.ID" data-occupancyid="@data.Occupancy" data-maxchildcap="@data.MaxChildCapacity" data-maxadultcap="@data.MaxAdultCapacity" onchange="changeRoom('@data.ServiceID','@data.ID', '@data.Occupancy', '@data.MaxAdultCapacity', '@data.MaxChildCapacity')">
+                                        <option value="0">0 Room</option>
+                                        <option value="1">1 Room</option>
+                                        <option value="2">2 Rooms</option>
+                                        <option value="3">3 Rooms</option>
+                                        <option value="4">4 Rooms</option>
+                                        <option value="5">5 Rooms</option>
+                                    </select>
+                                </div>
+                                <div id="ctn_@namePattern" class="column small-12 medium-4">
+                                    &nbsp;
+                                </div>
+                                <div class="column small-6 medium-2 text-right hotel-total-label">
+                                    Total
+                                </div>
+                                <div id="price_@namePattern" class="column small-6 medium-2  text-right hotel-servicePriceRed">
+                                    @currencyCode 0
+                                </div>
+                                <input type="hidden" id="hddPrice_@namePattern" class="RoomTypePrice" value="0" />
+                            </div>
+                        </div>
+					 }
+					</div>
+					<div class="row roomtypelabel-box">
+						<div class="columns small-12 roomtypelabel">
+							<a onclick="MoreOptionClick('double')" id="MoreOptionShow_double">+ Show double room</a>
+							<a onclick="MoreOptionClick('double')" id="MoreOptionHide_double" style="display:none;">- Hide double room</a>
+						</div>
+                    </div>
+					<div class="MoreOption_double" style="display:none;">
+					@foreach (var data in sampleData.Where(s => s.Occupancy == 3))
+					 {
+						 if (tempKey != data.Occupancy)
+						 {
+							 tempKey = data.Occupancy;
+                            <input type="hidden" name="@string.Format("[{0}].OccupancyTypeID", count)" value="@tempKey" />
+						 }
+
+						 string namePattern = data.ID + "_" + data.ServiceID;
+
+                        <div id="g_@namePattern" class="please-select CtnGroup">
+                            <input type="hidden" name="RoomOccupancy" value="@data.Occupancy" />
+                            <input type="hidden" name="RoomTypeID" value="@data.ID" />
+                            <input type="hidden" name="ServiceID" value="@data.ServiceID" />
+                            <div class="row">
+                                <div class="column small-12 large-5 hotel-serviceName">
+                                    &bull; @data.Name
+                                </div>
+
+                                <div class="column small-12 large-3 display-block">
+                                    @if (data.Status == "ON REQUEST")
+									{
+                                    <img src="/Images/OnRequest.png" class="float-right hotel-serviceStatus" />
+									}
+									else
+									{
+                                    <img src="/Images/status.png" class="float-right hotel-serviceStatus" />
+									}
+                                    <div id="cap_@namePattern" class="float-right">
+
+                                    </div>
+                                </div>
+                                <div class="show-for-small" style="clear: both"></div>
+                                <div class="column small-6 large-2 text-right">
+                                    <div>Price per night</div>
+                                </div>
+                                <div class="column small-6 large-2 text-right">
+                                    <div class="right hotel-servicePrice">@currencyCode @data.NetAmount.ToString("#,###.#0")</div>
+                                </div>
+                                <div style="clear: both"></div>
+                            </div>
+                            <div class="row">
+                                <div class="column small-12">
+                                    <div class="dashed-line"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="column medium-1 hide-for-small">
+                                    &nbsp;
+                                </div>
+                                <div class="column small-12 large-11">
+                                    <text class="hotel-servicePrice">Meal:</text>  @Html.Raw(Utility.StripEndBrTag(data.MealPlan)) <br />
+                                    <text class="hotel-servicePrice">Cancellation:</text> @Html.Raw(Utility.StripEndBrTag(cancellation)) <br />
+                                    <text class="MoreOption_@namePattern" style="display:none;">
+                                        <text class="hotel-servicePrice">Rules:</text> @Html.Raw(Utility.StripEndBrTag(data.Rules)) <br />
+                                        <text class="hotel-servicePrice">Room Description:</text> @Html.Raw(Utility.StripEndBrTag(data.Description)) <br />
+                                        <div class="right-content">
+                                            @if (data.Image != "")
+											{
+                                                <img src="@data.Image" width="300" height="200" />
+											}
+                                            <div class="dashed-line"></div>
+                                            <div class="hotel-servicePrice">Room Avaliable</div>
+                                            <div class="calendar-title"><    Available only display for 1 month after entered checkin date    ></div>
+                                            <div style="display: block;">
+                                                <div style="float:left;width:300px;margin-right:10px;" id="cal1_@namePattern">
+                                                    <script type="text/javascript">
+                                                    	DisplayCalendar('@checkInDate.Month', '@checkInDate.Year', '#cal1_@namePattern', '@data.ID', '@data.ServiceID');
+                                                    </script>
+                                                </div>
+                                                <div class="show-for-small" style="clear: both"></div>
+                                                <div style="float:left;width:300px;" id="cal2_@namePattern">
+                                                    <script type="text/javascript">
+                                                    	DisplayCalendar('@next.Month', '@next.Year', '#cal2_@namePattern', '@data.ID', '@data.ServiceID');
+                                                    </script>
+                                                </div>
+                                                <div class="show-for-small" style="clear: both"></div>
+                                                <div style="float: left;">
+                                                    <img src="/Images/calendar-label.png" width="100" />
+                                                </div>
+                                            </div>
+                                            <div style="clear: both"></div>
+                                            <div style="display: block;">
+                                                <div class="calendar-footer">Check in : <span class="font-red">@checkInDate.ToString("dd-MMM-yyyy")</span></div>
+                                                <div class="calendar-footer">Check out : <span class="font-red">@checkOutDate.ToString("dd-MMM-yyyy")</span></div>
+                                                <div class="calendar-footer">Night : <span class="font-red">@night.Value.Days</span></div>
+                                            </div>
+                                            <div class="dashed-line"></div>
+                                        </div>
+                                    </text>
+                                    <div class="columns small-12">
+                                        <a onclick="MoreOptionClick('@namePattern')" class="showmore" id="MoreOptionShow_@namePattern">+ Show more</a>
+                                        <a onclick="MoreOptionClick('@namePattern')" class="showless" id="MoreOptionHide_@namePattern" style="display:none;">- Show less</a>
+                                    </div>
+                                    <div class="column small-12">
+                                        <div class="dashed-line"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="column hide-for-small medium-1">&nbsp;</div>
+                                <div class="column small-12 medium-3">
+                                    <label class="search-label">Room(s)</label>
+                                    <select id="ddr_@namePattern" data-parentid="g_@namePattern" name="RoomAmount" class="RoomAmount" data-serviceid="@data.ServiceID" data-optionid="@data.ID" data-occupancyid="@data.Occupancy" data-maxchildcap="@data.MaxChildCapacity" data-maxadultcap="@data.MaxAdultCapacity" onchange="changeRoom('@data.ServiceID','@data.ID', '@data.Occupancy', '@data.MaxAdultCapacity', '@data.MaxChildCapacity')">
+                                        <option value="0">0 Room</option>
+                                        <option value="1">1 Room</option>
+                                        <option value="2">2 Rooms</option>
+                                        <option value="3">3 Rooms</option>
+                                        <option value="4">4 Rooms</option>
+                                        <option value="5">5 Rooms</option>
+                                    </select>
+                                </div>
+                                <div id="ctn_@namePattern" class="column small-12 medium-4">
+                                    &nbsp;
+                                </div>
+                                <div class="column small-6 medium-2 text-right hotel-total-label">
+                                    Total
+                                </div>
+                                <div id="price_@namePattern" class="column small-6 medium-2  text-right hotel-servicePriceRed">
+                                    @currencyCode 0
+                                </div>
+                                <input type="hidden" id="hddPrice_@namePattern" class="RoomTypePrice" value="0" />
+                            </div>
+                        </div>
+					 }
+					</div>
+					<div class="row roomtypelabel-box">
+						<div class="columns small-12 roomtypelabel">
+							<a onclick="MoreOptionClick('triple')" id="MoreOptionShow_triple">+ Show triple room</a>
+							<a onclick="MoreOptionClick('triple')" id="MoreOptionHide_triple" style="display:none;">- Hide triple room</a>
+						</div>
+                    </div>
+					<div class="MoreOption_triple" style="display:none;">
+					@foreach (var data in sampleData.Where(s => s.Occupancy == 4))
+					 {
+						 if (tempKey != data.Occupancy)
+						 {
+							 tempKey = data.Occupancy;
+											<input type="hidden" name="@string.Format("[{0}].OccupancyTypeID", count)" value="@tempKey" />
+						 }
+
+						 string namePattern = data.ID + "_" + data.ServiceID;
+
+                        <div id="g_@namePattern" class="please-select CtnGroup">
+                            <input type="hidden" name="RoomOccupancy" value="@data.Occupancy" />
+                            <input type="hidden" name="RoomTypeID" value="@data.ID" />
+                            <input type="hidden" name="ServiceID" value="@data.ServiceID" />
+                            <div class="row">
+                                <div class="column small-12 large-5 hotel-serviceName">
+                                    &bull; @data.Name
+                                </div>
+
+                                <div class="column small-12 large-3 display-block">
+                                    @if (data.Status == "ON REQUEST")
+									{
+                                    <img src="/Images/OnRequest.png" class="float-right hotel-serviceStatus" />
+									}
+									else
+									{
+                                    <img src="/Images/status.png" class="float-right hotel-serviceStatus" />
+									}
+                                    <div id="cap_@namePattern" class="float-right">
+
+                                    </div>
+                                </div>
+                                <div class="show-for-small" style="clear: both"></div>
+                                <div class="column small-6 large-2 text-right">
+                                    <div>Price per night</div>
+                                </div>
+                                <div class="column small-6 large-2 text-right">
+                                    <div class="right hotel-servicePrice">@currencyCode @data.NetAmount.ToString("#,###.#0")</div>
+                                </div>
+                                <div style="clear: both"></div>
+                            </div>
+                            <div class="row">
+                                <div class="column small-12">
+                                    <div class="dashed-line"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="column medium-1 hide-for-small">
+                                    &nbsp;
+                                </div>
+                                <div class="column small-12 large-11">
+                                    <text class="hotel-servicePrice">Meal:</text>  @Html.Raw(Utility.StripEndBrTag(data.MealPlan)) <br />
+                                    <text class="hotel-servicePrice">Cancellation:</text> @Html.Raw(Utility.StripEndBrTag(cancellation)) <br />
+                                    <text class="MoreOption_@namePattern" style="display:none;">
+                                        <text class="hotel-servicePrice">Rules:</text> @Html.Raw(Utility.StripEndBrTag(data.Rules)) <br />
+                                        <text class="hotel-servicePrice">Room Description:</text> @Html.Raw(Utility.StripEndBrTag(data.Description)) <br />
+                                        <div class="right-content">
+                                            @if (data.Image != "")
+											{
+                                                <img src="@data.Image" width="300" height="200" />
+											}
+                                            <div class="dashed-line"></div>
+                                            <div class="hotel-servicePrice">Room Avaliable</div>
+                                            <div class="calendar-title"><    Available only display for 1 month after entered checkin date    ></div>
+                                            <div style="display: block;">
+                                                <div style="float:left;width:300px;margin-right:10px;" id="cal1_@namePattern">
+                                                    <script type="text/javascript">
+                                                    	DisplayCalendar('@checkInDate.Month', '@checkInDate.Year', '#cal1_@namePattern', '@data.ID', '@data.ServiceID');
+                                                    </script>
+                                                </div>
+                                                <div class="show-for-small" style="clear: both"></div>
+                                                <div style="float:left;width:300px;" id="cal2_@namePattern">
+                                                    <script type="text/javascript">
+                                                    	DisplayCalendar('@next.Month', '@next.Year', '#cal2_@namePattern', '@data.ID', '@data.ServiceID');
+                                                    </script>
+                                                </div>
+                                                <div class="show-for-small" style="clear: both"></div>
+                                                <div style="float: left;">
+                                                    <img src="/Images/calendar-label.png" width="100" />
+                                                </div>
+                                            </div>
+                                            <div style="clear: both"></div>
+                                            <div style="display: block;">
+                                                <div class="calendar-footer">Check in : <span class="font-red">@checkInDate.ToString("dd-MMM-yyyy")</span></div>
+                                                <div class="calendar-footer">Check out : <span class="font-red">@checkOutDate.ToString("dd-MMM-yyyy")</span></div>
+                                                <div class="calendar-footer">Night : <span class="font-red">@night.Value.Days</span></div>
+                                            </div>
+                                            <div class="dashed-line"></div>
+                                        </div>
+                                    </text>
+                                    <div class="columns small-12">
+                                        <a onclick="MoreOptionClick('@namePattern')" class="showmore" id="MoreOptionShow_@namePattern">+ Show more</a>
+                                        <a onclick="MoreOptionClick('@namePattern')" class="showless" id="MoreOptionHide_@namePattern" style="display:none;">- Show less</a>
+                                    </div>
+                                    <div class="column small-12">
+                                        <div class="dashed-line"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="column hide-for-small medium-1">&nbsp;</div>
+                                <div class="column small-12 medium-3">
+                                    <label class="search-label">Room(s)</label>
+                                    <select id="ddr_@namePattern" data-parentid="g_@namePattern" name="RoomAmount" class="RoomAmount" data-serviceid="@data.ServiceID" data-optionid="@data.ID" data-occupancyid="@data.Occupancy" data-maxchildcap="@data.MaxChildCapacity" data-maxadultcap="@data.MaxAdultCapacity" onchange="changeRoom('@data.ServiceID','@data.ID', '@data.Occupancy', '@data.MaxAdultCapacity', '@data.MaxChildCapacity')">
+                                        <option value="0">0 Room</option>
+                                        <option value="1">1 Room</option>
+                                        <option value="2">2 Rooms</option>
+                                        <option value="3">3 Rooms</option>
+                                        <option value="4">4 Rooms</option>
+                                        <option value="5">5 Rooms</option>
+                                    </select>
+                                </div>
+                                <div id="ctn_@namePattern" class="column small-12 medium-4">
+                                    &nbsp;
+                                </div>
+                                <div class="column small-6 medium-2 text-right hotel-total-label">
+                                    Total
+                                </div>
+                                <div id="price_@namePattern" class="column small-6 medium-2  text-right hotel-servicePriceRed">
+                                    @currencyCode 0
+                                </div>
+                                <input type="hidden" id="hddPrice_@namePattern" class="RoomTypePrice" value="0" />
+                            </div>
+                        </div>
+	 }
+					</div>
+@*
+            foreach (var group in roomTypeGroup)
+            {
+                var roomTypeList = roomTypeOptionList.Where(t => t.Occupancy == group.Key).ToList();
+
+                //Occupancy: @Html.Raw(group.Key)
+                var last = roomTypeList.Last();
+
+            <input type="hidden" name="@string.Format("[{0}].OccupancyTypeID", count)" value="@group.Key" />
+                foreach (var roomType in roomTypeList)
                 {
-                    int count = 0;
-                    int firstServiceID = 0;//เอาไปใช้ load service extra ในครั้งแรก
+                    string namePattern = roomType.ID + "_" + roomType.ServiceID;
+                    string isCheck = "";
+                    int roomID = Convert.ToInt32(roomType.ID);
+                    var occ = occInfo.Where(t => t.RoomTypeID == group.Key).FirstOrDefault();
 
-
-                    foreach (var group in roomTypeGroup)
+                    if (roomType == roomTypeList.First())
                     {
-                        var roomTypeList = roomTypeOptionList.Where(t => t.Occupancy == group.Key).ToList();
+                        firstServiceID = roomType.ServiceID;
+                    }
 
-                        //Occupancy: @Html.Raw(group.Key)
-                        var last = roomTypeList.Last();
+                    if (roomType == roomTypeList.First())
+                    {
+                        isCheck = "checked='checked'";
+                    }
+            <div id="g_@namePattern" class="please-select CtnGroup">
+                <input type="hidden" name="RoomOccupancy" value="@group.Key" />
+                <input type="hidden" name="RoomTypeID" value="@roomType.ID" />
+                <input type="hidden" name="ServiceID" value="@roomType.ServiceID" />
 
-                    <input type="hidden" name="@string.Format("[{0}].OccupancyTypeID", count)" value="@group.Key" />
-                        foreach (var roomType in roomTypeList)
+                <div class="row">
+                    <div class="column small-12 large-5 hotel-serviceName">
+                        &bull; @roomType.Name
+                    </div>
+                    <div class="column small-12 large-3 display-block">
+
+                        @if (roomType.Status == "ON REQUEST")
                         {
-                            string namePattern = roomType.ID + "_" + roomType.ServiceID;
-                            string isCheck = "";
-                            int roomID = Convert.ToInt32(roomType.ID);
-                            var occ = occInfo.Where(t => t.RoomTypeID == group.Key).FirstOrDefault();
-                            
-                            if (roomType == roomTypeList.First())
-                            {
-                                firstServiceID = roomType.ServiceID;
-                            }
-
-                            if (roomType == roomTypeList.First())
-                            {
-                                isCheck = "checked='checked'";
-                            }
-                    <div id="g_@namePattern" class="please-select CtnGroup">
-                        <input type="hidden" name="RoomOccupancy" value="@group.Key" />
-                        <input type="hidden" name="RoomTypeID" value="@roomType.ID" />
-                        <input type="hidden" name="ServiceID" value="@roomType.ServiceID" />
-
-                        <div class="row">
-                            <div class="column small-1  text-right">
-                                &nbsp;
-                            </div>
-                            <div class="column small-5">
-                                @roomType.Name
-                            </div>
-                            <div class="column small-3">
-                                @* @roomType.Status*@
-                                @if (roomType.Status == "ON REQUEST")
-                                {
-                                    <img src="/Images/OnRequest.png" />
-                                }
-                                else
-                                {
-                                    <img src="/Images/status.png" />
-                                }
-                            </div>
-                            <div class="column small-3 text-right" style="padding-right: 15px;">
-                                @roomType.NetAmount.ToString("#,###.##") THB
-                            </div>
-                            <div style="clear: both"></div>
-                        </div>
-                        <div class="row">
-                            <div class="column small-6">
-                                <select id="ddr_@namePattern" data-parentID="g_@namePattern" name="RoomAmount" class="RoomAmount" data-ServiceID="@roomType.ServiceID" data-OptionID="@roomType.ID" data-OccupancyID="@group.Key" onchange="changeRoom('@roomType.ServiceID','@roomType.ID', '@group.Key', '@occ.MaxAdultCapacity', '@occ.MaxChildCapacity')">
-                                    <option value="0">0 Room</option>
-                                    <option value="1">1 Room</option>
-                                    <option value="2">2 Rooms</option>
-                                    <option value="3">3 Rooms</option>
-                                    <option value="4">4 Rooms</option>
-                                    <option value="5">5 Rooms</option>
-                                </select>
-                            </div>
-                            <div id="price_@namePattern" class="column small-6">
-                                &nbsp;
-                            </div>
-                            <input type="hidden" id="hddPrice_@namePattern" class="RoomTypePrice" value="0" />
-                        </div>
-                        <div class="row">
-                            <div id="ctn_@namePattern" class="column small-12">
-                            </div>
-                        </div>
-                        @if (!roomType.Equals(last))
+                            <img src="/Images/OnRequest.png" class="float-right hotel-serviceStatus" />
+                        }
+                        else
                         {
-                            <div style="padding-left: 10px; padding-right: 10px;">
+                            <img src="/Images/status.png" class="float-right hotel-serviceStatus" />
+                        }
+                        <div id="cap_@namePattern" class="float-right">
+
+                        </div>
+                    </div>
+                    <div class="show-for-small" style="clear: both"></div>
+                    <div class="column small-6 large-2 text-right">
+                        <div >Price per night</div>
+                    </div>
+                    <div class="column small-6 large-2 text-right">
+                        <div class="right hotel-servicePrice">@currencyCode @roomType.NetAmount.ToString("#,###.#0")</div>
+                    </div>
+                    <div style="clear: both"></div>
+                </div>
+                    <div class="row">
+                        <div class="column small-12">
+                            <div class="dashed-line"></div>
+                        </div>
+                    </div>
+                <div class="row">
+                    <div class="column medium-1 hide-for-small">
+                        &nbsp;
+                    </div>
+                    <div class="column small-12 large-11">
+                        <text class="hotel-servicePrice">Meal:</text>  @Html.Raw(Utility.StripEndBrTag(roomType.MealPlan)) <br />
+                        <text class="hotel-servicePrice">Cancellation:</text> @Html.Raw(Utility.StripEndBrTag(cancellation)) <br />
+                        <text class="MoreOption_@namePattern" style="display:none;">
+                            <text class="hotel-servicePrice">Rules:</text> @Html.Raw(Utility.StripEndBrTag(roomType.Rules)) <br />
+                            <text class="hotel-servicePrice">Room Description:</text> @Html.Raw(Utility.StripEndBrTag(roomType.Description)) <br />
+                            <div class="right-content">
+                                @if (roomType.Image != "")
+                                {
+                                    <img src="@roomType.Image" width="300" height="200" />
+                                }
+                                <div class="dashed-line"></div>
+                                <div class="hotel-servicePrice">Room Avaliable</div>
+                                <div class="calendar-title"><    Available only display for 1 month after entered checkin date    ></div>
+                                <div style="display: block;">
+                                    <div style="float:left;width:300px;margin-right:10px;" id="cal1_@namePattern">
+                                        <script type="text/javascript">
+                                            DisplayCalendar('@checkInDate.Month', '@checkInDate.Year', '#cal1_@namePattern', '@roomType.ID', '@roomType.ServiceID');
+                                        </script>
+                                    </div>
+                                    <div class="show-for-small" style="clear: both"></div>
+                                    <div style="float:left;width:300px;" id="cal2_@namePattern">
+                                        <script type="text/javascript">
+                                            DisplayCalendar('@next.Month', '@next.Year', '#cal2_@namePattern', '@roomType.ID', '@roomType.ServiceID');
+                                        </script>
+                                    </div>
+                                    <div class="show-for-small" style="clear: both"></div>
+                                    <div style="float: left;">
+                                        <img src="/Images/calendar-label.png" width="100" />
+                                    </div>
+                                </div>
+                                <div style="clear: both"></div>
+                                <div style="display: block;">
+                                    <div class="calendar-footer">Check in : <span class="font-red">@checkInDate.ToString("dd-MMM-yyyy")</span></div>
+                                    <div class="calendar-footer">Check out : <span class="font-red">@checkOutDate.ToString("dd-MMM-yyyy")</span></div>
+                                    <div class="calendar-footer">Night : <span class="font-red">@night.Value.Days</span></div>
+                                </div>
                                 <div class="dashed-line"></div>
                             </div>
 
-                        }
+
+                        </text>
+                        <div class="columns small-12">
+                            <a onclick="MoreOptionClick('@namePattern')" class="showmore" id="MoreOptionShow_@namePattern">+ Show more</a>
+                            <a onclick="MoreOptionClick('@namePattern')" class="showless" id="MoreOptionHide_@namePattern" style="display:none;">- Show less</a>
+                        </div>
+                        <div class="column small-12">
+                            <div class="dashed-line"></div>
+                        </div>
                     </div>
-                        }
-                        count++;
-                    }
+                </div>
+
+                <div class="row">
+                    <div class="column small-1">&nbsp;</div>
+                    <div class="column small-3">
+                        <label class="search-label">Room(s)</label>
+                        <select id="ddr_@namePattern" data-parentid="g_@namePattern" name="RoomAmount" class="RoomAmount" data-serviceid="@roomType.ServiceID" data-optionid="@roomType.ID" data-occupancyid="@group.Key" data-maxchildcap="@occ.MaxChildCapacity" data-maxadultcap="@occ.MaxAdultCapacity" onchange="changeRoom('@roomType.ServiceID','@roomType.ID', '@group.Key', '@occ.MaxAdultCapacity', '@occ.MaxChildCapacity')">
+                            <option value="0">0 Room</option>
+                            <option value="1">1 Room</option>
+                            <option value="2">2 Rooms</option>
+                            <option value="3">3 Rooms</option>
+                            <option value="4">4 Rooms</option>
+                            <option value="5">5 Rooms</option>
+                        </select>
+                    </div>
+                    <div id="ctn_@namePattern" class="column small-4">
+                        &nbsp;
+                    </div>
+                    <div class="column small-2 text-right hotel-total-label">
+                        Total
+                    </div>
+                    <div id="price_@namePattern" class="column small-2  text-right hotel-servicePriceRed">
+                         @currencyCode 0
+                    </div>
+                    <input type="hidden" id="hddPrice_@namePattern" class="RoomTypePrice" value="0" />
+                </div>
+
+
+            </div>
                 }
+                count++;
+            }
+                *@
+				}
 
                 <div class="row">
                     <div class="column small-12 medium-2 small-label" style="margin-top: 15px; margin-bottom: 10px;">
@@ -294,7 +769,7 @@
                     </div>
                     <div class="column small-12 medium-10  small-label">
                         <div class="serviceExtra font-gray margin-top15" data-first-service-id="" data-occupancy="">
-                            AA BB CC
+                            
                         </div>
                     </div>
                 </div>
@@ -305,133 +780,10 @@
                 </div>
 
                 <input type="button" id="btnSelect" value="Select" class="button right" onclick="ShowHints()" />
+
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="column small-12">
-            <div class="hotel-detail-section"></div>
-        </div>
-        <div class="column small-12 medium-3">
-            <label class="hotel-detail-label">Room Type</label>
-        </div>
-        <div class="column small-12 medium-9">
-        </div>
-    </div>
-    <div class="row">
-        <div class="column small-12">
-            <ul class="tabs vertical vertical-tabs" data-tab>
-                @*              <li class="tab-title active"><a href="#panel11">Tab 1</a></li>
-                            <li class="tab-title"><a href="#panel21">Tab 2</a></li>
-                            <li class="tab-title"><a href="#panel31">Tab 3</a></li>
-                            <li class="tab-title"><a href="#panel41">Tab 4</a></li>*@
-                @if (roomTypeOptionList != null && roomTypeOptionList.Count() > 0)
-                {
-                    int count = 0;
-
-                    foreach (var group in roomTypeGroup)
-                    {
-                        var roomTypeList = roomTypeOptionList.Where(t => t.Occupancy == group.Key).ToList();
-
-                        foreach (var roomType in roomTypeList)
-                        {
-
-                            string isActive = "";
-
-                            if (roomType == roomTypeList.First())
-                            {
-                                isActive = "active";
-                            }
-                    <li class="tab-title @isActive">
-                        <a href="#panel-@roomType.ID">
-                            <div class="tab-room-type-name">@roomType.Name </div>
-                            <div class="tab-rate-start-form">Rate Start From</div>
-                            <div class="tab-price">@Math.Ceiling(roomType.NetAmount).ToString("#,###") THB </div>
-                        </a>
-                    </li>
-                        }
-
-                        count++;
-                    }
-                }
-            </ul>
-            <div class="vertical-tabs tabs-content">
-                @if (roomTypeOptionList != null && roomTypeOptionList.Count() > 0)
-                {
-                    int count = 0;
-                    string showcontent1 = "calendarContent1_";
-                    string showcontent2 = "calendarContent2_";
-                    string cal1 = "";
-                    string cal2 = "";
-
-                    foreach (var group in roomTypeGroup)
-                    {
-                        var roomTypeList = roomTypeOptionList.Where(t => t.Occupancy == group.Key).ToList();
-                        foreach (var roomType in roomTypeList)
-                        {
-                            cal1 = showcontent1 + count;
-                            cal2 = showcontent2 + count;
-                            count++;
-
-                            string isActive = "";
-                            if (roomType == roomTypeList.First())
-                            {
-                                isActive = "active";
-                            }
-                    <div class="content @isActive" id="panel-@roomType.ID">
-                        <div class="right-content">
-                            <div class="room-type-name">@roomType.Name</div>
-                            @if (roomType.Image != "")
-                            {
-                                <img src="@roomType.Image" width="300" height="200" />
-                            }
-                            <div class="tab-content-line right"></div>
-                            <div class="small-label">Room Avaliable</div>
-                            <div class="calendar-title"><    Available only display for 1 month after entered checkin date    ></div>
-                            <div style="display: block;">
-                                <div style="float:left;width:300px;margin-right:10px;" id="@cal1">
-                                    <script type="text/javascript" defer>
-                                        DisplayCalendar('@checkInDate.Month', '@checkInDate.Year', '#@cal1', '@roomType.ID', '@roomType.ServiceID');
-                                    </script>
-                                </div>
-                                <div style="float:left;width:300px;" id="@cal2">
-                                    <script type="text/javascript" defer>
-                                        DisplayCalendar('@next.Month', '@next.Year', '#@cal2', '@roomType.ID', '@roomType.ServiceID');
-                                    </script>
-                                </div>
-                                <div style="float: left; margin-top: 258px;">
-                                    <img src="/Images/calendar-label.png" width="100" />
-                                </div>
-                            </div>
-                            <div style="clear: both"></div>
-                            <div style="display: block;">
-                                <div class="calendar-footer">Check in : <span class="font-red">@checkInDate.ToString("dd-MMM-yyyy")</span></div>
-                                <div class="calendar-footer">Check out : <span class="font-red">@checkOutDate.ToString("dd-MMM-yyyy")</span></div>
-                                <div class="calendar-footer">Night : <span class="font-red">@night.Value.Days</span></div>
-                            </div>
-                            <div class="tab-content-line right"></div>
-                            <div style="clear: both"></div>
-                            <div class="small-label">Room Description</div>
-                            <div class=" hotel-detail-text">@Html.Raw(roomType.Description)</div>
-                            <div class="tab-content-line right"></div>
-                            <div class="small-label">Rules</div>
-                            <div class=" hotel-detail-text">@Html.Raw(roomType.Rules)</div>
-                            <div class="tab-content-line right"></div>
-                            <div class="small-label">Meal Information</div>
-                            <div class=" hotel-detail-text">@roomType.MealPlan</div>
-                            <div class="tab-content-line right"></div>
-                            <div class="small-label">Cancellation Policy</div>
-                            <div class=" hotel-detail-text">@Html.Raw(cancellation)</div>
-                            <div class="tab-content-line right"></div>
-                        </div>
-                    </div>
-                        }
-                    }
-                }
-            </div>
-        </div>
-    </div>
-
     <div class="row">
         <div class="column small-12">
             <div class="hotel-detail-section"></div>
@@ -460,12 +812,12 @@
         </div>
         <div class="column small-12 medium-9 hotel-detail-text">
             @if (serviceRule != null && serviceRule.PromotionList != null && serviceRule.PromotionList.Count() > 0)
-            {
-                foreach (var item in serviceRule.PromotionList)
-                {
+			{
+				foreach (var item in serviceRule.PromotionList)
+				{
                 <span>@item.RuleMessage</span><br />
-                }
-            }
+				}
+			}
         </div>
     </div>
     <div class="row">
@@ -478,12 +830,12 @@
         <div class="column small-12 medium-9 hotel-detail-text">
             <div class="hotel-detail-facility">
                 @if (hotelInfo.ServiceFacilities != null && hotelInfo.ServiceFacilities.Count() > 0)
-                {
-                    foreach (var item in hotelInfo.ServiceFacilities)
-                    {
+				{
+					foreach (var item in hotelInfo.ServiceFacilities)
+					{
                     <span>@item.ServiceTypeFacilityName</span><br />
-                    }
-                }
+					}
+				}
             </div>
             <a class="readmore-link" id="read-more-facility" onclick="ShowFacility();">Read more</a>
         </div>
@@ -495,9 +847,9 @@
             <input type="button" value="< Back" class="button  btn-gray right " onclick="history.back();" />
         </div>
     </div>
-    
+
     <div id="cloneTemplate">
-        <div class="child-age columns small-4 left hide">
+        <div class="child-age columns small-6 left hide">
             <select name="ChildAge" class="childAge-amount">
                 <option value="0">0</option>
                 <option value="1">1</option>
@@ -518,52 +870,45 @@
                 <option value="16">16</option>
             </select>
         </div>
-        <div class="row child-row hide">
-            <div class="columns small-12">
-                <div class="search-label">
-                    <label>Age</label></div>
+
+            <div class="columns small-12   child-row hide">
+                    <label class="search-label">Age</label>
                 <div class="child-container row">
                 </div>
             </div>
-        </div>
-        <div class="room columns small-12 hide">
-            <div class="row">
-                <div class="columns medium-12 small-12">
-                    <div class="room-selection">
-                        <div class="row">
-                            <div class="columns medium-6 small-6">
-                                <label class="search-label">Adults</label>
-                                <select name="Adults" class="adult-amount">
-                                    @*<option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                    <option value="10">10</option>*@
-                                </select>
-                            </div>
-                            <div class="columns medium-6 small-6">
-                                <label class="search-label">Children</label>
-                                <select name="Children" class="child-amount">
-                                    @*<option value="0">0</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                    <option value="10">10</option>*@
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+
+        <div class="room hide">
+            <div class="room-selection">
+                <div class="columns medium-6 small-6">
+                    <label class="search-label">Adults</label>
+                    <select name="Adults" class="adult-amount">
+                        @*<option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>*@
+                    </select>
+                </div>
+                <div class="columns medium-6 small-6">
+                    <label class="search-label">Children</label>
+                    <select name="Children" class="child-amount">
+                        @*<option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>*@
+                    </select>
                 </div>
             </div>
         </div>
@@ -644,121 +989,34 @@
                     })
                 }
             });
-        });
-
-        $(document).on('change', 'select.child-amount', function () {
-            
-
-            var searchData = ConvertFormToJsonForGetPrice($('#frm'), $(this).attr("data-GroupID"), $(this).attr("data-ServiceID"), $(this).attr("data-RoomTypeID"), $(this).attr("data-OccupancyID"));
-            var priceID = $(this).attr("data-PriceID");
-            var hddPriceID = "hddPrice_" + $(this).attr("data-RoomTypeID") + "_" + $(this).attr("data-ServiceID");// hdd price ID
-
-            $("#" + priceID).html("Loading..");
-
-            $.ajax({
-                url: '@Url.Action("GetPrice", "Hotel")',
-                type: 'POST',
-                data: searchData,
-                contentType: "application/json",
-                success: function (data) {
-                    $("#" + priceID).html(data.PriceText + " " + data.Currency);
-                    $("#" + hddPriceID).val(data.Price);
-                    //GrandTotal();
-                    GenerateExtraService($(this).attr("data-ServiceID"));
-                }
-            });
-
-        });
-
-        $(document).on('change', 'select.adult-amount', function () {
-            GenerateExtraService($(this).attr("data-ServiceID"));
-        });
-
-        $(document).on('change', 'select.childAge-amount', function () {
-            var searchData = ConvertFormToJsonForGetPrice($('#frm'), $(this).attr("data-GroupID"), $(this).attr("data-ServiceID"), $(this).attr("data-RoomTypeID"), $(this).attr("data-OccupancyID"));
-            var priceID = $(this).attr("data-PriceID");
-            var hddPriceID = "hddPrice_" + $(this).attr("data-RoomTypeID") + "_" + $(this).attr("data-ServiceID");// hdd price ID
-
-            $("#" + priceID).html("Loading..");
-
-            $.ajax({
-                url: '@Url.Action("GetPrice", "Hotel")',
-                type: 'POST',
-                data: searchData,
-                contentType: "application/json",
-                success: function (data) {
-                    $("#" + priceID).html(data.PriceText + " " + data.Currency);
-                    $("#" + hddPriceID).val(data.Price);
-                    //GrandTotal();
-                    GenerateExtraService($(this).attr("data-ServiceID"));
-                }
-            });
-        });
-
-
-
-        function GenerateExtraService(serviceID) {
-
-            var result = ConvertFormToJsonForBook($('#frm'));
-
-            $(".serviceExtra").html("Service Extra Loading...");
-
-            $.ajax({
-                url: '@Url.Action("GetExtraService", "Hotel")',
-                type: 'POST',
-                data: result,
-                contentType: "application/json",
-                success: function (data) {
-                    $(".serviceExtra").html(data);
-                    GrandTotal();
-                }
-            });
-
-        }
-
-        function RemoveExtraService(serviceID) {
-
-            var canDel = true;
-
+            var i;
+            var text = "";
             $("#frm").find(".RoomAmount").each(function (i) {
-                if ($(this).val() != "0" && $(this).attr("data-ServiceID") == serviceID) {
-                    canDel = false;
+                //Gen html รูปตามจำนวน $(this).attr("data-MaxAdultCap") และ child
+                var text = "";
+                for (i = 0; i < $(this).attr("data-maxadultcap") ; i++) {
+                    text += "<img src='/Images/adult.png' alt='Adult' title='Adult' />";
                 }
+                for (i = 0; i < $(this).attr("data-maxchildcap") ; i++) {
+                    text += "<img src='/Images/child.png' alt='Child' title='Child' />";
+                }
+                $("#cap_" + $(this).attr("data-optionid") + "_" + $(this).attr("data-ServiceID")).html(text);
+                //alert("#cap_" + $(this).attr("data-optionid") + "_" + $(this).attr("data-ServiceID"));
             });
 
-            if (canDel) {
-                $("#ex_" + serviceID).remove();
-            }
-        }
-
-
-        var url = '@Url.Action("GetExtraService", "Hotel")';
-
-        $(document).ready(function () {
 
         });
+        function MoreOptionClick(id) {
+            $('.MoreOption_'+id).toggle('slow');
+            $('#MoreOptionShow_'+id).toggle();
+            $('#MoreOptionHide_'+id).toggle();
+        }
+        $(document).on('change', 'select.child-amount', function () {
 
 
-        function changeRoom(serviceID, RoomTypeID, occupancyID, maxAdult, maxChild) {
-            var id = "ctn_" + RoomTypeID + "_" + serviceID;//containner ID
-            var ddID = "ddr_" + RoomTypeID + "_" + serviceID;//dropdown ID
-            var gID = "g_" + RoomTypeID + "_" + serviceID;// group ID
-            var priceID = "price_" + RoomTypeID + "_" + serviceID;// price ID
-            var hddPriceID = "hddPrice_" + RoomTypeID + "_" + serviceID;// hdd price ID
-            var container = $('#' + id);
-            container.clearRoom();
-
-            var numberOfRoom = 0;
-            try {
-                numberOfRoom = parseInt($('#' + ddID).val());
-            } catch (e) {
-
-            }
-
-            //$("#nGuest").val(numberOfRoom);
-            container.addNewRoom2(numberOfRoom, serviceID, maxAdult, maxChild, gID, RoomTypeID, occupancyID, priceID);
-
-            var searchData = ConvertFormToJsonForGetPrice($('#frm'), gID, serviceID, RoomTypeID, occupancyID);
+            var searchData = ConvertFormToJsonForGetPrice($('#frm'), $(this).attr("data-GroupID"), $(this).attr("data-ServiceID"), $(this).attr("data-RoomTypeID"), $(this).attr("data-OccupancyID"));
+            var priceID = $(this).attr("data-PriceID");
+            var hddPriceID = "hddPrice_" + $(this).attr("data-RoomTypeID") + "_" + $(this).attr("data-ServiceID");// hdd price ID
 
             $("#" + priceID).html("Loading..");
 
@@ -770,90 +1028,153 @@
                 success: function (data) {
                     $("#" + priceID).html(data.PriceText + " " + data.Currency);
                     $("#" + hddPriceID).val(data.Price);
-                    GrandTotal();
+                    //GrandTotal();
+                    GenerateExtraService($(this).attr("data-ServiceID"));
                 }
             });
 
+        });
 
-            //Load Extra
-            if (numberOfRoom == 0) {
-                RemoveExtraService(serviceID);
-            }
+            $(document).on('change', 'select.adult-amount', function () {
+                GenerateExtraService($(this).attr("data-ServiceID"));
+            });
 
-            GenerateExtraService(serviceID);
+            $(document).on('change', 'select.childAge-amount', function () {
+                var searchData = ConvertFormToJsonForGetPrice($('#frm'), $(this).attr("data-GroupID"), $(this).attr("data-ServiceID"), $(this).attr("data-RoomTypeID"), $(this).attr("data-OccupancyID"));
+                var priceID = $(this).attr("data-PriceID");
+                var hddPriceID = "hddPrice_" + $(this).attr("data-RoomTypeID") + "_" + $(this).attr("data-ServiceID");// hdd price ID
 
-        }
+                $("#" + priceID).html("Loading..");
 
-        function ConvertFormToJsonForGetPrice(form, parentID, serviceID, RoomTypeID, occupancyID) {
-            var result = {};
-            //result.City = form.find('#' + parentID + ' select[name=City]').val();
-            //result.CityArea = form.find('#' + parentID + ' select[name=CityArea]').val();
-            result.HotelName = $("#HotelName").val();
-            result.CheckInDate = $("#CheckInDate").val();
-            result.CheckOutDate = $("#CheckOutDate").val();
-            result.RoomAmount = form.find('#' + parentID + ' select[name=RoomAmount]').val();
-            result.ServiceID = serviceID;
-            result.RoomTypeID = RoomTypeID;
-
-            //alert(parentID);
-
-            var rooms = [];
-            form.find('#' + parentID + ' .room').each(function (i) {
-
-                var room = {};
-                var adults = $(this).find('select[name=Adults] option:selected').val();
-                room.Adults = adults;
-                room.OccupancyID = occupancyID;
-                room.Children = [];
+                $.ajax({
+                    url: '@Url.Action("GetPrice", "Hotel")',
+                    type: 'POST',
+                    data: searchData,
+                    contentType: "application/json",
+                    success: function (data) {
+                        $("#" + priceID).html(data.PriceText + " " + data.Currency);
+                        $("#" + hddPriceID).val(data.Price);
+                        //GrandTotal();
+                        GenerateExtraService($(this).attr("data-ServiceID"));
+                    }
+                });
+            });
 
 
-                var childAges = $(this).find('.child-container .child-age');
 
-                childAges.each(function (j) {
-                    var childAge = {};
-                    var age = $(this).find('select[name=ChildAge] option:selected').val();
-                    childAge.Age = age;
-                    room.Children.push(childAge);
+            function GenerateExtraService(serviceID) {
+
+                var result = ConvertFormToJsonForBook($('#frm'));
+
+                $(".serviceExtra").html("Service Extra Loading...");
+
+                $.ajax({
+                    url: '@Url.Action("GetExtraService", "Hotel")',
+                    type: 'POST',
+                    data: result,
+                    contentType: "application/json",
+                    success: function (data) {
+                        $(".serviceExtra").html(data);
+                        GrandTotal();
+                    }
                 });
 
-                rooms.push(room);
+            }
+
+            function RemoveExtraService(serviceID) {
+
+                var canDel = true;
+
+                $("#frm").find(".RoomAmount").each(function (i) {
+                    if ($(this).val() != "0" && $(this).attr("data-ServiceID") == serviceID) {
+                        canDel = false;
+                    }
+                });
+
+                if (canDel) {
+                    $("#ex_" + serviceID).remove();
+                }
+            }
+
+
+            var url = '@Url.Action("GetExtraService", "Hotel")';
+
+            $(document).ready(function () {
+
             });
 
-            result.Rooms = rooms;
 
-            return JSON.stringify(result);
-        }
+            function changeRoom(serviceID, RoomTypeID, occupancyID, maxAdult, maxChild) {
+                var id = "ctn_" + RoomTypeID + "_" + serviceID;//containner ID
+                var ddID = "ddr_" + RoomTypeID + "_" + serviceID;//dropdown ID
+                var gID = "g_" + RoomTypeID + "_" + serviceID;// group ID
+                var priceID = "price_" + RoomTypeID + "_" + serviceID;// price ID
+                var hddPriceID = "hddPrice_" + RoomTypeID + "_" + serviceID;// hdd price ID
+                var container = $('#' + id);
+                container.clearRoom();
 
-        function ConvertFormToJsonForBook(form) {
+                var numberOfRoom = 0;
+                try {
+                    numberOfRoom = parseInt($('#' + ddID).val());
+                } catch (e) {
 
-            var result = {};
-            //result.RoomAmount = form.find('#' + parentID + ' select[name=RoomAmount]').val();
-            result.StartDate = $("#CheckInDate").val();
-            result.EndDate = $("#CheckOutDate").val();
+                }
 
-            var rooms = [];
-            var extras = [];
+                //$("#nGuest").val(numberOfRoom);
+                container.addNewRoom2(numberOfRoom, serviceID, maxAdult, maxChild, gID, RoomTypeID, occupancyID, priceID);
 
-            form.find('.CtnGroup').each(function (i) {
-                var parentID = $(this).attr("id");
+                var searchData = ConvertFormToJsonForGetPrice($('#frm'), gID, serviceID, RoomTypeID, occupancyID);
 
-                var roomOccupancy = $(this).find('input[name=RoomOccupancy]').val();
-                var serviceID = $(this).find('input[name=ServiceID]').val();
-                var roomTypeID = $(this).find('input[name=RoomTypeID]').val();
+                $("#" + priceID).html("Loading..");
 
-                form.find('#' + parentID + ' .room').each(function (j) {
+                $.ajax({
+                    url: '@Url.Action("GetPrice", "Hotel")',
+                    type: 'POST',
+                    data: searchData,
+                    contentType: "application/json",
+                    success: function (data) {
+                        $("#" + priceID).html(data.Currency + " " + data.PriceText);
+                        $("#" + hddPriceID).val(data.Price);
+                        GrandTotal();
+                    }
+                });
+
+
+                //Load Extra
+                if (numberOfRoom == 0) {
+                    RemoveExtraService(serviceID);
+                }
+
+                GenerateExtraService(serviceID);
+
+            }
+
+            function ConvertFormToJsonForGetPrice(form, parentID, serviceID, RoomTypeID, occupancyID) {
+                var result = {};
+                //result.City = form.find('#' + parentID + ' select[name=City]').val();
+                //result.CityArea = form.find('#' + parentID + ' select[name=CityArea]').val();
+                result.HotelName = $("#HotelName").val();
+                result.CheckInDate = $("#CheckInDate").val();
+                result.CheckOutDate = $("#CheckOutDate").val();
+                result.RoomAmount = form.find('#' + parentID + ' select[name=RoomAmount]').val();
+                result.ServiceID = serviceID;
+                result.RoomTypeID = RoomTypeID;
+
+                //alert(parentID);
+
+                var rooms = [];
+                form.find('#' + parentID + ' .room').each(function (i) {
 
                     var room = {};
                     var adults = $(this).find('select[name=Adults] option:selected').val();
-                    room.OccupancyID = roomOccupancy;
-                    room.ServiceID = serviceID;
-                    room.RoomTypeID = roomTypeID;
                     room.Adults = adults;
+                    room.OccupancyID = occupancyID;
                     room.Children = [];
+
 
                     var childAges = $(this).find('.child-container .child-age');
 
-                    childAges.each(function (k) {
+                    childAges.each(function (j) {
                         var childAge = {};
                         var age = $(this).find('select[name=ChildAge] option:selected').val();
                         childAge.Age = age;
@@ -863,125 +1184,172 @@
                     rooms.push(room);
                 });
 
-            });
+                result.Rooms = rooms;
 
-            result.Rooms = rooms;
-
-
-            $.each($("input[type='checkbox']:checked"), function (index, value) {
-                var extra = {};
-                extra.ServiceID = value.defaultValue.split("&")[2];
-                extra.ServiceExtraID = value.defaultValue.split("&")[0];
-                extras.push(extra);
-            });
-
-            result.Extras = extras;
-
-            return JSON.stringify(result);
-        }
-
-        function currencyFormat(num) {
-            return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
-        }
-
-        function ShowHints() {
-            var IsDisplayHint = true;
-
-            @if(IsDisplayHint)
-            {
-                <text>IsDisplayHint = true;</text>
-            }
-            else   
-            {
-                <text>IsDisplayHint = false;</text>
+                return JSON.stringify(result);
             }
 
-            if (IsDisplayHint) {
-                $("#HintsPopup").foundation('reveal', 'open');
-            }
-            else {
-                Book();
-            }
-        }
+            function ConvertFormToJsonForBook(form) {
 
-        function CloseHints() {
-            $("#HintsPopup").foundation('reveal', 'close');
-        }
+                var result = {};
+                //result.RoomAmount = form.find('#' + parentID + ' select[name=RoomAmount]').val();
+                result.StartDate = $("#CheckInDate").val();
+                result.EndDate = $("#CheckOutDate").val();
 
-        function Book() {
-            var result = ConvertFormToJsonForBook($('#frm'));
+                var rooms = [];
+                var extras = [];
 
-            $.ajax({
-                url: '@Url.Action("SetDetailData", "Hotel")',
-                type: 'POST',
-                data: result,
-                contentType: "application/json",
-                success: function (data) {
-                    $("#frm").submit();
-                }
-            });
-        }
+                form.find('.CtnGroup').each(function (i) {
+                    var parentID = $(this).attr("id");
 
-        function ChangeOption(serviceID, OccupancyID) {
-            $('.serviceExtra').each(function (i) {
-                var occupancyID = $(this).attr('data-occupancy');
-                if (OccupancyID == occupancyID) {
-                    //LoadExtraService($(this), serviceID, occupancyID, url, i);
-                    $.ajax({
-                        url: url,
-                        type: 'GET',
-                        data: {
-                            ServiceID: serviceID
-                            , OccupancyID: occupancyID
-                            , Index: i
-                        },
-                        success: function (data) {
-                            $(this).html(data);
-                            //var extraServicePrice = $("[name='extra-service-price']").val();
+                    var roomOccupancy = $(this).find('input[name=RoomOccupancy]').val();
+                    var serviceID = $(this).find('input[name=ServiceID]').val();
+                    var roomTypeID = $(this).find('input[name=RoomTypeID]').val();
 
-                            //Nop Remove
-                            //GrandTotal();
-                        }
+                    form.find('#' + parentID + ' .room').each(function (j) {
+
+                        var room = {};
+                        var adults = $(this).find('select[name=Adults] option:selected').val();
+                        room.OccupancyID = roomOccupancy;
+                        room.ServiceID = serviceID;
+                        room.RoomTypeID = roomTypeID;
+                        room.Adults = adults;
+                        room.Children = [];
+
+                        var childAges = $(this).find('.child-container .child-age');
+
+                        childAges.each(function (k) {
+                            var childAge = {};
+                            var age = $(this).find('select[name=ChildAge] option:selected').val();
+                            childAge.Age = age;
+                            room.Children.push(childAge);
+                        });
+
+                        rooms.push(room);
                     });
 
+                });
+
+                result.Rooms = rooms;
+
+
+                $.each($("input[type='checkbox']:checked"), function (index, value) {
+                    var extra = {};
+                    extra.ServiceID = value.defaultValue.split("&")[2];
+                    extra.ServiceExtraID = value.defaultValue.split("&")[0];
+                    extras.push(extra);
+                });
+
+                result.Extras = extras;
+
+                return JSON.stringify(result);
+            }
+
+            function currencyFormat(num) {
+                return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+            }
+
+            function ShowHints() {
+                var IsDisplayHint = true;
+
+                @if (IsDisplayHint)
+				{
+                <text>IsDisplayHint = true;</text>
+				}
+				else
+				{
+                <text>IsDisplayHint = false;</text>
+				}
+
+                if (IsDisplayHint) {
+                    $("#HintsPopup").foundation('reveal', 'open');
                 }
-            });
-        }
-        function GrandTotal() {
-            //Nop Remove
-            /*var roomPriceSum = 0;
-            var extraServicePriceSum = 0;
-                            
-            $.each($("input[type='radio']:checked"), function (index, value) { 
-                roomPriceSum += Number(value.defaultValue.split("&")[2]);
-            }); 
-            $.each($("input[type='checkbox']:checked"), function (index, value) { 
-                extraServicePriceSum += Number(value.defaultValue.split("&")[1]);
-            });
-            $("#total").html(currencyFormat(roomPriceSum + extraServicePriceSum) + " THB");*/
+                else {
+                    Book();
+                }
+            }
 
-            //Nop Add New Logic
-            var totalPrice = 0;
-            $("#frm").find('.RoomTypePrice').each(function (i) {
-                totalPrice = totalPrice + Number($(this).val());
+            function CloseHints() {
+                $("#HintsPopup").foundation('reveal', 'close');
+            }
 
-            });
+            function Book() {
 
-            $.each($("input[type='checkbox']:checked"), function (index, value) {
-                totalPrice += Number(value.defaultValue.split("&")[1]);
-            });
+                $('#Loading').foundation('reveal', 'open');
 
-            $("#total").html(currencyFormat(totalPrice));
-        }
+                var result = ConvertFormToJsonForBook($('#frm'));
 
-        function ShowDescription() {
-            $(".hotel-detal-description").css("height", "100%");
-            $("#read-more-description").hide();
-        }
-        function ShowFacility() {
-            $(".hotel-detail-facility").css("height", "100%");
-            $("#read-more-facility").hide();
-        }
+                $.ajax({
+                    url: '@Url.Action("SetDetailData", "Hotel")',
+                    type: 'POST',
+                    data: result,
+                    contentType: "application/json",
+                    success: function (data) {
+                        $("#frm").submit();
+                    }
+                });
+            }
+
+            function ChangeOption(serviceID, OccupancyID) {
+                $('.serviceExtra').each(function (i) {
+                    var occupancyID = $(this).attr('data-occupancy');
+                    if (OccupancyID == occupancyID) {
+                        //LoadExtraService($(this), serviceID, occupancyID, url, i);
+                        $.ajax({
+                            url: url,
+                            type: 'GET',
+                            data: {
+                                ServiceID: serviceID
+                                , OccupancyID: occupancyID
+                                , Index: i
+                            },
+                            success: function (data) {
+                                $(this).html(data);
+                                //var extraServicePrice = $("[name='extra-service-price']").val();
+
+                                //Nop Remove
+                                //GrandTotal();
+                            }
+                        });
+
+                    }
+                });
+            }
+            function GrandTotal() {
+                //Nop Remove
+                /*var roomPriceSum = 0;
+                var extraServicePriceSum = 0;
+
+                $.each($("input[type='radio']:checked"), function (index, value) {
+                    roomPriceSum += Number(value.defaultValue.split("&")[2]);
+                });
+                $.each($("input[type='checkbox']:checked"), function (index, value) {
+                    extraServicePriceSum += Number(value.defaultValue.split("&")[1]);
+                });
+                $("#total").html(currencyFormat(roomPriceSum + extraServicePriceSum) + " THB");*/
+
+                //Nop Add New Logic
+                var totalPrice = 0;
+                $("#frm").find('.RoomTypePrice').each(function (i) {
+                    totalPrice = totalPrice + Number($(this).val());
+
+                });
+
+                $.each($("input[type='checkbox']:checked"), function (index, value) {
+                    totalPrice += Number(value.defaultValue.split("&")[1]);
+                });
+
+                $("#total").html(currencyFormat(totalPrice) + " @currencyCode");
+            }
+
+            function ShowDescription() {
+                $(".hotel-detal-description").css("height", "100%");
+                $("#read-more-description").hide();
+            }
+            function ShowFacility() {
+                $(".hotel-detail-facility").css("height", "100%");
+                $("#read-more-facility").hide();
+            }
 
     </script>
 }
@@ -998,11 +1366,11 @@
         </div>
         <div class="row hotel-detail-text">
             @foreach (var item in hints)
-            {
+			{
                 <div class="column small-12 ">
                     @item
                 </div>
-            }
+			}
         </div>
         <div class="row ">
             <div class="column small-12 text-right">

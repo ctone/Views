@@ -1,6 +1,9 @@
 ﻿@using DiethelmTSWebsite2015.Core
 @{
     Utility.ReloadRouteData();
+
+    string country = Utility.GetCurrentCountryName();
+	int cartItem = 0;
 }
 
 <!DOCTYPE html>
@@ -37,7 +40,17 @@
         @{
             DiethelmTSWebsite2015.Biz.DataManager dataManager = DiethelmTSWebsite2015.Biz.DataManager.Instance;
             var isLogin = dataManager.IsAgencyLogin();
-            string country = Utility.GetCurrentCountryName();
+			if(isLogin)
+			{
+				if (dataManager.BookingData == null || dataManager.BookingData.NumberOfService == null || dataManager.BookingData.NumberOfService <= 0)
+				{
+					cartItem = 0;
+				}
+				else
+				{
+					cartItem = dataManager.BookingData.NumberOfService;
+				}
+			}
             string showcountry = country;
             string countryname = DiethelmTSWebsite2015.Core.Utility.GetCountryDisplayName(showcountry);
             string img = DiethelmTSWebsite2015.Core.Utility.GetCountryImageUrl(showcountry);
@@ -72,28 +85,27 @@
                         <li class="name show-for-small">
                             <a href="#"><img class="logo-mobile" src="../../Images/diethelm_travel_logo_mobile.png" alt="Diethelm Travel Logo" title="Diethelm Travel Logo" /></a>
 
-                            <a href="#" data-reveal-id="SubscribeBox" class="login-info right">Subscribe</a> 
-                            <span class="login-info right"> | </span>
+                            <a href="#" data-reveal-id="SubscribeBox" class="login-info right"><img src="/Images/subscript.png" alt="Subscribe" title="Subscribe" /></a> 
                             @if (showcountry == "Corporate")
                             {
                                 if (!isLogin)
                                 {
-                                    <a href="#" data-reveal-id="SelectCountry" class="login-info right">Login</a>
+                                    <a href="#" data-reveal-id="SelectCountry" class="login-info right"><img src="/Images/login.png" alt="Login" title="Login" /></a>
                                 }
                                 else
                                 {
-                                    <span class="login-info right"><a href='#' data-reveal-id="SelectCountry" onclick="selectModule('Booking/MyOrder');"><b>@dataManager.AgentDetails.LONG_NAME.Substring(0, 16)</b></a>, <a href='@Url.Action("Logout", "Home")' class="login">Logout</a></span>
+                                    <span class="login-info right"><a href='#' data-reveal-id="SelectCountry" onclick="selectModule('Booking/MyOrder');"><b>@Utility.GetShortText(@dataManager.AgentDetails.LONG_NAME.Trim(), "", 16)</b></a>, <a href='@Url.Action("Logout", "Home")' class="login"><img src="/Images/logout.png" alt="Logout" title="Logout" /></a></span>
                                 }
                             }
                             else
                             {
                                 if (!isLogin)
                                 {
-                                    <a href="#" data-reveal-id="LoginBox" class="login-info right">Login</a>
+                                    <a href="#" data-reveal-id="LoginBox" class="login-info right"><img src="/Images/login.png" alt="Login" title="Login" /></a>
                                 }
                                 else
                                 {
-                                    <span class="login-info right"><a href='#' onclick="selectModule('Booking/MyOrder'); return redirectTo('@showcountry')"><b>@dataManager.AgentDetails.LONG_NAME.Substring(0, 16)</b></a>, <a href='@Url.Action("Logout", "Home")' class="login">Logout</a></span>
+                                    <span class="login-info right"><a href='#' onclick="selectModule('Booking/MyOrder'); return redirectTo('@showcountry')"><b>@Utility.GetShortText(@dataManager.AgentDetails.LONG_NAME.Trim(), "", 16)</b></a>, <a href='@Url.Action("Logout", "Home")' class="login"><img src="/Images/logout.png" alt="Logout" title="Logout" /></a></span>
                                 }
                             }
                         </li>
@@ -113,7 +125,7 @@
                                     }
                                     else
                                     {
-                                        <span class="login-info">Welcome <a href='#' data-reveal-id="SelectCountry" onclick="selectModule('Booking/MyOrder');"><b>@dataManager.AgentDetails.LONG_NAME.Substring(0, 16)</b> | <b>@dataManager.AgentDetails.PREFERRED_ORGANIZATION_NAME.Substring(0, 16)</b></a>, not me <a href='@Url.Action("Logout", "Home")' class="login">Logout</a></span>
+                                        <span class="login-info">Welcome <a href='#' data-reveal-id="SelectCountry" onclick="selectModule('Booking/MyOrder');"><b>@Utility.GetShortText(@dataManager.AgentDetails.LONG_NAME.Trim(), "", 16)</b> | <b> @Utility.GetShortText(@dataManager.AgentDetails.PREFERRED_ORGANIZATION_NAME.Trim(), "", 16)</b></a>, not me? : <a href='@Url.Action("Logout", "Home")' class="login">Logout</a></span>
                                     }
                                 }
                                 else
@@ -124,7 +136,7 @@
                                     }
                                     else
                                     {
-                                        <span class="login-info">Welcome <a href='#' onclick="selectModule('Booking/MyOrder'); return redirectTo('@showcountry')"><b>@dataManager.AgentDetails.LONG_NAME.Substring(0, 16)</b> | <b>@dataManager.AgentDetails.PREFERRED_ORGANIZATION_NAME.Substring(0, 16)</b></a>, not me <a href='@Url.Action("Logout", "Home")' class="login">Logout</a></span>
+                                        <span class="login-info">Welcome <a href='#' id="loginName" onclick="selectModule('Booking/MyOrder'); return redirectTo('@showcountry')"><b>@Utility.GetShortText(@dataManager.AgentDetails.LONG_NAME.Trim(), "", 16)</b> | <b>@Utility.GetShortText(@dataManager.AgentDetails.PREFERRED_ORGANIZATION_NAME.Trim(), "", 16)</b></a>, not me? : <a href='@Url.Action("Logout", "Home")' class="login">Logout</a></span>
                                     }
                                 }
                             </li>
@@ -155,7 +167,7 @@
                             <li><a rel="nofollow" href="https://www.facebook.com/diethelmtravel"><img class="social-button" src="/Images/facebook-32.png" alt="@Resources.master.altFB" title="@Resources.master.altFB" /></a></li>
                             <li><a rel="nofollow" href="#"><img class=" social-button" src="/Images/google-plus-32.png" alt="@Resources.master.altGooglePlus" title="@Resources.master.altGooglePlus" /></a></li>
                             <li><a rel="nofollow" href="#"><img class="social-button" src="/Images/linkedin-32.png" alt="@Resources.master.altLinkedIn" title="@Resources.master.altLinkedIn" /></a></li>
-                            <li><a style="padding-top:5px;">RSS</a></li>
+                            <li><a style="padding-top:15px;line-height:25px">RSS</a></li>
                             <li><a rel="nofollow" href="#"><img class="social-button" src="/Images/twitter-32.png" alt="@Resources.master.altTwitter" title="@Resources.master.altTwitter" /></a></li>
                             <li><a rel="nofollow" href="#"><img class="social-button" src="/Images/youtube-32.png" alt="@Resources.master.altYouTube" title="@Resources.master.altYouTube" /></a></li>
                         </ul>
@@ -168,100 +180,52 @@
             <div class="small-12 medium-12 columns menu">
                 <nav class="top-bar " data-topbar role="navigation">
                     <ul class="title-area">
-                        <li class="name"><h1><a href="@Url.Action("Country", "Home", new { country = Utility.GetCurrentCountryName() })"><img class="logo" src="/Images/diethelm_travel_logo.png" alt="Diethelm Travel Logo" title="Diethelm Travel Logo" /></a></h1></li>
+						@if (cartItem > 0)
+						{
+							<li class="show-for-small shopping-cart-box"><a href="@Url.Action("ShoppingCart", "Booking", new { country = country })">@cartItem items selected</a></li>
+                        }
+                        else
+                        {
+                            <li class="name"><h1><a href="@Url.Action("Country", "Home", new { country = country })"><img class="logo" src="/Images/diethelm_travel_logo.png" alt="Diethelm Travel Logo" title="Diethelm Travel Logo" /></a></h1></li>
+                        }
                         <li class="toggle-topbar menu-icon"><a href="#"><span>&nbsp;</span></a></li>
                     </ul>
+					@if (cartItem > 0)
+					{
+                    <ul class="shopping-cart-box hide-for-small right">
+                        <li><a href="@Url.Action("ShoppingCart", "Booking", new { country = country })">Your have @cartItem items selected</a></li>
+                    </ul>
+					 }
 
                     <section class="top-bar-section main-menu">
                         <!-- Right Nav Section -->
                         <ul class="right">
-                            <li><a href="@Url.Action("Index", "Home", new { country = Utility.GetCurrentCountryName() })">Journeys of a lifetime</a></li>
-                            <li>
-                                @if (showcountry == "Corporate")
-                                {
-                                    <a href="#" data-reveal-id="SelectCountry">Awesome Deals</a>
-                                }
-                                else
-                                {
-                                    if (!isLogin)
-                                    {
-                                        <a href="#" data-reveal-id="LoginBox" onclick="selectModule('AwesomeDeal')">Awesome Deals</a>
-                                    }
-                                    else
-                                    {
-                                        <a href="@Url.Action("Index", "AwesomeDeal", new { country = Utility.GetCurrentCountryName() })">Awesome Deals</a>
-                                    }
-                                }
-                            </li>
-                            <li>
-                                @if (showcountry == "Corporate")
-                                {
-                                    <a href="#" data-reveal-id="SelectCountry">Holidays</a>
-                                }
-                                else
-                                {
-                                    if (!isLogin)
-                                    {
-                                        <a href="#" data-reveal-id="LoginBox" onclick="selectModule('Package')">Holidays</a>
-                                    }
-                                    else
-                                    {
-                                        <a href="@Url.Action("Index", "Package", new { country = Utility.GetCurrentCountryName() })">Holidays</a>
-                                    }
-                                }
-                            </li>
-                            <li>
-                                @if (showcountry == "Corporate")
-                                {
-                                    <a href="#" data-reveal-id="SelectCountry">Excursion</a>
-                                }
-                                else
-                                {
-                                    if (!isLogin)
-                                    {
-                                        <a href="#" data-reveal-id="LoginBox" onclick="selectModule('Excursion')">Excursion</a>
-                                    }
-                                    else
-                                    {
-                                        <a href="@Url.Action("Index", "Excursion", new { country = Utility.GetCurrentCountryName() })">Excursion</a>
-                                    }
-                                }
-                            </li>
-                            <li>
-                                @if (showcountry == "Corporate")
-                                {
-                                    <a href="#" data-reveal-id="SelectCountry">Transfer</a>
-                                }
-                                else
-                                {
-                                    if (!isLogin)
-                                    {
-                                        <a href="#" data-reveal-id="LoginBox" onclick="selectModule('Transfer')">Transfer</a>
-                                    }
-                                    else
-                                    {
-                                        <a href="@Url.Action("Index", "Transfer", new { country = Utility.GetCurrentCountryName() })">Transfer</a>
-                                    }   
-                                }
-                            </li>
-                            <li>
-                                @if (showcountry == "Corporate")
-                                {
-                                <a href="#" data-reveal-id="SelectCountry">Hotel</a>
-                                }
-                                else
-                                {
-                                    if (!isLogin)
-                                    {
-                                        <a href="#" data-reveal-id="LoginBox" onclick="selectModule('Hotel')">Hotel</a>
-                                    }
-                                    else
-                                    {
-                                        <a href="@Url.Action("Index", "Hotel", new { country = Utility.GetCurrentCountryName() })">Hotel</a>
-                                    }   
-                                }
-                            </li>
-                            <li><a href="@Url.Action("Index", "ContactUS", new { country = Utility.GetCurrentCountryName() })">Contact Us</a></li>
+                            <li><a href="@Url.Action("Index", "Home", new { country = country })">Journeys of a lifetime</a></li>
+                            @if (showcountry == "Corporate")
+							{ 
+                                <li><a href="#" data-reveal-id="SelectCountry">Awesome Deals</a></li>
+                                <li><a href="#" data-reveal-id="SelectCountry">Holidays</a></li>
+                                <li><a href="#" data-reveal-id="SelectCountry">Excursiosn</a></li>
+                                <li><a href="#" data-reveal-id="SelectCountry">Transfers</a></li>
+                                <li><a href="#" data-reveal-id="SelectCountry">Hotels</a></li>
+							}
+							else if (!isLogin)
+							{
+                                <li><a href="#" data-reveal-id="LoginBox" onclick="selectModule('AwesomeDeal')">Awesome Deals</a></li>
+                                <li><a href="#" data-reveal-id="LoginBox" onclick="selectModule('Package')">Holidays</a></li>
+                                <li><a href="#" data-reveal-id="LoginBox" onclick="selectModule('Excursion')">Excursions</a></li>
+                                <li><a href="#" data-reveal-id="LoginBox" onclick="selectModule('Transfer')">Transfers</a></li>
+                                <li><a href="#" data-reveal-id="LoginBox" onclick="selectModule('Hotel')">Hotels</a></li>
+							}
+							else
+							{
+                                <li><a href="@Url.Action("Index", "AwesomeDeal", new { country = country })">Awesome Deals</a></li>
+                                <li><a href="@Url.Action("Index", "Package", new { country = country })">Holidays</a></li>
+                                <li><a href="@Url.Action("Index", "Excursion", new { country = country })">Excursions</a></li>
+                                <li><a href="@Url.Action("Index", "Transfer", new { country = country })">Transfers</a></li>
+                                <li><a href="@Url.Action("Index", "Hotel", new { country = country })">Hotels</a></li>
+							}
+                            <li><a href="@Url.Action("Index", "ContactUS", new { country = country })">Contact Us</a></li>
                         </ul>
                     </section>
                 </nav>
@@ -337,8 +301,8 @@
             <div id="SelectCountry" class="reveal-modal small" data-reveal >
                 <a class="close-reveal-modal">&#215;</a>
                     <div class="row">
-                        @if (!isLogin) 
-                        { 
+                        @if (!isLogin)
+						{ 
                         <div class="small-12 medium-4 columns margin-bottom-15">
                             <a href="#" data-reveal-id="LoginBox" class="login" onclick="selectCountry('Bhutan')"><img src="/Images/flag_bhutan.png" alt="Bhutan" title="Bhuta n" /> Bhutan</a>
                         </div>
@@ -375,9 +339,9 @@
                         <div class="small-12 medium-4 columns margin-bottom-15">
                             <a href="#" data-reveal-id="LoginBox" class="login" onclick="selectCountry('Vietnam')"><img src="/Images/flag_vietnam.png" alt="Vietnam" title="Vietnam" /> Vietnam</a>
                         </div>
-                        }
-                        else
-                        {
+						}
+						else
+						{
                         <div class="small-12 medium-4 columns margin-bottom-15">
                             <a href="#" onclick="redirectTo('Bhutan')"><img src="/Images/flag_bhutan.png" alt="Bhutan" title="Bhutan" /> Bhutan</a>
                         </div>
@@ -414,7 +378,7 @@
                         <div class="small-12 medium-4 columns margin-bottom-15">
                             <a href="#" onclick="redirectTo('Vietnam')"><img src="/Images/flag_vietnam.png" alt="Vietnam" title="Vietnam" /> Vietnam</a>
                         </div>
-                        }
+						}
                     </div>
             </div>
             <!-- Loading popup -->
@@ -453,7 +417,7 @@
                         <li><a href="@Url.Action("Index", "ContactUS", new { country = Utility.GetCurrentCountryName() })">Contact us</a></li>
                     </ul>
                 </div>
-                <div class="medium-5 pull-7 columns center">
+                <div class="medium-5 pull-7 columns center copyright">
                     copyright  @DateTime.Now.Year Diethelm Travel Thailand. All rights reserved.
                 </div>
             </div>
@@ -462,17 +426,14 @@
             <!-- General script -->
         
 
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
     function selectCountry(selectcountry) {
         $("#hddCountry").val(selectcountry);
-        //alert( $("#hddCountry").val());
     }
     function selectModule(module) {
         $("#hddModule").val(module);
-       // alert($("#hddModule").val());
     }
     function redirectTo(selectcountry) {
-        //alert(selectcountry + "  /  " + $("#hddModule").val());
         $('#SelectCountry').foundation('reveal', 'close');
         $('#Loading').foundation('reveal', 'open');
         if ($("#hddModule").val() != "") {
@@ -488,8 +449,7 @@
             return;
         }
         var country = $('#hddCountry').val();
-        //$('#LoginBox').html("<img src='/Images/loading.gif'> Loading.....");
-        // $('#loading').foundation('reveal', 'open');
+
         $('#LoginBox').foundation('reveal', 'close');
         $('#Loading').foundation('reveal', 'open');
 
@@ -545,9 +505,6 @@
                     success: function (result) {
                         window.location.href = "/" + $("#hddCountry").val() + "/Home/Country";
                     },
-                    //error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                    //    alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-                    //}       
                 });
 
             });
@@ -588,7 +545,6 @@
                     login();
                 }
             });
-            //     $('img').one('error', function () { this.src = '/Images/Noimage.jpg'; });
         });
         function ClearCookie() {
             $.cookie("HotelSearchCondition", null, { path: '/' });

@@ -7,7 +7,7 @@
     Layout = "~/Views/Shared/_LayoutWeb.cshtml";
 
     DiethelmTSWebsite2015.Core.Utility.ReloadRouteData();
-    DTTDBContext db = new DTTDBContext();
+    DTTDBContext db = DataManager.DB;
     object obj = Request.RequestContext.RouteData.Values["country"];
     string country = obj == null ? string.Empty : obj.ToString();
     string countryTab = DiethelmTSWebsite2015.Core.HtmlHelper.GenerateTabCountryFrontend(country);
@@ -33,7 +33,7 @@
     <div class="small-12 medium-4 columns">
         <h3 class="step-title-label">Seasons  &bull; <font id="country-header">@countryname</font></h3> 
     </div>
-    <div class="small-12 medium-8 columns list-heading-right">
+    <div class="small-12 medium-8 columns list-heading-right hide-for-small">
         @*<font id="country-header">@countryname</font><font class="font-red"> &bull; Seasons</font>*@
     </div>
 </div>
@@ -43,7 +43,7 @@
 </div>
 <div class="row ">
     <div class="small-12 columns country-header-cover ">  </div>
-    <div class="small-12 columns country-image-cover"> <img src="/Images/@countryname-Headercover.png" id="img-cover" width="100%"> </div>
+    <div class="small-12 columns country-image-cover"> <img src="/Images/@countryname-Headercover.jpg" id="img-cover" width="100%"> </div>
 </div>
 
 <div class="row ">
@@ -154,7 +154,7 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
         function ChooseCountryTab(Country) {
             $('#country-header').html(Country);
             $('#img-cover').attr("src", "/Images/" + Country + "-Headercover.jpg");

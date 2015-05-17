@@ -7,7 +7,7 @@
     Layout = "~/Views/Shared/_LayoutWeb.cshtml";
 
     DiethelmTSWebsite2015.Core.Utility.ReloadRouteData();
-    DTTDBContext db = new DTTDBContext();
+
     object obj = Request.RequestContext.RouteData.Values["country"];
     string country = obj == null ? string.Empty : obj.ToString();
     string countryTab = DiethelmTSWebsite2015.Core.HtmlHelper.GenerateTabCountryFrontend(country);
@@ -43,7 +43,7 @@
 </div>
 <div class="row ">
     <div class="small-12 columns country-header-cover"> </div>
-    <div class="small-12 columns country-image-cover"> <img src="/Images/@countryname-Headercover.png" id="img-cover" width="100%"> </div>
+    <div class="small-12 columns country-image-cover"> <img src="/Images/@countryname-Headercover.jpg" id="img-cover" width="100%"> </div>
 </div>
 
 <div class="row our-team-tab">
@@ -124,7 +124,7 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
         function ChooseCountryTab(Country) {
             $('#country-header').html(Country);
             $('#img-cover').attr("src", "/Images/" + Country + "-Headercover.jpg");

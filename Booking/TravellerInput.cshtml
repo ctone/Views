@@ -6,7 +6,7 @@
     Layout = "~/Views/Shared/_LayoutWeb.cshtml";
 
     List<Title> TitleList = ViewBag.TitleList;
-    List<NationalitiesCountriesState> NationalitiesList = ViewBag.NationalitiesList;
+    List<NationalitiesCountriesState> NationalitiesList = ViewBag.NationalitiesList;      
 
     int travellerCount = 0;
     int room = 1;
@@ -20,7 +20,7 @@
     <div class="small-12 medium-4 columns">
         <h3 class="step-title-label">Search Hotel</h3>
     </div>
-    <div class="small-12 medium-8 columns" style="background-color: #EEEEEE; padding: 6.5px;">
+    <div class="small-12 medium-8 columns progress-bar">
         <img src="~/Images/progress_s3.png" />
     </div>
 </div>
@@ -58,38 +58,38 @@
             {
                 if (nAdult == 1) { 
                     <div class="row">
-                        <div class="column small-1 traveller-yellow">
+                        <div class="column small-12 medium-1 traveller-yellow">
                             Adult
                         </div>
                         @*<div class="column small-1 traveller-gray">
                             Main Traveller
                         </div>*@
-                        <div class="column small-2 traveller-gray">
+                        <div class="column medium-2 hide-for-small traveller-gray">
                             Title
                         </div>
-                        <div class="column small-6 traveller-name-cover">
-                           <div class="row traveller-name">
-                                <div class="column small-6 traveller-gray">
+                        <div class="column medium-6 hide-for-small traveller-name-cover">
+                            <div class="row traveller-name">
+                                <div class="column medium-6 traveller-gray">
                                     &nbsp;&nbsp;&nbsp;First name
                                 </div>
-                                <div class="column small-6 traveller-gray">
+                                <div class="column medium-6 traveller-gray">
                                     Last name
                                 </div>
-                           </div>
+                            </div>
                         </div>
                         @*<div class="column small-2 traveller-gray">
                             Nationality
                         </div>*@
-                        <div class="column small-2 traveller-gray">
+                        <div class="column medium-2 hide-for-small traveller-gray">
                             Age
                         </div>
-                        <div class="column small-1 traveller-gray" style="font-size:0.6em">
+                        <div class="column medium-1 hide-for-small traveller-gray" style="font-size:0.6em">
                             Select from Existing
                         </div>
                     </div>
                 }
             <div class="row traveller">
-                <div class="column small-1 padding-top-5">
+                <div class="column small-12 medium-1 padding-top-5">
                     @nAdult
                 </div>              
                 @*<div class="column small-1 padding-top-5">
@@ -100,8 +100,8 @@
 
                     <input type="radio" name="MainPassenger" @selected />  
                 </div>*@    
-                <div class="column small-2">
-                    <select name="[@travellerCount].Title">
+                <div class="column small-12 medium-2">
+                    <select name="[@travellerCount].Title" class="traveller-select">
                         @foreach (var item in TitleList)
                         {
                             if (item.ContactTitleTypeName == "Child")
@@ -114,24 +114,22 @@
                             {
                                 selected = "selected";
                             }
-                    
-                            <option value="@item.ContactTitleTypeName" @selected >@item.ContactTitleTypeName</option>
+
+                            <option value="@item.ContactTitleTypeName" @selected>@item.ContactTitleTypeName</option>
                         }
                     </select>
                 </div>
-                 <div class="column small-6">
+                 <div class="column small-12 medium-6">
                        <div class="row">
-                            <div class="column small-6">
-                                <input type="text" name="[@travellerCount].FirstName" id="@travellerCount-FirstName" onkeypress="bindSearchCtrl('@travellerCount-FirstName', 'divPopupSearch')" placeholder="@traveller.Type" value="@traveller.FirstName" />
-                            </div>
-                            <div class="column small-6">
-                                <input type="text" name="[@travellerCount].LastName" id="@travellerCount-LastName" onkeypress="bindSearchCtrl('@travellerCount-LastName', 'divPopupSearch')" placeholder="@traveller.Type" value="@traveller.LastName" />
-                                <input type="hidden" name="[@travellerCount].Type" value="@traveller.Type"/>
-                            </div>
-                           <div id="divPopupSearch" class="search-traveler-popup-box" style="">
-                               &nbsp;
+                           <div class="column small-12 medium-6">
+                               <input type="text" name="[@travellerCount].FirstName" id="@travellerCount-FirstName" onkeypress="bindSearchCtrl('@travellerCount-FirstName', 'divPopupSearch')" placeholder="Firstname" value="@traveller.FirstName" />
                            </div>
-
+                           <div class="column small-12 medium-6">
+                               <input type="text" name="[@travellerCount].LastName" id="@travellerCount-LastName" onkeypress="bindSearchCtrl('@travellerCount-LastName', 'divPopupSearch')" placeholder="Lastname" value="@traveller.LastName" />
+                               <input type="hidden" name="[@travellerCount].Type" value="@traveller.Type" />
+                           </div>
+                           <div id="divPopupSearch" class="search-traveler-popup-box" style="">
+                           </div>
                        </div>
                     </div>
                 @*<div class="column small-2">
@@ -142,11 +140,11 @@
                         }
                     </select>
                 </div>*@
-                <div class="column small-2">
+                <div class="column hide-for-small medium-2">
                     @*@traveller.Age*@
                     <input type="hidden" name="[@travellerCount].Age" value="@traveller.Age"/>   
                 </div>
-                <div class="column small-1 right">
+                <div class="column small-12 medium-1 right">
                     <input type="button" class="button tiny radius" Value="......" onclick="OpenExistingPopup('@travellerCount')">
                     @*<input type="radio" name="MainPassenger" />*@
                 </div>
@@ -166,45 +164,45 @@
                 if (nChild == 1)
                 {
                 <div class="row">
-                    <div class="column small-1 traveller-yellow">
+                    <div class="column small-12 medium-1 traveller-yellow">
                         Child
                     </div>
                     @*<div class="column small-1 traveller-gray">
                         Main Traveller
                     </div>*@
-                    <div class="column small-2 traveller-gray">
+                    <div class="column medium-2 hide-for-small traveller-gray">
                         Title
                     </div>
-                        <div class="column small-6 traveller-name-cover">
-                           <div class="row traveller-name">
-                                <div class="column small-6 traveller-gray">
-                                    &nbsp;&nbsp;&nbsp;First name
-                                </div>
-                                <div class="column small-6 traveller-gray">
-                                    Last name
-                                </div>
-                           </div>
+                    <div class="column hide-for-small medium-6 traveller-name-cover">
+                        <div class="row traveller-name">
+                            <div class="column small-6 traveller-gray">
+                                &nbsp;&nbsp;&nbsp;First name
+                            </div>
+                            <div class="column small-6 traveller-gray">
+                                Last name
+                            </div>
                         </div>
+                    </div>
                     @*<div class="column small-2 traveller-gray">
                         Nationality
                     </div>*@
-                    <div class="column small-2 traveller-gray">
+                    <div class="column hide-for-small medium-2 traveller-gray">
                         Age
                     </div>
-                    <div class="column small-1 traveller-gray" style="font-size:0.6em">
+                    <div class="column hide-for-small medium-1 traveller-gray" style="font-size:0.6em">
                         Select from Existing
                     </div>
                 </div>
                 }
             <div class="row traveller">
-                <div class="column small-1 padding-top-5">
+                <div class="column small-12 medium-1 padding-top-5">
                     @nChild
                 </div>              
                 @*<div class="column small-1 padding-top-5">
                     <input type="radio" name="MainPassenger" />  
                 </div>*@    
-                <div class="column small-2">
-                    <select name="[@travellerCount].Title">
+                <div class="column small-12 medium-2">
+                    <select name="[@travellerCount].Title" class="traveller-select">
                         @foreach (var item in TitleList)
                         {
                             string selected = "";
@@ -213,22 +211,22 @@
                             {
                                 selected = "selected";
                             }
-                    
-                            <option value="@item.ContactTitleTypeName" @selected >@item.ContactTitleTypeName</option>
+
+                            <option value="@item.ContactTitleTypeName" @selected>@item.ContactTitleTypeName</option>
                         }
                     </select>
                 </div>
-                 <div class="column small-6">
-                       <div class="row">
-                            <div class="column small-6">
-                                <input type="text" name="[@travellerCount].FirstName" placeholder="@traveller.Type" value="@traveller.FirstName"/>
-                            </div>
-                            <div class="column small-6">
-                                <input type="text" name="[@travellerCount].LastName" placeholder="@traveller.Type" value="@traveller.LastName" />
-                                <input type="hidden" name="[@travellerCount].Type" value="@traveller.Type"/>
-                            </div>
-                       </div>
+                <div class="column small-12 medium-6">
+                    <div class="row">
+                        <div class="column small-12 medium-6">
+                            <input type="text" name="[@travellerCount].FirstName" placeholder="Firstname" value="@traveller.FirstName" />
+                        </div>
+                        <div class="column small-12 medium-6">
+                            <input type="text" name="[@travellerCount].LastName" placeholder="Lastname" value="@traveller.LastName" />
+                            <input type="hidden" name="[@travellerCount].Type" value="@traveller.Type" />
+                        </div>
                     </div>
+                </div>
                 @*<div class="column small-2">
                     <select name="[@travellerCount].NationalityTypeID">
                         @foreach (var item in NationalitiesList)
@@ -237,18 +235,18 @@
                         }
                     </select>
                 </div>*@
-                <div class="column small-2 padding-top-5">
+                <div class="column small-12 medium-2 padding-top-5">
                     @traveller.Age
-                    <input type="hidden" name="[@travellerCount].Age" value="@traveller.Age"/>
-                    
-                    
+                    <input type="hidden" name="[@travellerCount].Age" value="@traveller.Age" />
+
+
                 </div>
 
-                <div class="column small-1">
-               
-                    <input type="button" class="button tiny radius" Value="......" onclick="OpenExistingPopup('@travellerCount    ')">
+                <div class="column small-12 medium-1">
+
+                    <input type="button" class="button tiny radius" value="......" onclick="OpenExistingPopup('@travellerCount    ')">
                     @*<input type="radio" name="MainPassenger" />*@
-                    
+
                 </div>
 
                 <input type="hidden" name="[@travellerCount].ID" value="@travellerCount" />
@@ -284,7 +282,8 @@
 {
     <input type="hidden" id="selTravellerID" value="" />
 
-    @*Popup แสดง traveller list ที่อยู่ใน Service อื่น*@
+
+	@*Popup แสดง traveller list ที่อยู่ใน Service อื่น*@
     <div id="ExistingTravellerPopup" class="reveal-modal medium" data-reveal>
     <a class="close-reveal-modal">&#215;</a>
     @*ถ้ามีการเพิ่ม field ให้ไปเพิ่มที่ Model และ js ด้วย*@
@@ -304,13 +303,13 @@
     else
     {
         <div class="row">
-            <div class="column small-1 traveller-gray padding-top-10">
+            <div class="column small-6 medium-1 traveller-gray padding-top-10">
                 Select
             </div>
-            <div class="column small-2 traveller-gray padding-top-10">
+            <div class="column small-6 medium-2 traveller-gray padding-top-10">
                 Title
             </div>
-            <div class="column small-7 traveller-name-cover">
+            <div class="column small-12 medium-7 traveller-name-cover">
                 <div class="row traveller-name">
                     <div class="column small-6 traveller-gray padding-top-10">
                         &nbsp;&nbsp;&nbsp;First name
@@ -320,7 +319,7 @@
                     </div>
                 </div>
             </div>
-            <div class="column small-2 traveller-gray padding-top-10">
+            <div class="column small-12 medium-2 traveller-gray padding-top-10">
                 Age
             </div>
             @*<div class="column small-2 traveller-gray padding-top-10">
@@ -332,14 +331,14 @@
     @for (int i = 0; i < Model.ExistingTraveller.Count(); i++)
     {
         <div class="row hotel-detail-text">
-            <div class="column small-1">
+            <div class="column small-6 medium-1">
                 <input type="radio" id="exist_rdo_@i" name="existTitle" value="@i" />
             </div>
-            <div class="column small-2">
+            <div class="column small-6 medium-2">
                 @Model.ExistingTraveller[i].Title
                 <input type="hidden" id="exist_Title_@i" value="@Model.ExistingTraveller[i].Title" />
             </div>
-            <div class="column small-7">
+            <div class="column small-12 medium-7">
                 <div class="row">
                     <div class="column small-6">
                         @Model.ExistingTraveller[i].FirstName
@@ -351,7 +350,7 @@
                     </div>
                 </div>
             </div>
-            <div class="column small-2">
+            <div class="column small-12 medium-2">
                 @Model.ExistingTraveller[i].Age
                 <input type="hidden" id="exist_Age_@i" value="@Model.ExistingTraveller[i].Age" />
             </div>
@@ -377,7 +376,7 @@
 
 @section scripts
 {
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
     function bindSearchCtrl(txtCtrlID, popupSearchID) {
         @*alert(txtCtrlID);
         $('#' + txtCtrlID).bind('keypress', function (e) {
@@ -487,6 +486,8 @@
                     }
                 }
             }
+
+            $('#Loading').foundation('reveal', 'open');
 
             return true;
         }

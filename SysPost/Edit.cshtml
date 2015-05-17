@@ -141,7 +141,7 @@
             </div>
 
             <div class="columns small-12 push-2">
-                @Html.EditorFor(model => model.IsPublish) Publish
+                @Html.CheckBoxFor(model => model.IsPublish) Publish
                 @Html.ValidationMessageFor(model => model.IsPublish)
             </div>
 
@@ -239,7 +239,7 @@
     <script src="~/Scripts/jquery.filedrop.js"></script>
 
 
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
 
         function Submit() {
 

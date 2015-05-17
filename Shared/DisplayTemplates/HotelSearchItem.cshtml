@@ -5,12 +5,12 @@
 <div class="small-12 medium-4 columns content-detail left" style="height:420px;" onclick="GotoDetail('@Model.ServiceID')">
     <div class="row">
         <div class="small-12 medium-12 columns  search-result-pic">
-            <img src="@Model.Image" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" title="@Model.Themes" alt="@Model.Themes" />
+            <img src="@Model.Image" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" title="@Model.HotelName" alt="@Model.HotelName" />
         </div>
         <div class="small-12 columns">
             <div class="row content-detail-title-small">
                 <div class="small-12 medium-12 columns">
-                    <h6>@Model.HotelName</h6>
+                    <h6 class="hotel-name">@Model.HotelName</h6>
                 </div>
                 <div class="column small-6 star">
                     <img src="~/Images/@Model.Rating-star.png" title="@Model.Rating stars" alt="@Model.Rating stars" />
@@ -24,6 +24,17 @@
                     {
                         <img src="~/Images/status.png" title="@Model.Status.ToLower()" alt="@Model.Status.ToLower()" class="right" />
                     }
+                </div>
+                <div class="column small-12 price">
+                    <div>
+                        @Model.Currency  @Math.Ceiling(Model.Price).ToString("#,###")
+                    </div>
+                </div>
+                <div class="small-12 medium-12 columns" style="padding-top:10px;">
+                    <span class="content-detail-desc">@HttpUtility.HtmlDecode(Utility.GetShortText(Model.HotelDescription, "...", 100))</span>
+                </div>
+                <div class="small-12 medium-12 columns link-readmore">
+                    read more
                 </div>
                 <div class="column small-12 hotel-rating">
                     @if (Model.Themes != null && Model.Themes.Count() > 0)
@@ -69,17 +80,6 @@
                             }
                         }
                     }
-                </div>
-                <div class="column small-12 price">
-                    <div>
-                        THB  @Math.Ceiling(Model.Price).ToString("#,###")
-                    </div>
-                </div>
-                <div class="small-12 medium-12 columns" style="padding-top:10px;">
-                    <span class="content-detail-desc">@HttpUtility.HtmlDecode(Utility.GetShortText(Model.HotelDescription, "...", 100))</span>
-                </div>
-                <div class="small-12 medium-12 columns link-readmore">
-                    read more
                 </div>
             </div>
         </div>

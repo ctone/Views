@@ -15,7 +15,9 @@
 @using (Html.BeginForm("Detail", "Package", FormMethod.Post, new { id = "frmPackageDetail"}))
 {
     <input type="hidden" id="PackageID" name="PackageID" value=""/>
+    <input type="hidden" id="hddPackageName" name="hddPackageName" value="" />
     <input type="hidden" id="IsLandingPage" name="IsLandingPage" value="true"/>   
+    <input type="hidden" id="LandingType" name="LandingType" value="BestSellingExperiences"/>
 
 <div id="Recommended">
     <div class="row" style="@strDisplay">

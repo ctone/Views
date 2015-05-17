@@ -6,7 +6,7 @@
             <img src="@Model.Image" onclick="GotoDetail('@Model.PackageID')" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" title="@Model.PackageName" alt="@Model.PackageName" />
         </div>
         <div class="small-12 columns display-block">
-            <div class="price-red float-left"><b> THB @Math.Ceiling(Model.Price).ToString("#,##0") </b></div>
+            <div class="price-red float-left"><b> @Model.Currency @Math.Ceiling(Model.Price).ToString("#,##0") </b></div>
             @if (Model.Available == "Yes")
             {
                 <img src="/Images/status.png" class="float-right" />

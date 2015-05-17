@@ -26,7 +26,7 @@
             foreach (var alt in item.Package_AlternateServices)
             {
                 <div>
-                    <input type="radio" name="Day_@item.DaySequenceNumber" checked="checked" /> @item.ServiceName
+                    <input type="radio" name="Day_@item.DaySequenceNumber" checked="checked" /> @alt.ServiceName
                 </div>
             }
         }

@@ -7,7 +7,7 @@
     <div class="small-12 medium-7 columns">
         <h5 onclick="GotoDetail('@Model.ServiceID')">@Model.HotelName</h5>
         <div class="display-block">
-            <div class="small-price">from THB @Math.Ceiling(Model.Price).ToString("#,##0")</div>
+            <div class="small-price">from @Model.Currency @Math.Ceiling(Model.Price).ToString("#,##0")</div>
             @*            <div style="float:left;" class="price-red">from <b>@Model.Price.ToString("#,##0.00") THB</b></div>*@
 
             <div class="float-right">

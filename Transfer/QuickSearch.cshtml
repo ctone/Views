@@ -20,7 +20,7 @@
     <div class="page-title page-title-quick-search">
         <div class="row quick-search-cover">
             <div class="small-12 medium-2 columns">
-                <h5 class="page-title-label main-title quick-search-margin-top">Quick search</h5>
+                <h6 class="page-title-label main-title quick-search-margin-top">Transfer search</h6>
             </div>
             <div class="small-12 medium-3 columns">
                 <h5 class="page-title-label main-title">
@@ -33,7 +33,7 @@
                     </select>
                 </h5>
             </div>
-            <div class="small-12 medium-3 columns ">
+            <div class="small-12 medium-3 columns tranfer-arrival-cover">
                 <div class="row ">
                     <div class="small-6 medium-12 columns"><label>Arrival To</label></div>
                     <div class="small-6 medium-12 columns">
@@ -41,7 +41,7 @@
                     </div>
                 </div>
             </div>
-            <div class="small-12 medium-2 columns margin-top10 show-for-small">
+            <div class="small-12 medium-2 columns">
                 <div class="row">
                     <div class="small-6 medium-12 columns"><label>Depature Date</label></div>
                     <div class="small-6 medium-12 columns quick-search-date-input">
@@ -49,21 +49,14 @@
                     </div>
                 </div>
             </div>
-            <div class="small-12 medium-2 columns hide-for-small">
-                <div class="row">
-                    <div class="small-6 medium-12 columns"><label>Depature Date</label></div>
-                    <div class="small-6 medium-12 columns">
-                        @Html.TextBoxFor(model => model.FromDate, new { @Value = DateTime.Now.ToString("dd-MM-yyyy")})
-                    </div>
-                </div>
-            </div>
+   
             <div class="small-12 medium-2 columns">
                 <input id="btnPackageSearch" type="submit" class="tiny button radius expand " value="Go" onclick="return ValidateInput()" />
             </div>
         </div>
     </div>
 
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
 
         $('select[name=FromLocation]').change(function () {
 

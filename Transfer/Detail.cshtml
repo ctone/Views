@@ -43,7 +43,7 @@
         <div class="small-12 medium-4 columns">
             <h3 class="step-title-label">Transfer</h3>
         </div>
-        <div class="small-12 medium-8 columns" style="background-color: #EEEEEE; padding: 6.5px;">
+        <div class="small-12 medium-8 columns progress-bar" >
             <img src="~/Images/progress_s2.png" />
         </div>
     </div>
@@ -66,7 +66,7 @@
 
 
     <div class="row">
-        <div class="columns small-12 medium-12 owl-theme-area">
+        <div class="columns small-12 medium-12 owl-theme-area detail-slide-img-cover">
             <div id="slice-content-excursion" class="owl-carousel owl-theme">
                 @if (imageList != null)
                 {
@@ -208,7 +208,7 @@
                                     }
                                 </select>
                             </div>
-                            <div class="column small-12 medium-2">
+                            <div class="column small-12 medium-2" id="PickupTimeBox">
                                 <input type="text" id="PickupTime" name="PickupTime" />
                             </div>
                         </div>
@@ -230,7 +230,7 @@
                                     }
                                 </select>
                             </div>
-                            <div class="column small-12 medium-2">
+                            <div class="column small-12 medium-2" id="DropoffTimeBox">
                                 <input type="text" id="DropoffTime" name="DropoffTime" />
                             </div>
                         </div>
@@ -238,7 +238,7 @@
                 </div>
                 <div class="tab-content-line right"></div>
                 <div class="row">
-                    <div class="column small-8">
+                    <div class="column small-12 medium-8">
                         <div class="row">
                             <div class="column small-12 small-label">Total Price</div><br />
                             <div class="column small-12 small-label">
@@ -246,11 +246,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="column small-2">
-                        <div class="float-right"><input type="button" value="Select" class="button right" onclick="ShowHints()" /></div>
+                    <div class="column small-12 medium-2 right">
+                        <input type="button" value="Select" class="button right expand-mobile-small-pc" onclick="ShowHints()" />
                     </div>
-                    <div class="column small-2 right padding-top-25">
-                        <input type="button" value="< Back" class="button btn-gray right " onclick="history.back();" />
+                    <div class="column small-12 medium-2 right padding-top-25">
+                        <input type="button" value="< Back" class="button btn-gray right expand-mobile-small-pc" onclick="history.back();" />
                     </div>
                 </div>
             </div>
@@ -260,7 +260,7 @@
 }
 
 @section Scripts {
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
         function ContactToggle(id) {
             $('#' + id).slideToggle();
             $('.' + id).toggle();
@@ -289,7 +289,7 @@
             var selected = $('#Pickup').find('option:selected');
             var time = selected.data('time');
 
-            if (time == '') {
+            /*if (time == '') {
                 $('#PickupTime').attr('readonly', false);
                 $('#PickupTime').removeClass('input-disabled');
                 $('#PickupTime').val('');
@@ -298,14 +298,26 @@
                 $('#PickupTime').attr('readonly', true);
                 $('#PickupTime').addClass('input-disabled');
                 $('#PickupTime').val(time);
-            }
+            }*/
+
+            $.ajax({
+                url: '@Url.Action("GetSelectTimeCtrl", "Excursion")',
+                 type: 'POST',
+                 data: {
+                     Time: time,
+                     CtrlName: 'PickupTime'
+                 },
+                 success: function (data) {
+                     $('#PickupTimeBox').html(data);
+                 }
+             });
         }
 
         function DropoffLogic() {
             var selected = $('#Dropoff').find('option:selected');
             var time = selected.data('time');
 
-            if (time == '') {
+            /*if (time == '') {
                 $('#DropoffTime').attr('readonly', false);
                 $('#DropoffTime').removeClass('input-disabled');
                 $('#DropoffTime').val('');
@@ -314,7 +326,19 @@
                 $('#DropoffTime').attr('readonly', true);
                 $('#DropoffTime').addClass('input-disabled');
                 $('#DropoffTime').val(time);
-            }
+            }*/
+
+            $.ajax({
+                url: '@Url.Action("GetSelectTimeCtrl", "Excursion")',
+                type: 'POST',
+                data: {
+                    Time: time,
+                    CtrlName: 'DropoffTime'
+                },
+                success: function (data) {
+                    $('#DropoffTimeBox').html(data);
+                }
+            });
         }
 
         $(document).ready(function () {
@@ -372,7 +396,7 @@
 
         function ShowHints()
         {
-            if ($("#FlightNo").val()=="")
+            /*if ($("#FlightNo").val()=="")
             {
                 alert("Plase insert flight No.");
                 $("#FlightNo").focus();
@@ -383,17 +407,19 @@
                 alert("Plase select pick up");
                 $("#Pickup").focus();
                 return false;
-            }
+            }*/
 
-            if ($("#FlightTime").val() == "") {
-                alert("Plase insert flight time");
-                $("#FlightTime").focus();
-                return false;
-            } else {
-                var str = $("#FlightTime").val();
+            //if ($("#FlightTime").val() == "") {
+            //    alert("Plase insert flight time");
+            //    $("#FlightTime").focus();
+            //    return false;
+            //} else {
+            var str = $("#FlightTime").val();
+            if(str != "")
+            {
                 var ftime = str.replace(".", ":");
                 if (ftime.length < 4 || ftime.length > 5) {
-                    alert("Incorrect flight time");
+                    alert("Incorrect flight time format (hh:mm)");
                     return false;
                 } else {
                     if (ftime.length == 4) {
@@ -405,15 +431,18 @@
                         return false;
                     } else {
                         $("#FlightTime").val(ftime);
-                        return true;
+                        //return true;
                     }
                 }
             }
-            if ($("#Dropoff").val() == null) {
+            //}
+            
+            /*if ($("#Dropoff").val() == null) {
                 alert("Plase select drop off");
                 $("#Dropoff").focus();
                 return false;
-            }
+            }*/
+
             var IsDisplayHint = true;
 
             @if(IsDisplayHint)
@@ -424,6 +453,7 @@
             {
                 <text>IsDisplayHint = false;</text>
             }
+
 
             if(IsDisplayHint)
             {
@@ -443,6 +473,7 @@
 
         function Book()
         {
+            $('#Loading').foundation('reveal', 'open');
             $("#frm").submit();
         }
     </script>

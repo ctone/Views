@@ -7,7 +7,7 @@
     Layout = "~/Views/Shared/_LayoutWeb.cshtml";
 
     DiethelmTSWebsite2015.Core.Utility.ReloadRouteData();
-    DTTDBContext db = new DTTDBContext();
+    DTTDBContext db = DataManager.DB;
     object obj = Request.RequestContext.RouteData.Values["country"];
     string country = obj == null ? string.Empty : obj.ToString();
     string countryTab = DiethelmTSWebsite2015.Core.HtmlHelper.GenerateTabCountryFrontend(country);
@@ -15,6 +15,7 @@
     var countryList = list.ToList();
     byte countryID = Utility.GetCurrentCountryID();
     string countryName = Utility.GetCurrentCountryName();
+    string coverImg = Utility.GetCoverImage(countryName);
     if (string.IsNullOrEmpty(country))
     {
         //DISPLAY COUNTRY POPUP ... REDIRECT
@@ -33,7 +34,7 @@
     <div class="small-12 medium-4 columns">
         <h3 class="step-title-label">Dining Guide  &bull; <font id="country-header">@countryName</font></h3> 
     </div>
-    <div class="medium-8 columns list-heading-right hide-for-small">
+    <div class="medium-8 columns list-heading-right  hide-for-small">
     </div>
 </div>
 
@@ -44,7 +45,7 @@
 </div>
 <div class="row ">
     <div class="small-12 columns country-header-cover"> </div>
-    <div class="small-12 columns country-image-cover"> <img src="/Images/@countryName-Headercover.png"  id="img-cover" width="100%"> </div>
+    <div class="small-12 columns country-image-cover"> <img src="/Images/@countryName-Headercover.jpg"  id="img-cover" width="100%"> </div>
 </div>
 
 
@@ -160,10 +161,18 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
         function ChooseCountryTab(Country) {
             $('#country-header').html(Country);
-            $('#img-cover').attr("src", "/Images/"+ Country + "-Headercover.jpg");
+            @{
+                countryName = 
+                coverImg = Utility.GetCoverImage();
+            }
+
+            $('#img-cover').attr("src", "/Images/" + Country + "-Headercover.jpg");
+
+
+
         }
 
         function ChangeCity(CountryID) {

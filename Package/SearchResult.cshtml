@@ -22,9 +22,10 @@
             </div>
         </div>
     <script>
-        function GotoDetail(packageID, packageCode) {
+        function GotoDetail(packageID, packageName) {
 
             $("#PackageID").val(packageID);
+            $("#hddPackageName").val(packageName);
             $("#frmDetail").submit();
 
             @*$.ajax({

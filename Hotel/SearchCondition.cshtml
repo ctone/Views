@@ -4,7 +4,7 @@
 @{
     Layout = null;
     ViewBag.Title = "Search";
-    DTTDBContext db = new DTTDBContext();
+    DTTDBContext db = DataManager.DB;
     List<DiethelmTSWebsite2015.Models.Region> CityList = ViewBag.CityList;
     List<DiethelmTSWebsite2015.Models.ServiceTypeRatingDetails> hotelTheme = ViewBag.HotelTheme;
     List<DiethelmTSWebsite2015.Models.ServiceTypeRatingDetails> hotelStarRating = ViewBag.HotelStarRating;
@@ -93,7 +93,7 @@
                 </div>
 
 
-                <div class="MoreOption hide-for-small" style="display:none;">
+                <div class="MoreOption" style="display:none;">
                     <div class="columns small-12 editor-label search-label">
                         <label for="HotelStarRating">Star</label>
                     </div>
@@ -141,55 +141,6 @@
                         @Html.HiddenFor(model => model.PriceFrom)
                         @Html.HiddenFor(model => model.PriceTo)
                     </div>
-                </div>
-                <div class="MoreOption show-for-small" style="display:none;">
-                    <dl class="accordion" data-accordion>
-                        <dd class="accordion-navigation">
-                            <a href="#panel1b">Star</a>
-                            <div id="panel1b" class="content active editor-field search-field search-checkbox">
-                                <ul class="option-radio-list">
-                                    @foreach (var item in hotelStarRating)
-                                    {
-                                        <li>
-                                            <input type="checkbox" name="HotelStarRating[]" id="HotelStarRating-@j" value="@item.ServiceTypeRatingID" />
-                                            <label for="HotelStarRating-@j">@item.ServiceTypeRatingName.Trim()</label>
-                                        </li>
-                                        j++;
-                                    }
-                                </ul>
-                            </div>
-                        </dd>
-                        <dd class="accordion-navigation">
-                            <a href="#panel2b">Price</a>
-                            <div id="panel2b" class="content editor-field   search-field search-checkbox ">
-                                <ul class="option-radio-list">
-                                    @foreach (var item in priceRange)
-                                    {
-
-                                        var currency = db.Currency.Where(c => c.CurrencyID == item.CurrencyCode);
-                                        currencyName = currency.First().CurrencyISOCode;
-                                        <li>
-                                            <input type="checkbox" name="PriceRange[]" id="PriceRange-@j" value="@item.ID" />
-                                            <label for="PriceRange-@j">
-                                                @item.PriceFrom.ToString("#,##0.00") -
-                                                @if (item.PriceTo.HasValue)
-                                                {
-                                                    @item.PriceTo.Value.ToString("#,##0.00")
-                                                }
-                                                else
-                                                {
-                                                    @item.PriceFrom.ToString("#,##0.00") <text>++</text>
-                                                }
-                                                @currencyName
-                                            </label>
-                                        </li>
-                                                j++;
-
-                                    }
-                                </ul>
-                            </div>
-                        </dd>
-                    </dl>
                 </div>
                 <div class="columns small-12 editor-label search-label text-center">
                     <a onclick="MoreOptionClick()" id="MoreOptionShow">+ More search options</a>
@@ -279,7 +230,7 @@
 </div>
 
 
-<script type="text/javascript" defer>
+<script type="text/javascript" >
 
     $.datepicker.setDefaults($.datepicker.regional['en']);
     $("#CheckInDate").datepicker({
@@ -355,7 +306,8 @@
         var searchObj = null;
         if (obj) {
 
-            searchObj = queryStringToJSON(obj);
+            searchObj = queryStringToJSON(obj);            
+
             fillSearchForm(searchObj);
             fillStarRatingForm(searchObj);
             fillPriceRangeForm(searchObj);
@@ -365,7 +317,9 @@
             var val = selected.data('val');
             LoadArea(val, searchObj.CityArea);
 
-            SearchHotel(false);//TODOTARN: ตอน auto search ให้ disable ปุ่ม search ด้วย
+            if (searchObj.City != null && searchObj.City != "") {
+                SearchHotel(false);//TODOTARN: ตอน auto search ให้ disable ปุ่ม search ด้วย
+            }
         }
 
         $(document).on('click', 'a.resultlink', function (e) {
@@ -584,7 +538,6 @@
 
             chkValPriceRange += $(this).val() + ",";
         });
-        alert(chkValPriceRange);
         result.PriceRange = chkValPriceRange;
 
         var chkThemeVal = "";

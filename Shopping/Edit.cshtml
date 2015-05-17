@@ -3,7 +3,7 @@
 @using DiethelmTSWebsite2015.Core;
 @{
     ViewBag.Title = "Edit";
-    DTTDBContext db = new DTTDBContext();
+    DTTDBContext db = DataManager.DB;
     List<Place> place = db.Place.ToList();
     List<PriceLevel> priceLevel = db.PriceLevel.ToList();
     string country = Request.RequestContext.RouteData.Values["country"].ToString();
@@ -169,7 +169,7 @@
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/jqueryfileupload")
 
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
         function Submit() {
             $('#main-form').submit();
         }

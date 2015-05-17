@@ -6,7 +6,7 @@
     ViewBag.Title = "Create";
     string country = Request.RequestContext.RouteData.Values["country"].ToString();
     DiethelmTSWebsite2015.Biz.CountryCollection countryColl = new DiethelmTSWebsite2015.Biz.CountryCollection();
-    DTTDBContext db = new DTTDBContext();
+    DTTDBContext db = DataManager.DB;
     List<Place> place = db.Place.ToList();
     List<PriceLevel> priceLevel = db.PriceLevel.ToList();
     DiethelmTSWebsite2015.Biz.RegionBiz region = new DiethelmTSWebsite2015.Biz.RegionBiz();
@@ -135,7 +135,7 @@
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/jqueryfileupload")
 
-<script type="text/javascript" defer>
+<script type="text/javascript" >
         function Submit() {
             $('#main-form').submit();
         }

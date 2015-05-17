@@ -3,7 +3,7 @@
 <div class="small-12 columns content-detail left">
     <div class="row">
         <div class="small-12 columns package-small-pic">
-            <img src="@Model.Image" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" onclick="GotoDetail('@Model.PackageID')" title="@Model.PackageName" alt="@Model.PackageName" />
+            <img src="@Model.Image" onerror="this.onerror = null; this.src = '/Images/Noimage.jpg';" onclick="GotoDetail('@Model.PackageID','@Model.PackageName')" title="@Model.PackageName" alt="@Model.PackageName" />
         </div>
         <div class="small-12 columns display-block">
             @if (Model.Available=="Yes") {
@@ -22,16 +22,16 @@
             }
         </div>
         <div class="small-12 columns">
-            <h6 onclick="GotoDetail('@Model.PackageID')">@Model.PackageName</h6>
+            <h6 onclick="GotoDetail('@Model.PackageID','@Model.PackageName')">@Model.PackageName</h6>
         </div>
         <div class="small-12 columns">
-        <div class="price-red">from <b>THB @Math.Ceiling(Model.Price).ToString("#,##0") </b></div>
+        <div class="price-red">from <b>@Model.Currency @Math.Ceiling(Model.Price).ToString("#,##0") </b></div>
         </div>
         <div class="small-12 columns">
             <span class="content-detail-desc">@Model.PackageDescription</span>
         </div>
         <div class="small-12 columns">
-            <span class="link-readmore" onclick="GotoDetail('@Model.PackageID')">read more</span>
+            <span class="link-readmore" onclick="GotoDetail('@Model.PackageID','@Model.PackageName')">read more</span>
         </div>
     </div>
 </div>

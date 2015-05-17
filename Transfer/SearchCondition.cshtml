@@ -181,7 +181,7 @@
     </div>
 </div>
 
-<script type="text/javascript" defer>
+<script type="text/javascript" >
 
     $('select[name=FromLocation]').change(function () {
 
@@ -218,17 +218,23 @@
 
     $(function () {
 
+        $("#FromDate").datepicker("setDate", 3);
+
         //initialize search data from cookie
         var obj = $.cookie("@DataManager.Transfer.SEARCH_COOKIE_NAME");
         var searchObj = null;
         if (obj) {
 
-            searchObj = queryStringToJSON(obj);
+            searchObj = queryStringToJSON(obj);            
+
             fillSearchForm(searchObj);
             fillTourTypeForm(searchObj);
             fillSpeakingGuideForm(searchObj);
 
-            SearchPackage(false);//TODOTARN: ตอน auto search ให้ disable ปุ่ม search ด้วย
+            
+            if (searchObj.FromLocation != null && searchObj.FromLocation != "") {
+                SearchPackage(false);//TODOTARN: ตอน auto search ให้ disable ปุ่ม search ด้วย
+            }
         }
 
         
@@ -265,7 +271,7 @@
 
         //CreateRoom();
 
-        $("#FromDate").datepicker("setDate", 3);
+        
     });
 
     function SearchPackage(isSearch) {

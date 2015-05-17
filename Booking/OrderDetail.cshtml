@@ -11,7 +11,7 @@
     <div class="small-12 medium-4 columns">
         <h3 class="step-title-label">Booking</h3>
     </div>
-    <div class="small-12 medium-8 columns" style="background-color: #EEEEEE; padding: 20px;">
+    <div class="small-12 medium-8 columns progress-bar">
         <img src="~/Images/progress_s6.png" />
     </div>
 </div>
@@ -44,17 +44,6 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="small-12 columns">
-        <div class="button tiny booking-grey-button right" onclick="ExportPDF('Confirmation Proforma Invoice', 'Default Itinerary Name')">
-            Export Confirmation Proforma Invoice
-        </div>
-    </div>
-    <div class="small-12 columns" id="pdfLink">
-        
-    </div>
-</div>
-
 <div class="row booking-review-bottom-line margin-top30">
     <div class="small-12 columns">
     </div>
@@ -66,13 +55,36 @@
     </div>
 </div>
 
+  <div class="row">
+        <div class="small-4 columns">
+            Confirmation Document file:
+        </div>
+        <div class="small-8 columns" id="ConfInvoicePdfLink">
+            Loading...
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-4 columns">
+            Itinerary Document file:
+        </div>
+        <div class="small-8 columns" id="ItinPdfLink">
+            Loading...
+        </div>
+    </div>
+
 @section scripts
 {
-    <script type="text/javascript" defer>
-        function ExportPDF(templateName, itinName) {
+    <script type="text/javascript" >
 
-            $('#Loading').foundation('reveal', 'open');
+        $(document).ready(function () {
+            //ExportPDF('Confirmation Proforma Invoice', 'Default Itinerary Name', 'ConfInvoicePdfLink');
+            ExportPDF('Itinerary', 'Confirmation Proforma Invoice', 'ConfInvoicePdfLink');
+            ExportPDF('Itinerary', 'Default Itinerary Name', 'ItinPdfLink');
+        });
 
+        function ExportPDF(templateName, itinName, link) {
+
+            //$('#Loading').foundation('reveal', 'open');
             $.ajax({
                 url: '@Url.Action("ExportPDF", "Booking")',
                 type: 'GET',
@@ -83,15 +95,10 @@
                     LanguageName: "English"
                 },
                 success: function (data) {
-                    $('#Loading').foundation('reveal', 'close');
+                    $("#" + link).html("<a href='" + data + "' target='_blank' >Please Click here to download document.</a>");
 
-                    $("#pdfLink").html("<a href='" + data + "' target='_blank' >Please Click here to download document.</a>");
-
-                    //var win = window.open(data, '_blank');
-                    //win.focus();
                 }
-            });
-        }
+           
     </script>
 }
 

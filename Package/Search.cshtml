@@ -19,7 +19,7 @@
     <div class="small-12 medium-4 columns">
         <h3 class="step-title-label">Holidays search</h3>
     </div>
-    <div class="small-12 medium-8 columns" style="background-color:#EEEEEE;padding:6.5px;">
+    <div class="small-12 medium-8 columns progress-bar" >
         <img src="~/Images/progress_s1.png" />
     </div>
 </div>
@@ -49,6 +49,7 @@
                 @using (Html.BeginForm("Detail", "Package", FormMethod.Post, new { id = "frmDetail" }))
                 {
                     <input type="hidden" id="PackageID" name="PackageID" value="" />
+                    <input type="hidden" id="hddPackageName" name="hddPackageName" value="" />
                     <input type="hidden" name="IsLandingPage" value="false" />
 
                     <div id="PackageSearchResult" class="row">
@@ -71,8 +72,9 @@
     @Scripts.Render("~/bundles/jqueryval")
     <script src="@Url.Content("~/Scripts/jquery.cookie.js")"></script>
     <script src="@Url.Content("~/Scripts/TS/Package.js")"></script>
+    <script src="@Url.Content("~/Scripts/TS/Utility.js")"></script>
 
-    <script type="text/javascript" defer>
+    <script type="text/javascript" >
         $(document).ready(function () {
             LoadPackageSortBox();
 
@@ -95,9 +97,10 @@
             });
         }
 
-        function GotoDetail(serviceID) {
+        function GotoDetail(serviceID, packageName) {
             PrepareSearchConditionData();//เตรียมข้อมูล search condition data เพื่อส่งไปยังหน้า detail
             $("#PackageID").val(serviceID);
+            $("#hddPackageName").val(packageName);
             $("#frmDetail").submit();
         }
 
@@ -105,6 +108,7 @@
             $.ajax({
                 url: '@Url.Action("LoadMoreResult", "Package")',
                 type: 'Get',
+                data: { token: guid() },
                 success: function (data) {
 
                     $('#PackageSearchResult').append(data);
